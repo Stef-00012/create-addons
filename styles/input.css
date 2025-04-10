@@ -1,0 +1,79 @@
+@import "tailwindcss";
+@plugin "flyonui";
+@plugin "@iconify/tailwind4";
+
+@import url(https://fonts.bunny.net/css?family=lexend:500|martian-mono:500|merriweather:700);
+
+@theme {
+  /* colours */
+  --color-rbase: #191724;
+  --color-rsurface: #1f1d2e;
+  --color-roverlay: #26233a;
+  --color-rmuted: #6e6a86;
+  --color-rsubtle: #908caa;
+  --color-rtext: #e0def4;
+  --color-rlove: #eb6f92;
+  --color-rgold: #f6c177;
+  --color-rrose: #ebbcba;
+  --color-rpine: #31748f;
+  --color-rfoam: #9ccfd8;
+  --color-riris: #c4a7e7;
+  --color-rhighlightl: #21202e;
+  --color-rhighlightm: #403d52;
+  --color-rhighlighth: #524f67;
+
+  /* fonts */
+  --font-sans: "Lexend", "sans-serif";
+  --font-serif: "Merriweather", "serif";
+  --font-mono: "Martian Mono", "monospace";
+}
+
+
+@plugin "flyonui/theme" {
+  name: "rose-pine";
+  default: true;
+  prefersdark: true;
+  color-scheme: "dark";
+  --color-base-300: #191724;
+  --color-base-200: #1f1d2e;
+  --color-base-100: #26233a;
+  --color-base-content: #e0def4;
+  --color-primary: #ebbcba;
+  --color-primary-content: #26233a;
+  --color-secondary: #31748f;
+  --color-secondary-content: #e0def4;
+  --color-accent: #f6c177;
+  --color-accent-content: #26233a;
+  --color-neutral: #9ccfd8;
+  --color-neutral-content: #26233a;
+  --color-info: #c4a7e7;
+  --color-info-content: #26233a;
+  --color-success: #31748f;
+  --color-success-content: #e0def4;
+  --color-warning: #f6c177;
+  --color-warning-content: #26233a;
+  --color-error: #eb6f92;
+  --color-error-content: #26233a;
+  --radius-selector: 1rem;
+  --radius-field: 1rem;
+  --radius-box: 1rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 2px;
+  --depth: 1;
+  --noise: 1;
+}
+
+/* Base 
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+b, strong { @apply font-bold; }
+i, em { @apply italic; }
+code { @apply p-1 m-1 font-mono rounded-lg bg-rhighlightl; }
+img { @apply select-none; }
+hr { @apply border-rtext; }
+fieldset { @apply p-3 rounded-lg border-2 border-rrose; }
+legend { @apply px-1; }
+
+/* Links
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+@utility link2 { @apply inline-block relative underline decoration-rrose decoration-2 hover:no-underline; }

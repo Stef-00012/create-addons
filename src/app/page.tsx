@@ -1,103 +1,153 @@
-import Image from "next/image";
 
-export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  <link rel="stylesheet" href="styles/output.css" />
+
+    <div className="justify-center mx-auto max-w-7xl p-3 text-lg bg-rbase text-rtext">
+
+        <nav className="navbar rounded-box shadow-base-300/20 shadow-sm mt-4">
+            <a className="link text-base-content link-neutral text-xl no-underline" href="#">Create Mod Index</a>
+          </nav>
+          </br>
+        
+        <div className="sm:flex sm:justify-between">
+            <div className="sm:flex sm:justify-start">
+                <div className="max-w-sm my-2 mr-2">
+                    <!-- Filter by modloader -->
+                    <select
+                      multiple
+                      data-select='{
+                      "placeholder": "<span className=\"inline-flex items-center\"><span className=\"icon-[tabler--filter] shrink-0 size-4 me-2\"></span> Filter by modloader</span>",
+                      "toggleTag": "<button type=\"button\" aria-expanded=\"false\"></button>",
+                      "toggleClassNamees": "advance-select-toggle select-disabled:pointer-events-none select-disabled:opacity-40",
+                      "toggleCountText": "selected",
+                      "toggleCountTextMinItems": 5,
+                      "dropdownClassNamees": "advance-select-menu",
+                      "optionClassNamees": "advance-select-option selected:select-active",
+                      "optionTemplate": "<div className=\"flex justify-between items-center w-full\"><span data-title></span><span className=\"icon-[tabler--check] shrink-0 size-4 text-primary hidden selected:block \"></span></div>",
+                      "extraMarkup": "<span className=\"icon-[tabler--caret-up-down] shrink-0 size-4 text-base-content absolute top-1/2 end-3 -translate-y-1/2 \"></span>"
+                      }'
+                      className="hidden"
+                    >
+                      <option value="name">Fabric</option>
+                      <option value="email">Forge</option>
+                      <option value="description">Neoforge</option>
+                      <option value="user_id">Quilt</option>
+                    </select>
+                  </div>
+
+                  <div className="max-w-sm my-2 mr-2">
+                    <select
+                      multiple
+                      data-select='{
+                      "placeholder": "<span className=\"inline-flex items-center\"><span className=\"icon-[tabler--filter] shrink-0 size-4 me-2\"></span> Filter by version</span>",
+                      "toggleTag": "<button type=\"button\" aria-expanded=\"false\"></button>",
+                      "toggleClassNamees": "advance-select-toggle select-disabled:pointer-events-none select-disabled:opacity-40",
+                      "toggleCountText": "selected",
+                      "toggleCountTextMinItems": 5,
+                      "dropdownClassNamees": "advance-select-menu",
+                      "optionClassNamees": "advance-select-option selected:select-active",
+                      "optionTemplate": "<div className=\"flex justify-between items-center w-full\"><span data-title></span><span className=\"icon-[tabler--check] shrink-0 size-4 text-primary hidden selected:block \"></span></div>",
+                      "extraMarkup": "<span className=\"icon-[tabler--caret-up-down] shrink-0 size-4 text-base-content absolute top-1/2 end-3 -translate-y-1/2 \"></span>"
+                      }'
+                      className="hidden"
+                    >
+                      <option value="name">1.21.5</option>
+                      <option value="email">1.21.4</option>
+                      <option value="description">1.21.3</option>
+                      <option value="user_id">1.21.2</option>
+                    </select>
+                  </div>
+            </div>
+              
+              <div className="input rounded-full max-w-56 sm:my-2">
+                <span className="icon-[tabler--search] text-base-content/80 my-auto me-3 size-5 shrink-0"></span>
+                <label className="sr-only" for="searchInput">Mod name</label>
+                <input type="search" className="grow" placeholder="Search" id="searchInput" />
+              </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
-  );
-}
+
+          <div className="py-2 sm:flex sm:flex-wrap sm:justify-between my-2">
+
+          <div className="card sm:max-w-lg my-2">
+            <div className="card-body">
+              <h5 className="card-title mb-0">
+                <img src="https://placehold.co/20"  className="size-12 inline-block" ="mod logo">
+                Mod Title
+                <img src="assets/fabric.png" alt="fabric logo" className="mask mask-squircle size-8 inline-block">
+                <img src="assets/forge.ico" alt="forge logo" className="mask mask-squircle size-8 inline-block">
+                <img src="assets/neoforge.png" alt="neoforge logo" className="mask mask-squircle size-8 inline-block">
+                <img src="assets/quilt.svg" alt="qulit logo" className="mask mask-squircle size-8 inline-block">
+
+              </h5>
+              <ul>
+                <li><span className="icon-[tabler--hash] pt-2"></span> Version: x.x.x (Modloader)</li>
+                <li><span className="icon-[tabler--download] pt-2"></span> Downloads: x</li>
+                <li><span className="icon-[tabler--user] pt-2"></span> Creator: [x](link to x's profile)</li>
+                <li><span className="icon-[tabler--heart] pt-2"></span> Followers: x</li>
+                <li><span className="icon-[tabler--category] pt-2"></span> Categories: x, x, x</li>
+                <!-- <li><span className="icon-[tabler--text-caption] pt-2"></span> Description: x... (cut off at 300 characters)</li> -->
+              </ul>
+            </div>
+          </div>
+
+          <div className="card sm:max-w-lg my-2">
+            <div className="card-body">
+              <h5 className="card-title mb-0">
+                <img src="https://placehold.co/20"  className="size-12 inline-block" ="mod logo">
+                Mod Title
+                <img src="assets/fabric.png" alt="fabric logo" className="mask mask-squircle size-8 inline-block">
+                <img src="assets/forge.ico" alt="forge logo" className="mask mask-squircle size-8 inline-block">
+                <img src="assets/neoforge.png" alt="neoforge logo" className="mask mask-squircle size-8 inline-block">
+                <img src="assets/quilt.svg" alt="qulit logo" className="mask mask-squircle size-8 inline-block">
+
+              </h5>
+              <ul>
+                <li><span className="icon-[tabler--hash] pt-2"></span> Version: x.x.x (Modloader)</li>
+                <li><span className="icon-[tabler--download] pt-2"></span> Downloads: x</li>
+                <li><span className="icon-[tabler--user] pt-2"></span> Creator: [x](link to x's profile)</li>
+                <li><span className="icon-[tabler--heart] pt-2"></span> Followers: x</li>
+                <li><span className="icon-[tabler--category] pt-2"></span> Categories: x, x, x</li>
+                <!-- <li><span className="icon-[tabler--text-caption] pt-2"></span> Description: x... (cut off at 300 characters)</li> -->
+              </ul>
+            </div>
+          </div>
+
+          <div className="card sm:max-w-lg my-2">
+            <div className="card-body">
+              <h5 className="card-title mb-0">
+                <img src="https://placehold.co/20"  className="size-12 inline-block" ="mod logo">
+                Mod Title
+                <img src="assets/fabric.png" alt="fabric logo" className="mask mask-squircle size-8 inline-block">
+                <img src="assets/forge.ico" alt="forge logo" className="mask mask-squircle size-8 inline-block">
+                <img src="assets/neoforge.png" alt="neoforge logo" className="mask mask-squircle size-8 inline-block">
+                <img src="assets/quilt.svg" alt="qulit logo" className="mask mask-squircle size-8 inline-block">
+
+              </h5>
+              <ul>
+                <li><span className="icon-[tabler--hash] pt-2"></span> Version: x.x.x (Modloader)</li>
+                <li><span className="icon-[tabler--download] pt-2"></span> Downloads: x</li>
+                <li><span className="icon-[tabler--user] pt-2"></span> Creator: [x](link to x's profile)</li>
+                <li><span className="icon-[tabler--heart] pt-2"></span> Followers: x</li>
+                <li><span className="icon-[tabler--category] pt-2"></span> Categories: x, x, x</li>
+                <!-- <li><span className="icon-[tabler--text-caption] pt-2"></span> Description: x... (cut off at 300 characters)</li> -->
+              </ul>
+            </div>
+          </div>
+        
+        </div>
+
+          <br>
+
+        <!-- Footer -->
+        <footer className="footer bg-base-200/60 px-6 py-4 rounded-2xl">
+            <div className="flex w-full items-center justify-between">
+            <aside className="grid-flow-col items-center">
+              <p>©2025 <a href="https://stefdp.com" className="link2 text-riris">Stef</a> & <a href="https://orangc.net" className="link2 text-[#fab387]">orangc</a>.</p>
+            </aside>
+              <div className="flex gap-4 h-5">
+                <a href="#" className="link" aria-label="Github Link">
+                  <span className="icon-[tabler--brand-github] size-5"></span>
+                </a>
+              </div>
+            </div>
+          </footer>
