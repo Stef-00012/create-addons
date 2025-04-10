@@ -1,4 +1,7 @@
 @import "tailwindcss";
+@import "flyonui/variants.css";
+@plugin "flyonui";
+@source "./node_modules/flyonui/flyonui.js";
 
 :root {
   --background: #ffffff;
