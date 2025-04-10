@@ -91,7 +91,7 @@ export default function Home() {
 								className="size-12 inline-block rounded-2xl"
 								alt="mod logo"
 							/>
-							Mod Title
+							⠀Mod Title
 							<img
 								src="assets/fabric.png"
 								alt="fabric logo"
@@ -145,7 +145,7 @@ export default function Home() {
 								className="size-12 inline-block rounded-2xl"
 								alt="mod logo"
 							/>
-							Mod Title
+							⠀Mod Title
 							<img
 								src="assets/fabric.png"
 								alt="fabric logo"
@@ -199,7 +199,7 @@ export default function Home() {
 								className="size-12 inline-block rounded-2xl"
 								alt="mod logo"
 							/>
-							Mod Title
+							⠀Mod Title
 							<img
 								src="assets/fabric.png"
 								alt="fabric logo"
