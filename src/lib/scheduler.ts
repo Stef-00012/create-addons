@@ -4,12 +4,7 @@ import db from "@/db/db";
 import { mods as modsSchema } from "@/db/schema";
 
 export const startScheduler = () => {
-	// cron.schedule("0 */3 * * *", () => {
-	// 	console.log("Started fetching the mods from Modrinth");
-
-	// 	handleFetching();
-	// });
-    console.log('Started fetching the mods from Modrinth');
+	console.log('Started fetching the mods from Modrinth');
 
     handleFetching()
 
@@ -52,8 +47,8 @@ async function handleFetching() {
                 author: mod.author,
                 slug: mod.slug,
             }
-        }).finally(() => {
-            console.log("--------------done--------------")
         })
 	}
+
+    console.log("Finished inserting mods");
 }
