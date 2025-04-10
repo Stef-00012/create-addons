@@ -1,8 +1,9 @@
-import type { ModrinthMod, ModrinthSearchResponse } from "@/types/modrinth";
+import type { ModrinthSearchResponse } from "@/types/modrinth";
 import axios, { type AxiosError } from "axios";
+import { ratelimitFetch } from "./fetch";
 
 async function fetchMods(offset = 0, skipIteration = false): Promise<{
-	mods: ModrinthMod[];
+	mods: ModrinthSearchResponse["hits"];
 	totalMods: number;
 }> {
 	const searchParams = new URLSearchParams({
@@ -18,7 +19,7 @@ async function fetchMods(offset = 0, skipIteration = false): Promise<{
 	const mods = [];
 
 	try {
-		const res = await axios.get(url);
+		const res = await ratelimitFetch(url);
 
 		const data: ModrinthSearchResponse = res.data;
 
@@ -64,4 +65,16 @@ async function fetchMods(offset = 0, skipIteration = false): Promise<{
 
 fetchMods().then(x => console.log(x, x.mods.length, x.totalMods));
 
-export default async function getModrinthMods() {}
+export default async function getModrinthMods() {
+    const modsData = await fetchMods()
+
+    const mods = []
+
+    for (const mod of modsData.mods) {
+        const res = await axios.get(`https://api.modrinth.com/v2/project/${mod.slug}/dependencies`);
+
+        const dependencies = res.data;
+
+        
+    }
+}

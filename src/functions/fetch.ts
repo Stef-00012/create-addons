@@ -3,7 +3,7 @@ import { promisify } from "node:util";
 const sleep = promisify(setTimeout);
 
 // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-async function ratelimitFetch(url: string, config?: AxiosRequestConfig<any> | undefined): Promise<AxiosResponse<any, any>> {
+export async function ratelimitFetch(url: string, config?: AxiosRequestConfig<any> | undefined): Promise<AxiosResponse<any, any>> {
 	try {
 		const res = await axios.get(url, config);
 

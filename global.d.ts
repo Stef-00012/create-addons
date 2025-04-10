@@ -1,17 +1,10 @@
 // global.d.ts
-import { IStaticMethods } from "flyonui/flyonui";
+import { IStaticMethods } from "flyonui/flyonui.js";
 
 declare global {
   interface Window {
-    // Optional third-party libraries
-    _;
-    $: typeof import("jquery");
-    jQuery: typeof import("jquery");
-    DataTable;
-    Dropzone;
-
     HSStaticMethods: IStaticMethods;
   }
 }
 
-export {};
+export { };
