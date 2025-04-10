@@ -44,4 +44,4 @@ next-env.d.ts
 default.nix
 
 # db
-/data/*
+/data/data.db
