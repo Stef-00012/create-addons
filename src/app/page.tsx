@@ -88,7 +88,7 @@ export default function Home() {
 						<h5 className="card-title mb-0">
 							<img
 								src="https://placehold.co/20"
-								className="size-12 inline-block"
+								className="size-12 inline-block rounded-2xl"
 								alt="mod logo"
 							/>
 							Mod Title
@@ -142,7 +142,7 @@ export default function Home() {
 						<h5 className="card-title mb-0">
 							<img
 								src="https://placehold.co/20"
-								className="size-12 inline-block"
+								className="size-12 inline-block rounded-2xl"
 								alt="mod logo"
 							/>
 							Mod Title
@@ -196,7 +196,7 @@ export default function Home() {
 						<h5 className="card-title mb-0">
 							<img
 								src="https://placehold.co/20"
-								className="size-12 inline-block"
+								className="size-12 inline-block rounded-2xl"
 								alt="mod logo"
 							/>
 							Mod Title
@@ -266,7 +266,7 @@ export default function Home() {
 					</aside>
 					<div className="flex gap-4 h-5">
 						{/* biome-ignore lint/a11y/useValidAnchor: <explanation> */}
-						<a href="#" className="link" aria-label="Github Link">
+						<a href="https://github.com/Stef-00012/create-addons" className="link" aria-label="Github Link">
 							<span className="icon-[tabler--brand-github] size-5" />
 						</a>
 					</div>
