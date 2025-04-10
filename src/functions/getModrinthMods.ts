@@ -1,5 +1,5 @@
-import type { ModrinthSearchResponse } from "@/types/modrinth";
-import axios, { type AxiosError } from "axios";
+import type { ModrinthDependenciesResponse, ModrinthSearchResponse } from "@/types/modrinth";
+import type { AxiosError } from "axios";
 import { ratelimitFetch } from "./fetch";
 
 async function fetchMods(offset = 0, skipIteration = false): Promise<{
@@ -14,7 +14,6 @@ async function fetchMods(offset = 0, skipIteration = false): Promise<{
 	});
 
 	const url = `https://api.modrinth.com/v2/search?${searchParams}`;
-    console.log(url)
 
 	const mods = [];
 
@@ -25,7 +24,7 @@ async function fetchMods(offset = 0, skipIteration = false): Promise<{
 
 		mods.push(...data.hits);
         
-        console.log(`fetched ${mods.length} mods, total: ${data.total_hits}, offset: ${offset}`);
+        console.log(`Fetched ${mods.length} mods, total: ${data.total_hits}, offset: ${offset}`);
 
 		const totalMods = data.total_hits;
 		let currentOffset = offset + 100;
@@ -63,18 +62,32 @@ async function fetchMods(offset = 0, skipIteration = false): Promise<{
 	}
 }
 
-fetchMods().then(x => console.log(x, x.mods.length, x.totalMods));
-
-export default async function getModrinthMods() {
+export default async function getModrinthMods(): Promise<ModrinthSearchResponse["hits"]> {
     const modsData = await fetchMods()
 
-    const mods = []
+    const mods: ModrinthSearchResponse["hits"] = []
+
+	let index = 0
 
     for (const mod of modsData.mods) {
-        const res = await axios.get(`https://api.modrinth.com/v2/project/${mod.slug}/dependencies`);
+		console.log(index, "Fetching dependencies for", mod.slug);
 
-        const dependencies = res.data;
+		if (mod.slug === "create") {
+			mods.push(mod);
+			index++;
+			continue;
+		}
 
-        
+        const res = await ratelimitFetch(`https://api.modrinth.com/v2/project/${mod.slug}/dependencies`);
+
+        const dependencies = res.data as ModrinthDependenciesResponse;
+
+        if (dependencies.projects.find(project => project.slug === "create")) {
+			mods.push(mod);
+		}
+
+		index++;
     }
+
+	return mods;
 }

@@ -13,9 +13,11 @@ export async function ratelimitFetch(url: string, config?: AxiosRequestConfig<an
 
 		if (error?.response?.status === 429) {
 			const retryAfter = error.response.headers["Retry-After"];
-
+			console.log(`Rate limit hit, retrying in ${retryAfter} seconds...`);
+			
 			if (retryAfter) {
 				await sleep(Number.parseInt(retryAfter) * 1000);
+				console.log("retrying...");
 
 				return await ratelimitFetch(url, config);
 			}
