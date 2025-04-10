@@ -21,8 +21,11 @@ export async function ratelimitFetch(url: string, config?: AxiosRequestConfig<an
 
 				return await ratelimitFetch(url, config);
 			}
+		} else {
+			throw e;
 		}
-
-		throw e
 	}
+
+	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+	return {} as AxiosResponse<any, any>;
 }
