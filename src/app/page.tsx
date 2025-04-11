@@ -1,6 +1,25 @@
-import Image from "next/image";
+"use client";
+import { useEffect, useState } from "react";
+import axios from "axios";
+
+// import Image from "next/image";
+import type { APIModsResponse } from "./api/addons/route";
+import Card from "@/components/card";
 
 export default function Home() {
+	const [mods, setMods] = useState<APIModsResponse>([]);
+
+	useEffect(() => {
+		const fetchMods = async () => {
+			const res = await axios.get("/api/addons");
+
+			const data = (await res.data) as APIModsResponse;
+			setMods(data);
+		};
+
+		fetchMods().catch((err) => console.error(err));
+	}, []);
+
 	return (
 		<>
 			{/* // <!-- Navbar --> */}
@@ -83,167 +102,31 @@ export default function Home() {
 
 			{/* <!-- Mods --> */}
 			<div className="py-2 sm:flex sm:flex-wrap sm:justify-between my-2">
-				<div className="card sm:max-w-lg my-2">
-					<div className="card-body">
-						<h5 className="card-title mb-0">
-							<img
-								src="https://placehold.co/20"
-								className="size-12 inline-block rounded-2xl"
-								alt="mod logo"
+				{mods.length > 0 ? (
+					<>
+						{mods.map((mod) => (
+							<Card
+								author={mod.author}
+								categories={mod.categories}
+								description={mod.description}
+								downloads={mod.downloads}
+								follows={mod.follows}
+								icon={mod.icon}
+								name={mod.name}
+								platform={mod.platform}
+								slug={mod.slug}
+								version={mod.version}
+								versions={mod.versions}
+								key={mod.slug}
+								modloaders={mod.modloaders}
 							/>
-							Mod Title
-							<img
-								src="assets/fabric.png"
-								alt="fabric logo"
-								className="mask mask-squircle size-8 inline-block"
-							/>
-							<img
-								src="assets/forge.ico"
-								alt="forge logo"
-								className="mask mask-squircle size-8 inline-block"
-							/>
-							<img
-								src="assets/neoforge.png"
-								alt="neoforge logo"
-								className="mask mask-squircle size-8 inline-block"
-							/>
-							<img
-								src="assets/quilt.svg"
-								alt="qulit logo"
-								className="mask mask-squircle size-8 inline-block"
-							/>
-						</h5>
-						<ul>
-							<li>
-								<span className="icon-[tabler--hash] pt-2" /> Version: x.x.x
-								(Modloader)
-							</li>
-							<li>
-								<span className="icon-[tabler--download] pt-2" /> Downloads: x
-							</li>
-							<li>
-								<span className="icon-[tabler--user] pt-2" /> Creator: [x](link
-								to x's profile)
-							</li>
-							<li>
-								<span className="icon-[tabler--heart] pt-2" /> Followers: x
-							</li>
-							<li>
-								<span className="icon-[tabler--category] pt-2" /> Categories: x,
-								x, x
-							</li>
-							{/* <!-- <li><span className="icon-[tabler--text-caption] pt-2" /> Description: x... (cut off at 300 characters)</li> --> */}
-						</ul>
+						))}
+					</>
+				) : (
+					<div>
+						<p>Some Loading Screen</p>
 					</div>
-				</div>
-
-				<div className="card sm:max-w-lg my-2">
-					<div className="card-body">
-						<h5 className="card-title mb-0">
-							<img
-								src="https://placehold.co/20"
-								className="size-12 inline-block rounded-2xl"
-								alt="mod logo"
-							/>
-							Mod Title
-							<img
-								src="assets/fabric.png"
-								alt="fabric logo"
-								className="mask mask-squircle size-8 inline-block"
-							/>
-							<img
-								src="assets/forge.ico"
-								alt="forge logo"
-								className="mask mask-squircle size-8 inline-block"
-							/>
-							<img
-								src="assets/neoforge.png"
-								alt="neoforge logo"
-								className="mask mask-squircle size-8 inline-block"
-							/>
-							<img
-								src="assets/quilt.svg"
-								alt="qulit logo"
-								className="mask mask-squircle size-8 inline-block"
-							/>
-						</h5>
-						<ul>
-							<li>
-								<span className="icon-[tabler--hash] pt-2" /> Version: x.x.x
-								(Modloader)
-							</li>
-							<li>
-								<span className="icon-[tabler--download] pt-2" /> Downloads: x
-							</li>
-							<li>
-								<span className="icon-[tabler--user] pt-2" /> Creator: [x](link
-								to x's profile)
-							</li>
-							<li>
-								<span className="icon-[tabler--heart] pt-2" /> Followers: x
-							</li>
-							<li>
-								<span className="icon-[tabler--category] pt-2" /> Categories: x,
-								x, x
-							</li>
-							{/* <!-- <li><span className="icon-[tabler--text-caption] pt-2" /> Description: x... (cut off at 300 characters)</li> --> */}
-						</ul>
-					</div>
-				</div>
-
-				<div className="card sm:max-w-lg my-2">
-					<div className="card-body">
-						<h5 className="card-title mb-0">
-							<img
-								src="https://placehold.co/20"
-								className="size-12 inline-block rounded-2xl"
-								alt="mod logo"
-							/>
-							Mod Title
-							<img
-								src="assets/fabric.png"
-								alt="fabric logo"
-								className="mask mask-squircle size-8 inline-block"
-							/>
-							<img
-								src="assets/forge.ico"
-								alt="forge logo"
-								className="mask mask-squircle size-8 inline-block"
-							/>
-							<img
-								src="assets/neoforge.png"
-								alt="neoforge logo"
-								className="mask mask-squircle size-8 inline-block"
-							/>
-							<img
-								src="assets/quilt.svg"
-								alt="qulit logo"
-								className="mask mask-squircle size-8 inline-block"
-							/>
-						</h5>
-						<ul>
-							<li>
-								<span className="icon-[tabler--hash] pt-2" /> Version: x.x.x
-								(Modloader)
-							</li>
-							<li>
-								<span className="icon-[tabler--download] pt-2" /> Downloads: x
-							</li>
-							<li>
-								<span className="icon-[tabler--user] pt-2" /> Creator: [x](link
-								to x's profile)
-							</li>
-							<li>
-								<span className="icon-[tabler--heart] pt-2" /> Followers: x
-							</li>
-							<li>
-								<span className="icon-[tabler--category] pt-2" /> Categories: x,
-								x, x
-							</li>
-							{/* <!-- <li><span className="icon-[tabler--text-caption] pt-2" /> Description: x... (cut off at 300 characters)</li> --> */}
-						</ul>
-					</div>
-				</div>
+				)}
 			</div>
 
 			<br />
@@ -265,8 +148,11 @@ export default function Home() {
 						</p>
 					</aside>
 					<div className="flex gap-4 h-5">
-						{/* biome-ignore lint/a11y/useValidAnchor: <explanation> */}
-						<a href="https://github.com/Stef-00012/create-addons" className="link" aria-label="Github Link">
+						<a
+							href="https://github.com/Stef-00012/create-addons"
+							className="link"
+							aria-label="Github Link"
+						>
 							<span className="icon-[tabler--brand-github] size-5" />
 						</a>
 					</div>
