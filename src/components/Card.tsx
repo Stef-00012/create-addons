@@ -35,7 +35,7 @@ export default function Card({
 	follows,
 	slug, // used for the url, modrinth.com/mod/<SLUG>
 	versions,
-	modloaders
+	modloaders,
 }: Props) {
 	return (
 		<div className="card sm:max-w-lg my-2">
@@ -88,11 +88,15 @@ export default function Card({
 				</h5>
 				<ul>
 					<li>
-						<span className="icon-[tabler--hash] pt-2" /> Version: {version}
-						({modloaders.map(modloader => modloaderNames[modloader]).join(", ")})
+						<span className="icon-[tabler--hash] pt-2" /> Version: {version}(
+						{modloaders
+							.map((modloader) => modloaderNames[modloader])
+							.join(", ")}
+						)
 					</li>
 					<li>
-						<span className="icon-[tabler--hash] pt-2" /> Versions: {versions.join(", ")}
+						<span className="icon-[tabler--hash] pt-2" /> Versions:{" "}
+						{versions.join(", ")}
 					</li>
 					<li>
 						<span className="icon-[tabler--download] pt-2" /> Downloads:{" "}
@@ -100,15 +104,28 @@ export default function Card({
 					</li>
 					<li>
 						<span className="icon-[tabler--user] pt-2" /> Creator:{" "}
-                        <a className="underline" href={`https://modrinth.com/user/${author}`} target="_blank" rel="noreferrer">{author}</a>
+						<a
+							className="underline"
+							href={`https://modrinth.com/user/${author}`}
+							target="_blank"
+							rel="noreferrer"
+						>
+							{author}
+						</a>
 					</li>
 					<li>
 						<span className="icon-[tabler--heart] pt-2" /> Followers: {follows}
 					</li>
 					<li>
-						<span className="icon-[tabler--category] pt-2" /> Categories: {categories.join(", ")}
+						<span className="icon-[tabler--category] pt-2" /> Categories:{" "}
+						{categories.join(", ")}
 					</li>
-					<li><span className="icon-[tabler--text-caption] pt-2" /> Description: {description.length > 300 ? `${description.substring(0, 300)}...` : description}</li>
+					<li>
+						<span className="icon-[tabler--text-caption] pt-2" /> Description:{" "}
+						{description.length > 300
+							? `${description.substring(0, 300)}...`
+							: description}
+					</li>
 				</ul>
 			</div>
 		</div>

@@ -14,6 +14,7 @@ export default function Home() {
 	const [version, setVersion] = useState<
 		APIModsResponse[0]["versions"][0] | "all"
 	>("all");
+	const [search, setSearch] = useState<string>("");
 
 	useEffect(() => {
 		const fetchMods = async () => {
@@ -49,8 +50,11 @@ export default function Home() {
 							className="select"
 							aria-label="Select floating label"
 							defaultValue="all"
+							id="selectFloating"
 							onChange={(data) => {
-								const loader = data.target.value as APIModsResponse[0]["modloaders"][0] | "all"
+								const loader = data.target.value as
+									| APIModsResponse[0]["modloaders"][0]
+									| "all";
 
 								setLoader(loader);
 							}}
@@ -71,21 +75,21 @@ export default function Home() {
 						<select
 							className="select"
 							aria-label="Select floating label"
+							id="selectFloating"
 							onChange={(data) => {
-								const version = data.target.value
+								const version = data.target.value;
 
-								setVersion(version)
+								setVersion(version);
 							}}
 						>
 							<option value="all">All</option>
-							{mods.find(mod => mod.slug === "create")?.versions.map((version) => (
-								<option
-									value={version}
-									key={version}
-								>
-									{version}
-								</option>
-							))}
+							{mods
+								.find((mod) => mod.slug === "create")
+								?.versions.map((version) => (
+									<option value={version} key={version}>
+										{version}
+									</option>
+								))}
 						</select>
 						<label className="select-floating-label" htmlFor="selectFloating">
 							Filter by version
@@ -103,13 +107,18 @@ export default function Home() {
 						className="grow"
 						placeholder="Search"
 						id="searchInput"
+						onChange={(data) => {
+							const searchTerm = data.target.value;
+
+							setSearch(searchTerm);
+						}}
 					/>
 				</div>
 			</div>
 
 			{/* <!-- Mods --> */}
 			<div className="py-2 sm:flex sm:flex-wrap sm:justify-between my-2">
-				{/* for orangc, Card is in /src/components/Card.tsx */}
+				{/* for orangc, <Card> element is in /src/components/Card.tsx */}
 
 				{mods.length > 0 ? (
 					<>
@@ -117,8 +126,13 @@ export default function Home() {
 							.filter((mod) => {
 								return (
 									(loader === "all" || mod.modloaders.includes(loader)) &&
-									(version === "all" || mod.versions.includes(version))
-								)
+									(version === "all" || mod.versions.includes(version)) &&
+									(mod.name.toLowerCase().includes(search.toLowerCase()) ||
+										mod.slug.toLowerCase().includes(search.toLowerCase()) ||
+										mod.description
+											.toLowerCase()
+											.includes(search.toLowerCase()))
+								);
 							})
 							.map((mod) => (
 								<Card
@@ -136,8 +150,7 @@ export default function Home() {
 									key={mod.slug}
 									modloaders={mod.modloaders}
 								/>
-							))
-						}
+							))}
 					</>
 				) : (
 					<div>
