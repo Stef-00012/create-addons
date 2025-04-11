@@ -4,7 +4,7 @@ import axios from "axios";
 
 // import Image from "next/image";
 import type { APIModsResponse } from "./api/addons/route";
-import Card from "@/components/card";
+import Card from "@/components/Card";
 
 export default function Home() {
 	const [mods, setMods] = useState<APIModsResponse>([]);
@@ -81,6 +81,8 @@ export default function Home() {
 
 			{/* <!-- Mods --> */}
 			<div className="py-2 sm:flex sm:flex-wrap sm:justify-between my-2">
+				{/* for orangc, Card is in /src/components/Card.tsx */}
+
 				{mods.length > 0 ? (
 					<>
 						{mods.map((mod) => (
@@ -103,7 +105,7 @@ export default function Home() {
 					</>
 				) : (
 					<div>
-						<p>Some Loading Screen</p>
+						<b className="underline text-red-500">Some Loading Screen</b>
 					</div>
 				)}
 			</div>

@@ -3,6 +3,7 @@ import fabric from "#/assets/fabric.png";
 import forge from "#/assets/forge.ico";
 import neoforge from "#/assets/neoforge.png";
 import quilt from "#/assets/quilt.svg";
+import defaultModIcon from "#/assets/defaultModIcon.svg";
 
 import { modloaderNames } from "@/constants/loaders";
 import type { APIModsResponse } from "@/app/api/addons/route";
@@ -41,7 +42,7 @@ export default function Card({
 			<div className="card-body">
 				<h5 className="card-title mb-0">
 					<Image
-						src={icon}
+						src={icon === "" ? defaultModIcon : icon}
 						className="size-12 inline-block rounded-2xl"
 						alt="mod logo"
 						width={20}
