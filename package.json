@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "cp node_modules/flyonui/dist/select.js public/scripts/advanced-select.js && next dev",
-    "build": "cp node_modules/flyonui/dist/select.js public/scripts/advanced-select.js && next build",
+    "dev": "next dev",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "db:setup": "npm run db:generate && npm run db:migrate",
