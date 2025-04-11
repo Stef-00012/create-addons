@@ -34,7 +34,7 @@ async function handleFetching() {
             categories: JSON.stringify(mod.categories),
             follows: mod.follows,
         }).onConflictDoUpdate({
-            target: [modsSchema.id, modsSchema.platform],
+            target: [modsSchema.slug, modsSchema.platform],
             set: {
                 downloads: mod.downloads,
                 description: mod.description,
@@ -45,7 +45,6 @@ async function handleFetching() {
                 categories: JSON.stringify(mod.categories),
                 follows: mod.follows,
                 author: mod.author,
-                slug: mod.slug,
             }
         })
 	}

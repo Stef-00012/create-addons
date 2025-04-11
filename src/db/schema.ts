@@ -1,8 +1,7 @@
-import { integer, sqliteTable, text, primaryKey } from "drizzle-orm/sqlite-core";
+import { integer, sqliteTable, text, unique } from "drizzle-orm/sqlite-core";
 
 export const mods = sqliteTable("mods", {
     platform: text("platform").notNull(),
-    id: text("id"),
 	slug: text("slug").notNull(),
 	author: text("author").notNull(),
 	downloads: integer("downloads").notNull(),
@@ -13,10 +12,6 @@ export const mods = sqliteTable("mods", {
 	versions: text("versions", { mode: "json" }).notNull(),
     categories: text("categories", { mode: "json" }).notNull(),
     follows: integer("follows").notNull(),
-}, (table) => {
-    return {
-        pk: primaryKey({
-            columns: [table.id, table.platform],
-        }),
-    };
-},);
+}, (table) => [
+    unique().on(table.slug, table.platform),
+]);

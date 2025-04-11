@@ -1,10 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import type { ModrinthSearchResponse } from "@/types/modrinth";
 import db from "@/db/db";
- 
-type ResponseData = {
-    platform: "modrinth" | "curseforge",
-    id: string,
+
+type ResponseData = ({
+    platform: string,
 	slug: string,
 	author: string,
 	downloads: number,
@@ -15,15 +13,16 @@ type ResponseData = {
 // 	versions: text("versions", { mode: "json" }).notNull(),
 //     categories: text("categories", { mode: "json" }).notNull(),
     follows: number,
-}
- 
-export default async function handler(
-    req: NextApiRequest,
+})[]
+
+export async function GET(
+    req: Request,
     res: NextApiResponse<ResponseData>
 ) {
 //   res.status(200).json({ message: 'Hello from Next.js!' })
 
     const mods = await db.query.mods.findMany()
+	console.log(mods)
     
-    return res.status(200).json(mods);
+    return Response.json(mods);
 }
