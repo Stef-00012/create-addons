@@ -8,6 +8,12 @@ import Card from "@/components/Card";
 
 export default function Home() {
 	const [mods, setMods] = useState<APIModsResponse>([]);
+	const [loader, setLoader] = useState<
+		APIModsResponse[0]["modloaders"][0] | "all"
+	>("all");
+	const [version, setVersion] = useState<
+		APIModsResponse[0]["versions"][0] | "all"
+	>("all");
 
 	useEffect(() => {
 		const fetchMods = async () => {
@@ -37,32 +43,54 @@ export default function Home() {
 			{/* <!-- Search & Filter --> */}
 			<div className="sm:flex sm:justify-between">
 				<div className="sm:flex sm:justify-start">
-
 					{/* <!-- Filter by modloader --> */}
 					<div className="select-floating w-96 mr-4">
-						<select className="select" aria-label="Select floating label" id="selectFloating">
-							<option>All</option>
-							<option>Fabric</option>
-							<option>Forge</option>
-							<option>NeoForge</option>
-							<option>Quilt</option>
+						<select
+							className="select"
+							aria-label="Select floating label"
+							defaultValue="all"
+							onChange={(data) => {
+								const loader = data.target.value as APIModsResponse[0]["modloaders"][0] | "all"
+
+								setLoader(loader);
+							}}
+						>
+							<option value="all">All</option>
+							<option value="fabric">Fabric</option>
+							<option value="forge">Forge</option>
+							<option value="neoforge">NeoForge</option>
+							<option value="quilt">Quilt</option>
 						</select>
-						<label className="select-floating-label" htmlFor="selectFloating">Filter by modloader</label>
+						<label className="select-floating-label" htmlFor="selectFloating">
+							Filter by modloader
+						</label>
 					</div>
 
 					{/* <!-- Filter by version --> */}
 					<div className="select-floating w-96">
-						<select className="select" aria-label="Select floating label" id="selectFloating">
-							<option>All</option>
-							<option>1.21.1</option>
-							<option>1.20.1</option>
-							<option>1.19.2</option>
-							<option>1.18.2</option>
+						<select
+							className="select"
+							aria-label="Select floating label"
+							onChange={(data) => {
+								const version = data.target.value
+
+								setVersion(version)
+							}}
+						>
+							<option value="all">All</option>
+							{mods.find(mod => mod.slug === "create")?.versions.map((version) => (
+								<option
+									value={version}
+									key={version}
+								>
+									{version}
+								</option>
+							))}
 						</select>
-						<label className="select-floating-label" htmlFor="selectFloating">Filter by version</label>
+						<label className="select-floating-label" htmlFor="selectFloating">
+							Filter by version
+						</label>
 					</div>
-
-
 				</div>
 
 				<div className="input rounded-full max-w-56">
@@ -85,23 +113,31 @@ export default function Home() {
 
 				{mods.length > 0 ? (
 					<>
-						{mods.map((mod) => (
-							<Card
-								author={mod.author}
-								categories={mod.categories}
-								description={mod.description}
-								downloads={mod.downloads}
-								follows={mod.follows}
-								icon={mod.icon}
-								name={mod.name}
-								platform={mod.platform}
-								slug={mod.slug}
-								version={mod.version}
-								versions={mod.versions}
-								key={mod.slug}
-								modloaders={mod.modloaders}
-							/>
-						))}
+						{mods
+							.filter((mod) => {
+								return (
+									(loader === "all" || mod.modloaders.includes(loader)) &&
+									(version === "all" || mod.versions.includes(version))
+								)
+							})
+							.map((mod) => (
+								<Card
+									author={mod.author}
+									categories={mod.categories}
+									description={mod.description}
+									downloads={mod.downloads}
+									follows={mod.follows}
+									icon={mod.icon}
+									name={mod.name}
+									platform={mod.platform}
+									slug={mod.slug}
+									version={mod.version}
+									versions={mod.versions}
+									key={mod.slug}
+									modloaders={mod.modloaders}
+								/>
+							))
+						}
 					</>
 				) : (
 					<div>

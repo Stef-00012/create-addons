@@ -34,7 +34,7 @@ export default function Card({
 	description,
 	follows,
 	slug, // used for the url, modrinth.com/mod/<SLUG>
-	versions, // Array of versions, eg. ["1.21.1", "1.21.2"]
+	versions,
 	modloaders
 }: Props) {
 	return (
@@ -92,12 +92,15 @@ export default function Card({
 						({modloaders.map(modloader => modloaderNames[modloader]).join(", ")})
 					</li>
 					<li>
+						<span className="icon-[tabler--hash] pt-2" /> Versions: {versions.join(", ")}
+					</li>
+					<li>
 						<span className="icon-[tabler--download] pt-2" /> Downloads:{" "}
 						{downloads}
 					</li>
 					<li>
 						<span className="icon-[tabler--user] pt-2" /> Creator:{" "}
-                        <a href={`https://modrinth.com/user/${author}`}>{author}</a>
+                        <a className="underline" href={`https://modrinth.com/user/${author}`} target="_blank" rel="noreferrer">{author}</a>
 					</li>
 					<li>
 						<span className="icon-[tabler--heart] pt-2" /> Followers: {follows}
