@@ -40,7 +40,6 @@ export default function RootLayout({
       >
         {children}
 
-        <script src="/scripts/advanced-select.js" />
       </body>
     </html>
   );

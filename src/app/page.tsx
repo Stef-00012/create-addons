@@ -37,56 +37,35 @@ export default function Home() {
 			{/* <!-- Search & Filter --> */}
 			<div className="sm:flex sm:justify-between">
 				<div className="sm:flex sm:justify-start">
-					<div className="max-w-sm my-2 mr-2">
-						{/* <!-- Filter by modloader --> */}
-						<select
-							multiple
-							data-select='{
-                        "placeholder": "<span className="inline-flex items-center"><span className="icon-[tabler--filter] shrink-0 size-4 me-2"></span> Filter by modloader</span>",
-                        "toggleTag": "<button type="button" aria-expanded="false"></button>",
-                        "toggleclassNamees": "advance-select-toggle select-disabled:pointer-events-none select-disabled:opacity-40",
-                        "toggleCountText": "selected",
-                        "toggleCountTextMinItems": 5,
-                        "dropdownclassNamees": "advance-select-menu",
-                        "optionclassNamees": "advance-select-option selected:select-active",
-                        "optionTemplate": "<div className="flex justify-between items-center w-full"><span data-title></span><span className="icon-[tabler--check] shrink-0 size-4 text-primary hidden selected:block "></span></div>",
-                        "extraMarkup": "<span className="icon-[tabler--caret-up-down] shrink-0 size-4 text-base-content absolute top-1/2 end-3 -translate-y-1/2 "></span>"
-                        }'
-							className="hidden"
-						>
-							<option value="name">Fabric</option>
-							<option value="email">Forge</option>
-							<option value="description">Neoforge</option>
-							<option value="user_id">Quilt</option>
+
+					{/* <!-- Filter by modloader --> */}
+					<div className="select-floating w-96 mr-4">
+						<select className="select" aria-label="Select floating label" id="selectFloating">
+							<option>All</option>
+							<option>Fabric</option>
+							<option>Forge</option>
+							<option>NeoForge</option>
+							<option>Quilt</option>
 						</select>
+						<label className="select-floating-label" htmlFor="selectFloating">Filter by modloader</label>
 					</div>
 
 					{/* <!-- Filter by version --> */}
-					<div className="max-w-sm my-2 mr-2">
-						<select
-							multiple
-							data-select='{
-                        "placeholder": "<span className="inline-flex items-center"><span className="icon-[tabler--filter] shrink-0 size-4 me-2"></span> Filter by version</span>",
-                        "toggleTag": "<button type="button" aria-expanded="false"></button>",
-                        "toggleclassNamees": "advance-select-toggle select-disabled:pointer-events-none select-disabled:opacity-40",
-                        "toggleCountText": "selected",
-                        "toggleCountTextMinItems": 5,
-                        "dropdownclassNamees": "advance-select-menu",
-                        "optionclassNamees": "advance-select-option selected:select-active",
-                        "optionTemplate": "<div className="flex justify-between items-center w-full"><span data-title></span><span className="icon-[tabler--check] shrink-0 size-4 text-primary hidden selected:block "></span></div>",
-                        "extraMarkup": "<span className="icon-[tabler--caret-up-down] shrink-0 size-4 text-base-content absolute top-1/2 end-3 -translate-y-1/2 "></span>"
-                        }'
-							className="hidden"
-						>
-							<option value="name">1.21.5</option>
-							<option value="email">1.21.4</option>
-							<option value="description">1.21.3</option>
-							<option value="user_id">1.21.2</option>
+					<div className="select-floating w-96">
+						<select className="select" aria-label="Select floating label" id="selectFloating">
+							<option>All</option>
+							<option>1.21.1</option>
+							<option>1.20.1</option>
+							<option>1.19.2</option>
+							<option>1.18.2</option>
 						</select>
+						<label className="select-floating-label" htmlFor="selectFloating">Filter by version</label>
 					</div>
+
+
 				</div>
 
-				<div className="input rounded-full max-w-56 sm:my-2">
+				<div className="input rounded-full max-w-56">
 					<span className="icon-[tabler--search] text-base-content/80 my-auto me-3 size-5 shrink-0" />
 					<label className="sr-only" htmlFor="searchInput">
 						Mod name

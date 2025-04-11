@@ -2,7 +2,6 @@
 @import "tailwindcss";
 @plugin "@iconify/tailwind4";
 @plugin "flyonui";
-@source "../../public/scripts/flyonui.js";
 
 
 @import url(https://fonts.bunny.net/css?family=lexend:500|martian-mono:500|merriweather:700);
