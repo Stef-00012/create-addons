@@ -21,6 +21,12 @@ export async function ratelimitFetch(url: string, config?: AxiosRequestConfig<an
 
 				return await ratelimitFetch(url, config);
 			}
+		} else if (error?.response?.status === 408) {
+			console.log("Request timed out, retrying in 1 second...");
+
+			await sleep(1000);
+
+			return await ratelimitFetch(url, config);
 		} else {
 			throw e;
 		}

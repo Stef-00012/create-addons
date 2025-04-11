@@ -1,4 +1,3 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
 import db from "@/db/db";
 
 type ResponseData = ({
@@ -10,19 +9,21 @@ type ResponseData = ({
 	icon: string,
 	name: string,
 	version: string,
-// 	versions: text("versions", { mode: "json" }).notNull(),
-//     categories: text("categories", { mode: "json" }).notNull(),
+	versions: string[],
+    categories: string[],
     follows: number,
 })[]
 
 export async function GET(
-    req: Request,
-    res: NextApiResponse<ResponseData>
+    req: Request
 ) {
-//   res.status(200).json({ message: 'Hello from Next.js!' })
-
-    const mods = await db.query.mods.findMany()
-	console.log(mods)
+	const mods = await db.query.mods.findMany()
+	
+	const formattedMods = mods.map(mod => ({
+		...mod,
+		versions: JSON.parse(mod.versions as string),
+		categories: JSON.parse(mod.categories as string),
+	}))
     
-    return Response.json(mods);
+    return Response.json(formattedMods);
 }
