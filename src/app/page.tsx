@@ -194,33 +194,39 @@ export default function Home() {
 
 			{/* <!-- Mods --> */}
 			<div className="py-2 my-2 sm:flex sm:flex-row sm:flex-wrap sm:gap-4">
-				{filteredMods.length > 0 ? (
+				{mods.length > 0 ? (
 					<>
-						{filteredMods
-							.filter((mod) => {
-								return (
-									(loader === "all" || mod.modloaders.includes(loader)) &&
-									(version === "all" || mod.versions.includes(version))
-								);
-							})
-							.slice(0, displayCardAmount)
-							.map((mod) => (
-								<Card
-									author={mod.author}
-									categories={mod.categories}
-									description={mod.description}
-									downloads={mod.downloads}
-									follows={mod.follows}
-									icon={mod.icon}
-									name={mod.name}
-									platform={mod.platform}
-									slug={mod.slug}
-									version={mod.version}
-									versions={mod.versions}
-									key={mod.slug}
-									modloaders={mod.modloaders}
-								/>
-							))}
+						{filteredMods.length > 0 ? (
+							<>
+								{filteredMods
+									.filter((mod) => {
+										return (
+											(loader === "all" || mod.modloaders.includes(loader)) &&
+											(version === "all" || mod.versions.includes(version))
+										);
+									})
+									.slice(0, displayCardAmount)
+									.map((mod) => (
+										<Card
+											author={mod.author}
+											categories={mod.categories}
+											description={mod.description}
+											downloads={mod.downloads}
+											follows={mod.follows}
+											icon={mod.icon}
+											name={mod.name}
+											platform={mod.platform}
+											slug={mod.slug}
+											version={mod.version}
+											versions={mod.versions}
+											key={mod.slug}
+											modloaders={mod.modloaders}
+										/>
+									))}
+							</>
+						) : (
+							<p>No Mods found</p>
+						)}
 					</>
 				) : (
 					<div className="py-2 my-2 sm:flex sm:flex-row sm:flex-wrap sm:gap-4">
