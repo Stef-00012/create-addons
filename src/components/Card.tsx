@@ -64,7 +64,7 @@ export default function Card({
 								data-tooltip-content="Fabric"
 								data-tooltip-id="fabric-tooltip"
 							/>
-							<Tooltip id="fabric-tooltip" className="rounded-lg" />
+							<Tooltip id="fabric-tooltip" disableStyleInjection={true} className="rounded-2xl bg-base-200 px-2 p-1 text-lg" />
 						</>
 					)}
 					{modloaders.includes("forge") && (
@@ -78,7 +78,7 @@ export default function Card({
 								data-tooltip-content="Forge"
 								data-tooltip-id="forge-tooltip"
 							/>
-							<Tooltip id="forge-tooltip" className="rounded-lg" />
+							<Tooltip id="forge-tooltip" disableStyleInjection={true} className="rounded-2xl bg-base-200 px-2 p-1 text-lg" />
 						</>
 					)}
 					{modloaders.includes("neoforge") && (
@@ -92,7 +92,7 @@ export default function Card({
 								data-tooltip-content="NeoForge"
 								data-tooltip-id="neoforge-tooltip"
 							/>
-							<Tooltip id="neoforge-tooltip" className="rounded-lg" />
+							<Tooltip id="neoforge-tooltip" disableStyleInjection={true} className="rounded-2xl bg-base-200 px-2 p-1 text-lg" />
 						</>
 					)}
 					{modloaders.includes("quilt") && (
@@ -106,7 +106,7 @@ export default function Card({
 								data-tooltip-content="Quilt"
 								data-tooltip-id="quilt-tooltip"
 							/>
-							<Tooltip id="quilt-tooltip" className="rounded-lg" />
+							<Tooltip id="quilt-tooltip" disableStyleInjection={true} className="rounded-2xl bg-base-200 px-2 p-1 text-lg" />
 						</>
 					)}
 				</h5>
