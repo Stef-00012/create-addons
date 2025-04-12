@@ -107,7 +107,7 @@ export default function Card({
 					<li>
 						<span className="icon-[tabler--user] pt-2" /> Creator:{" "}
 						<a
-							className="link-primary link-animated"
+							className="text-primary hover:underline"
 							href={`https://modrinth.com/user/${author}`}
 							target="_blank"
 							rel="noreferrer"
@@ -131,7 +131,7 @@ export default function Card({
 						<span className="icon-[tabler--link] pt-2" /> Modrinth Link:{" "}
 						<a
 							href={`https://modrinth.com/mod/${slug}`}
-							className="link-primary link-animated"
+							className="text-primary hover:underline"
 						>{`modrinth.com/mod/${slug}`}</a>
 					</li>
 					<li>
