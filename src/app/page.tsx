@@ -534,7 +534,7 @@ export default function Home() {
 							<a href="https://orangc.net" className="link2 text-[#fab387]">
 								orangc
 							</a>
-							.
+							. This project is not affiliated with or endorsed by Mojang® or the Create mod.
 						</p>
 					</aside>
 					<div className="flex gap-4 h-5">
