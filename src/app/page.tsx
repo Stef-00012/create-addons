@@ -5,8 +5,7 @@ import Fuse from "fuse.js";
 import type { APIModsResponse } from "./api/addons/route";
 import Card from "@/components/Card";
 import Select from 'react-select';
-
-// import Image from "next/image";
+import { useSearchParams } from 'next/navigation'
 
 const defaultCardAmount = 9;
 const defaultAddCardAmont = 9;
@@ -40,6 +39,8 @@ const modloaderOptions = [
 ];
 
 export default function Home() {
+	const searchParams = useSearchParams()
+
 	const [mods, setMods] = useState<APIModsResponse>([]);
 	const [filteredMods, setFilteredMods] = useState<APIModsResponse>([]);
 	const [loader, setLoader] = useState<
@@ -66,6 +67,27 @@ export default function Home() {
 
 		fetchMods().catch((err) => console.error(err));
 	}, []);
+
+	useEffect(() => {
+		if (mods.length === 0) return;
+
+		const versions = mods.find(mod => mod.slug === "create")?.versions || [];
+		const modloaders = modloaderOptions.map(modloader => modloader.value);
+
+		const version = searchParams.get("version") as APIModsResponse[0]["versions"][0] | "all";
+		const loader = searchParams.get("modloader") as APIModsResponse[0]["modloaders"][0] | "all";
+		const search = searchParams.get("search") as string;
+		
+		if (versions.includes(version)) {
+			setVersion(version);
+		}
+
+		if (modloaders.includes(loader)) {
+			setLoader(loader);
+		}
+
+		setSearch(decodeURIComponent(search))
+	}, [mods, searchParams.get]);
 
 	useEffect(() => {
 		const fuse = new Fuse(mods, {
@@ -153,6 +175,7 @@ export default function Home() {
 							id="selectFloating"
 							defaultValue={modloaderOptions[0]}
 							options={modloaderOptions}
+							value={modloaderOptions.find((option) => option.value === loader) || null}
 							unstyled
 							isSearchable={false}
 							isLoading={mods.length === 0}
@@ -186,6 +209,10 @@ export default function Home() {
 								value: "all",
 								label: "All",
 							}}
+							value={{
+								value: version,
+								label: version === "all" ? "All" : version,
+							}}
 							options={[
 								{
 									value: "all",
@@ -218,6 +245,7 @@ export default function Home() {
 					<input
 						disabled={mods.length === 0}
 						type="search"
+						value={search}
 						className="grow"
 						placeholder="Search"
 						id="searchInput"
