@@ -4,6 +4,7 @@ import axios from "axios";
 import Fuse from "fuse.js";
 import type { APIModsResponse } from "./api/addons/route";
 import Card from "@/components/Card";
+import Select, { StylesConfig } from 'react-select';
 
 // import Image from "next/image";
 
@@ -29,6 +30,14 @@ let addCardScrollPercentage = process.env.NEXT_PUBLIC_ADD_CARD_SCROLL_PERCENTAGE
 if (addCardScrollPercentage > 100) addCardScrollPercentage = 100;
 else if (addCardScrollPercentage < 0)
 	addCardScrollPercentage = defaultScrollPercentage;
+
+const modloaderOptions = [
+	{ value: "all", label: "All" },
+	{ value: "fabric", label: "Fabric" },
+	{ value: "forge", label: "Forge" },
+	{ value: "neoforge", label: "NeoForge" },
+	{ value: "quilt", label: "Quilt" },
+];
 
 export default function Home() {
 	const [mods, setMods] = useState<APIModsResponse>([]);
@@ -136,7 +145,7 @@ export default function Home() {
 				<div className="md:flex md:justify-start">
 					{/* <!-- Filter by modloader --> */}
 					<div className="select-floating w-96 my-6 md:my-0 mr-4">
-						<select
+						{/* <select
 							className="select"
 							aria-label="Select floating label"
 							defaultValue="all"
@@ -151,12 +160,24 @@ export default function Home() {
 						</select>
 						<label className="select-floating-label rounded-2xl px-2" htmlFor="selectFloating">
 							Filter by modloader
-						</label>
+						</label> */}
+
+						<Select
+							defaultValue={modloaderOptions[0]}
+							options={modloaderOptions}
+							unstyled
+							classNames={{
+								control: ({ isFocused }) => "select",
+								// option: ({ isSelected }) => isSelected ? "bg-red-500" : "bg-red-400",
+								menuList: () => "bg-green-500 border-[#ad8c92] rounded-lg",
+								
+							}}
+						/>
 					</div>
 
 					{/* <!-- Filter by version --> */}
 					<div className="select-floating w-96 my-6 md:my-0">
-						<select
+						{/* <select
 							className="select"
 							aria-label="Select floating label"
 							id="selectFloating"
@@ -173,7 +194,28 @@ export default function Home() {
 						</select>
 						<label className="select-floating-label rounded-2xl px-2" htmlFor="selectFloating">
 							Filter by version
-						</label>
+						</label> */}
+
+						<Select
+							defaultValue={[
+								{
+									value: "all",
+									label: "All",
+								},
+								...(mods.find((mod) => mod.slug === "create")?.versions || []).map((version) => ({
+									value: version,
+									label: version,
+								}))
+							]}
+							options={modloaderOptions}
+							unstyled
+							classNames={{
+								control: ({ isFocused }) => "select",
+								// option: ({ isSelected }) => isSelected ? "bg-red-500" : "bg-red-400",
+								menuList: () => "bg-green-500 border-[#ad8c92] rounded-lg",
+								
+							}}
+						/>
 					</div>
 				</div>
 
