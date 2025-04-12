@@ -48,7 +48,9 @@ export default function Card({
 						width={20}
 						height={20}
 					/>
-					<a href={`https://modrinth.com/mod/${slug}`} className="link-primary">{name}</a>
+					<a href={`https://modrinth.com/mod/${slug}`} className="link-primary">
+						{name}
+					</a>
 					{modloaders.includes("fabric") && (
 						<Image
 							src={fabric}
@@ -88,7 +90,8 @@ export default function Card({
 				</h5>
 				<ul>
 					<li>
-						<span className="icon-[tabler--brand-minecraft] pt-2" /> Modloader(s):
+						<span className="icon-[tabler--brand-minecraft] pt-2" />{" "}
+						Modloader(s):
 						{` ${modloaders
 							.map((modloader) => modloaderNames[modloader])
 							.join(", ")}`}
@@ -117,11 +120,19 @@ export default function Card({
 					</li>
 					<li>
 						<span className="icon-[tabler--category] pt-2" /> Categories:{" "}
-						{categories.map(category => category.charAt(0).toUpperCase() + category.slice(1)).join(", ")}
+						{categories
+							.map(
+								(category) =>
+									category.charAt(0).toUpperCase() + category.slice(1),
+							)
+							.join(", ")}
 					</li>
 					<li>
 						<span className="icon-[tabler--link] pt-2" /> Modrinth Link:{" "}
-						<a href={`https://modrinth.com/mod/${slug}`} className="link-primary link-animated">{`modrinth.com/mod/${slug}`}</a>
+						<a
+							href={`https://modrinth.com/mod/${slug}`}
+							className="link-primary link-animated"
+						>{`modrinth.com/mod/${slug}`}</a>
 					</li>
 					<li>
 						<span className="icon-[tabler--text-caption] pt-2" /> Description:{" "}

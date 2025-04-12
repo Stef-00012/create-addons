@@ -1,5 +1,5 @@
 "use client";
-import { type ChangeEvent, Fragment, type FragmentInstance, useEffect, useRef, useState } from "react";
+import { type ChangeEvent, useEffect, useState } from "react";
 import axios from "axios";
 import Fuse from "fuse.js";
 import type { APIModsResponse } from "./api/addons/route";
@@ -9,22 +9,26 @@ import Card from "@/components/Card";
 
 const defaultCardAmount = 9;
 const defaultAddCardAmont = 9;
-const defaultScrollPercentage = 60
+const defaultScrollPercentage = 60;
 
 const defaultDisplayCardAmount = process.env.NEXT_PUBLIC_DEFAULT_CARD_AMOUNT
-	? Math.abs(Number.parseInt(process.env.NEXT_PUBLIC_DEFAULT_CARD_AMOUNT)) || defaultCardAmount
-	: defaultCardAmount
+	? Math.abs(Number.parseInt(process.env.NEXT_PUBLIC_DEFAULT_CARD_AMOUNT)) ||
+		defaultCardAmount
+	: defaultCardAmount;
 
 const addCardAmount = process.env.NEXT_PUBLIC_ADD_CARD_AMOUNT
-	? Math.abs(Number.parseInt(process.env.NEXT_PUBLIC_ADD_CARD_AMOUNT)) || defaultAddCardAmont
+	? Math.abs(Number.parseInt(process.env.NEXT_PUBLIC_ADD_CARD_AMOUNT)) ||
+		defaultAddCardAmont
 	: defaultAddCardAmont;
 
 let addCardScrollPercentage = process.env.NEXT_PUBLIC_ADD_CARD_SCROLL_PERCENTAGE
-	? Number.parseInt(process.env.NEXT_PUBLIC_ADD_CARD_SCROLL_PERCENTAGE) || defaultScrollPercentage
+	? Number.parseInt(process.env.NEXT_PUBLIC_ADD_CARD_SCROLL_PERCENTAGE) ||
+		defaultScrollPercentage
 	: defaultScrollPercentage;
 
 if (addCardScrollPercentage > 100) addCardScrollPercentage = 100;
-else if (addCardScrollPercentage < 0) addCardScrollPercentage = defaultScrollPercentage;
+else if (addCardScrollPercentage < 0)
+	addCardScrollPercentage = defaultScrollPercentage;
 
 export default function Home() {
 	const [mods, setMods] = useState<APIModsResponse>([]);
@@ -37,7 +41,9 @@ export default function Home() {
 	>("all");
 	const [search, setSearch] = useState<string>("");
 
-	const [displayCardAmount, setDisplayCardAmount] = useState<number>(defaultDisplayCardAmount);
+	const [displayCardAmount, setDisplayCardAmount] = useState<number>(
+		defaultDisplayCardAmount,
+	);
 
 	const [isLoadingMore, setIsLoadingMore] = useState(false);
 
@@ -69,39 +75,40 @@ export default function Home() {
 		const searchResult = fuse.search(search);
 		const resultMods = searchResult.map((result) => result.item);
 
-		setFilteredMods(resultMods)
+		setFilteredMods(resultMods);
 	}, [search, mods]);
 
-		useEffect(() => {
-        const handleScroll = () => {
-            if (isLoadingMore) return;
+	useEffect(() => {
+		const handleScroll = () => {
+			if (isLoadingMore) return;
 
-            const scrollPosition = window.scrollY + window.innerHeight;
-            const scrollThreshold = (addCardScrollPercentage / 100) * document.body.scrollHeight;
+			const scrollPosition = window.scrollY + window.innerHeight;
+			const scrollThreshold =
+				(addCardScrollPercentage / 100) * document.body.scrollHeight;
 
-            if (scrollPosition >= scrollThreshold) {
-                setIsLoadingMore(true);
-                setDisplayCardAmount((prev) => prev + addCardAmount);
-            }
-        };
+			if (scrollPosition >= scrollThreshold) {
+				setIsLoadingMore(true);
+				setDisplayCardAmount((prev) => prev + addCardAmount);
+			}
+		};
 
-        window.addEventListener("scroll", handleScroll);
+		window.addEventListener("scroll", handleScroll);
 
-        return () => {
-            window.removeEventListener("scroll", handleScroll);
-        };
-    }, [isLoadingMore]);
+		return () => {
+			window.removeEventListener("scroll", handleScroll);
+		};
+	}, [isLoadingMore]);
 
-    useEffect(() => {
-        if (isLoadingMore) {
-            // Simulate loading delay to avoid too many re-renders
-            const timeout = setTimeout(() => {
-                setIsLoadingMore(false);
-            }, 500);
+	useEffect(() => {
+		if (isLoadingMore) {
+			// Simulate loading delay to avoid too many re-renders
+			const timeout = setTimeout(() => {
+				setIsLoadingMore(false);
+			}, 500);
 
-            return () => clearTimeout(timeout);
-        }
-    }, [isLoadingMore]);
+			return () => clearTimeout(timeout);
+		}
+	}, [isLoadingMore]);
 
 	function handleLoaderSelect(data: ChangeEvent<HTMLSelectElement>) {
 		const loader = data.target.value as
@@ -128,216 +135,360 @@ export default function Home() {
 
 	return (
 		<div>
-				{/* // <!-- Navbar --> */}
-				<nav className="navbar rounded-box shadow-base-300/20 shadow-sm mt-4">
-					<a
-						className="link text-base-content link-neutral text-xl no-underline"
-						// biome-ignore lint/a11y/useValidAnchor: <explanation>
-						href="#"
-					>
-						Create Mod Index
-					</a>
-				</nav>
-				<br />
-	
-				{/* <!-- Search & Filter --> */}
-				<div className="sm:flex sm:justify-between">
-					<div className="sm:flex sm:justify-start">
-						{/* <!-- Filter by modloader --> */}
-						<div className="select-floating w-96 my-6 sm:my-0 mr-4">
-							<select
-								className="select"
-								aria-label="Select floating label"
-								defaultValue="all"
-								id="selectFloating"
-								onChange={handleLoaderSelect}
-							>
-								<option value="all">All</option>
-								<option value="fabric">Fabric</option>
-								<option value="forge">Forge</option>
-								<option value="neoforge">NeoForge</option>
-								<option value="quilt">Quilt</option>
-							</select>
-							<label className="select-floating-label" htmlFor="selectFloating">
-								Filter by modloader
-							</label>
-						</div>
-	
-						{/* <!-- Filter by version --> */}
-						<div className="select-floating w-96 my-6 sm:my-0">
-							<select
-								className="select"
-								aria-label="Select floating label"
-								id="selectFloating"
-								onChange={handleVersionSelect}
-							>
-								<option value="all">All</option>
-								{mods
-									.find((mod) => mod.slug === "create")
-									?.versions.map((version) => (
-										<option value={version} key={version}>
-											{version}
-										</option>
-									))}
-							</select>
-							<label className="select-floating-label" htmlFor="selectFloating">
-								Filter by version
-							</label>
-						</div>
-					</div>
-	
-					<div className="input rounded-full max-w-56">
-						<span className="icon-[tabler--search] text-base-content/80 my-auto me-3 size-5 shrink-0" />
-						<label className="sr-only" htmlFor="searchInput">
-							Mod name
+			{/* // <!-- Navbar --> */}
+			<nav className="navbar rounded-box shadow-base-300/20 shadow-sm mt-4">
+				<a
+					className="link text-base-content link-neutral text-xl no-underline"
+					// biome-ignore lint/a11y/useValidAnchor: <explanation>
+					href="#"
+				>
+					Create Mod Index
+				</a>
+			</nav>
+			<br />
+
+			{/* <!-- Search & Filter --> */}
+			<div className="sm:flex sm:justify-between">
+				<div className="sm:flex sm:justify-start">
+					{/* <!-- Filter by modloader --> */}
+					<div className="select-floating w-96 my-6 sm:my-0 mr-4">
+						<select
+							className="select"
+							aria-label="Select floating label"
+							defaultValue="all"
+							id="selectFloating"
+							onChange={handleLoaderSelect}
+						>
+							<option value="all">All</option>
+							<option value="fabric">Fabric</option>
+							<option value="forge">Forge</option>
+							<option value="neoforge">NeoForge</option>
+							<option value="quilt">Quilt</option>
+						</select>
+						<label className="select-floating-label" htmlFor="selectFloating">
+							Filter by modloader
 						</label>
-						<input
-							type="search"
-							className="grow"
-							placeholder="Search"
-							id="searchInput"
-							onChange={handleSearch}
-						/>
+					</div>
+
+					{/* <!-- Filter by version --> */}
+					<div className="select-floating w-96 my-6 sm:my-0">
+						<select
+							className="select"
+							aria-label="Select floating label"
+							id="selectFloating"
+							onChange={handleVersionSelect}
+						>
+							<option value="all">All</option>
+							{mods
+								.find((mod) => mod.slug === "create")
+								?.versions.map((version) => (
+									<option value={version} key={version}>
+										{version}
+									</option>
+								))}
+						</select>
+						<label className="select-floating-label" htmlFor="selectFloating">
+							Filter by version
+						</label>
 					</div>
 				</div>
-	
-				{/* <!-- Mods --> */}
-				<div className="py-2 my-2 sm:flex sm:flex-row sm:flex-wrap sm:gap-4">
-					{filteredMods.length > 0 ? (
-						<>
-							{filteredMods
-								.filter((mod) => {
-									return (
-										(loader === "all" || mod.modloaders.includes(loader)) &&
-										(version === "all" || mod.versions.includes(version))
-									);
-								})
-								.slice(0, displayCardAmount)
-								.map((mod) => (
-									<Card
-										author={mod.author}
-										categories={mod.categories}
-										description={mod.description}
-										downloads={mod.downloads}
-										follows={mod.follows}
-										icon={mod.icon}
-										name={mod.name}
-										platform={mod.platform}
-										slug={mod.slug}
-										version={mod.version}
-										versions={mod.versions}
-										key={mod.slug}
-										modloaders={mod.modloaders}
-									/>
-								))}
-						</>
-					) : (
-						<div className="py-2 my-2 sm:flex sm:flex-row sm:flex-wrap sm:gap-4">
-							<div className="card sm:max-w-lg my-4 sm:my-0 skeleton skeleton-animated sm:flex-auto">
-								<div className="card-body">
-									<ul>
-										<li><span className="icon-[tabler--hash] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
-										<li><span className="icon-[tabler--hash] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
-										<li><span className="icon-[tabler--download] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
-										<li><span className="icon-[tabler--user] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
-										<li><span className="icon-[tabler--heart] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
-										<li><span className="icon-[tabler--category] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
-										<li><span className="icon-[tabler--text-caption] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
-										<li><span className="icon-[tabler--link] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
-									</ul>
-								</div>
-								<div className="absolute start-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform">
-									<span className="loading loading-spinner loading-lg text-primary" />
-								</div>
+
+				<div className="input rounded-full max-w-56">
+					<span className="icon-[tabler--search] text-base-content/80 my-auto me-3 size-5 shrink-0" />
+					<label className="sr-only" htmlFor="searchInput">
+						Mod name
+					</label>
+					<input
+						type="search"
+						className="grow"
+						placeholder="Search"
+						id="searchInput"
+						onChange={handleSearch}
+					/>
+				</div>
+			</div>
+
+			{/* <!-- Mods --> */}
+			<div className="py-2 my-2 sm:flex sm:flex-row sm:flex-wrap sm:gap-4">
+				{filteredMods.length > 0 ? (
+					<>
+						{filteredMods
+							.filter((mod) => {
+								return (
+									(loader === "all" || mod.modloaders.includes(loader)) &&
+									(version === "all" || mod.versions.includes(version))
+								);
+							})
+							.slice(0, displayCardAmount)
+							.map((mod) => (
+								<Card
+									author={mod.author}
+									categories={mod.categories}
+									description={mod.description}
+									downloads={mod.downloads}
+									follows={mod.follows}
+									icon={mod.icon}
+									name={mod.name}
+									platform={mod.platform}
+									slug={mod.slug}
+									version={mod.version}
+									versions={mod.versions}
+									key={mod.slug}
+									modloaders={mod.modloaders}
+								/>
+							))}
+					</>
+				) : (
+					<div className="py-2 my-2 sm:flex sm:flex-row sm:flex-wrap sm:gap-4">
+						<div className="card sm:max-w-lg my-4 sm:my-0 skeleton skeleton-animated sm:flex-auto">
+							<div className="card-body">
+								<ul>
+									<li>
+										<span className="icon-[tabler--hash] pt-2" />
+										<p className="skeleton skeleton-animated pr-70" />
+									</li>
+									<li>
+										<span className="icon-[tabler--hash] pt-2" />
+										<p className="skeleton skeleton-animated pr-70" />
+									</li>
+									<li>
+										<span className="icon-[tabler--download] pt-2" />
+										<p className="skeleton skeleton-animated pr-70" />
+									</li>
+									<li>
+										<span className="icon-[tabler--user] pt-2" />
+										<p className="skeleton skeleton-animated pr-70" />
+									</li>
+									<li>
+										<span className="icon-[tabler--heart] pt-2" />
+										<p className="skeleton skeleton-animated pr-70" />
+									</li>
+									<li>
+										<span className="icon-[tabler--category] pt-2" />
+										<p className="skeleton skeleton-animated pr-70" />
+									</li>
+									<li>
+										<span className="icon-[tabler--text-caption] pt-2" />
+										<p className="skeleton skeleton-animated pr-70" />
+									</li>
+									<li>
+										<span className="icon-[tabler--link] pt-2" />
+										<p className="skeleton skeleton-animated pr-70" />
+									</li>
+								</ul>
 							</div>
-							<div className="card sm:max-w-lg my-4 sm:my-0 skeleton skeleton-animated sm:flex-auto">
-								<div className="card-body">
-									<ul>
-										<li><span className="icon-[tabler--hash] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
-										<li><span className="icon-[tabler--hash] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
-										<li><span className="icon-[tabler--download] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
-										<li><span className="icon-[tabler--user] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
-										<li><span className="icon-[tabler--heart] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
-										<li><span className="icon-[tabler--category] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
-										<li><span className="icon-[tabler--text-caption] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
-										<li><span className="icon-[tabler--link] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
-									</ul>
-								</div>
-								<div className="absolute start-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform">
-									<span className="loading loading-spinner loading-lg text-primary" />
-								</div>
-							</div>
-							<div className="card sm:max-w-lg my-4 sm:my-0 skeleton skeleton-animated sm:flex-auto">
-								<div className="card-body">
-									<ul>
-										<li><span className="icon-[tabler--hash] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
-										<li><span className="icon-[tabler--hash] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
-										<li><span className="icon-[tabler--download] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
-										<li><span className="icon-[tabler--user] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
-										<li><span className="icon-[tabler--heart] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
-										<li><span className="icon-[tabler--category] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
-										<li><span className="icon-[tabler--text-caption] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
-										<li><span className="icon-[tabler--link] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
-									</ul>
-								</div>
-								<div className="absolute start-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform">
-									<span className="loading loading-spinner loading-lg text-primary" />
-								</div>
-							</div>
-							<div className="card sm:max-w-lg my-4 sm:my-0 skeleton skeleton-animated sm:flex-auto">
-								<div className="card-body">
-									<ul>
-										<li><span className="icon-[tabler--hash] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
-										<li><span className="icon-[tabler--hash] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
-										<li><span className="icon-[tabler--download] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
-										<li><span className="icon-[tabler--user] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
-										<li><span className="icon-[tabler--heart] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
-										<li><span className="icon-[tabler--category] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
-										<li><span className="icon-[tabler--text-caption] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
-										<li><span className="icon-[tabler--link] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
-									</ul>
-								</div>
-								<div className="absolute start-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform">
-									<span className="loading loading-spinner loading-lg text-primary" />
-								</div>
-							</div>
-							<div className="card sm:max-w-lg my-4 sm:my-0 skeleton skeleton-animated sm:flex-auto">
-								<div className="card-body">
-									<ul>
-										<li><span className="icon-[tabler--hash] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
-										<li><span className="icon-[tabler--hash] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
-										<li><span className="icon-[tabler--download] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
-										<li><span className="icon-[tabler--user] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
-										<li><span className="icon-[tabler--heart] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
-										<li><span className="icon-[tabler--category] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
-										<li><span className="icon-[tabler--text-caption] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
-										<li><span className="icon-[tabler--link] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
-									</ul>
-								</div>
-								<div className="absolute start-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform">
-									<span className="loading loading-spinner loading-lg text-primary" />
-								</div>
-							</div>
-							<div className="card sm:max-w-lg my-4 sm:my-0 skeleton skeleton-animated sm:flex-auto">
-								<div className="card-body">
-									<ul>
-										<li><span className="icon-[tabler--hash] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
-										<li><span className="icon-[tabler--hash] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
-										<li><span className="icon-[tabler--download] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
-										<li><span className="icon-[tabler--user] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
-										<li><span className="icon-[tabler--heart] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
-										<li><span className="icon-[tabler--category] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
-										<li><span className="icon-[tabler--text-caption] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
-										<li><span className="icon-[tabler--link] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
-									</ul>
-								</div>
-								<div className="absolute start-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform">
-									<span className="loading loading-spinner loading-lg text-primary" />
-								</div>
+							<div className="absolute start-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform">
+								<span className="loading loading-spinner loading-lg text-primary" />
 							</div>
 						</div>
-					)}
-				</div>
+						<div className="card sm:max-w-lg my-4 sm:my-0 skeleton skeleton-animated sm:flex-auto">
+							<div className="card-body">
+								<ul>
+									<li>
+										<span className="icon-[tabler--hash] pt-2" />
+										<p className="skeleton skeleton-animated pr-70" />
+									</li>
+									<li>
+										<span className="icon-[tabler--hash] pt-2" />
+										<p className="skeleton skeleton-animated pr-70" />
+									</li>
+									<li>
+										<span className="icon-[tabler--download] pt-2" />
+										<p className="skeleton skeleton-animated pr-70" />
+									</li>
+									<li>
+										<span className="icon-[tabler--user] pt-2" />
+										<p className="skeleton skeleton-animated pr-70" />
+									</li>
+									<li>
+										<span className="icon-[tabler--heart] pt-2" />
+										<p className="skeleton skeleton-animated pr-70" />
+									</li>
+									<li>
+										<span className="icon-[tabler--category] pt-2" />
+										<p className="skeleton skeleton-animated pr-70" />
+									</li>
+									<li>
+										<span className="icon-[tabler--text-caption] pt-2" />
+										<p className="skeleton skeleton-animated pr-70" />
+									</li>
+									<li>
+										<span className="icon-[tabler--link] pt-2" />
+										<p className="skeleton skeleton-animated pr-70" />
+									</li>
+								</ul>
+							</div>
+							<div className="absolute start-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform">
+								<span className="loading loading-spinner loading-lg text-primary" />
+							</div>
+						</div>
+						<div className="card sm:max-w-lg my-4 sm:my-0 skeleton skeleton-animated sm:flex-auto">
+							<div className="card-body">
+								<ul>
+									<li>
+										<span className="icon-[tabler--hash] pt-2" />
+										<p className="skeleton skeleton-animated pr-70" />
+									</li>
+									<li>
+										<span className="icon-[tabler--hash] pt-2" />
+										<p className="skeleton skeleton-animated pr-70" />
+									</li>
+									<li>
+										<span className="icon-[tabler--download] pt-2" />
+										<p className="skeleton skeleton-animated pr-70" />
+									</li>
+									<li>
+										<span className="icon-[tabler--user] pt-2" />
+										<p className="skeleton skeleton-animated pr-70" />
+									</li>
+									<li>
+										<span className="icon-[tabler--heart] pt-2" />
+										<p className="skeleton skeleton-animated pr-70" />
+									</li>
+									<li>
+										<span className="icon-[tabler--category] pt-2" />
+										<p className="skeleton skeleton-animated pr-70" />
+									</li>
+									<li>
+										<span className="icon-[tabler--text-caption] pt-2" />
+										<p className="skeleton skeleton-animated pr-70" />
+									</li>
+									<li>
+										<span className="icon-[tabler--link] pt-2" />
+										<p className="skeleton skeleton-animated pr-70" />
+									</li>
+								</ul>
+							</div>
+							<div className="absolute start-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform">
+								<span className="loading loading-spinner loading-lg text-primary" />
+							</div>
+						</div>
+						<div className="card sm:max-w-lg my-4 sm:my-0 skeleton skeleton-animated sm:flex-auto">
+							<div className="card-body">
+								<ul>
+									<li>
+										<span className="icon-[tabler--hash] pt-2" />
+										<p className="skeleton skeleton-animated pr-70" />
+									</li>
+									<li>
+										<span className="icon-[tabler--hash] pt-2" />
+										<p className="skeleton skeleton-animated pr-70" />
+									</li>
+									<li>
+										<span className="icon-[tabler--download] pt-2" />
+										<p className="skeleton skeleton-animated pr-70" />
+									</li>
+									<li>
+										<span className="icon-[tabler--user] pt-2" />
+										<p className="skeleton skeleton-animated pr-70" />
+									</li>
+									<li>
+										<span className="icon-[tabler--heart] pt-2" />
+										<p className="skeleton skeleton-animated pr-70" />
+									</li>
+									<li>
+										<span className="icon-[tabler--category] pt-2" />
+										<p className="skeleton skeleton-animated pr-70" />
+									</li>
+									<li>
+										<span className="icon-[tabler--text-caption] pt-2" />
+										<p className="skeleton skeleton-animated pr-70" />
+									</li>
+									<li>
+										<span className="icon-[tabler--link] pt-2" />
+										<p className="skeleton skeleton-animated pr-70" />
+									</li>
+								</ul>
+							</div>
+							<div className="absolute start-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform">
+								<span className="loading loading-spinner loading-lg text-primary" />
+							</div>
+						</div>
+						<div className="card sm:max-w-lg my-4 sm:my-0 skeleton skeleton-animated sm:flex-auto">
+							<div className="card-body">
+								<ul>
+									<li>
+										<span className="icon-[tabler--hash] pt-2" />
+										<p className="skeleton skeleton-animated pr-70" />
+									</li>
+									<li>
+										<span className="icon-[tabler--hash] pt-2" />
+										<p className="skeleton skeleton-animated pr-70" />
+									</li>
+									<li>
+										<span className="icon-[tabler--download] pt-2" />
+										<p className="skeleton skeleton-animated pr-70" />
+									</li>
+									<li>
+										<span className="icon-[tabler--user] pt-2" />
+										<p className="skeleton skeleton-animated pr-70" />
+									</li>
+									<li>
+										<span className="icon-[tabler--heart] pt-2" />
+										<p className="skeleton skeleton-animated pr-70" />
+									</li>
+									<li>
+										<span className="icon-[tabler--category] pt-2" />
+										<p className="skeleton skeleton-animated pr-70" />
+									</li>
+									<li>
+										<span className="icon-[tabler--text-caption] pt-2" />
+										<p className="skeleton skeleton-animated pr-70" />
+									</li>
+									<li>
+										<span className="icon-[tabler--link] pt-2" />
+										<p className="skeleton skeleton-animated pr-70" />
+									</li>
+								</ul>
+							</div>
+							<div className="absolute start-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform">
+								<span className="loading loading-spinner loading-lg text-primary" />
+							</div>
+						</div>
+						<div className="card sm:max-w-lg my-4 sm:my-0 skeleton skeleton-animated sm:flex-auto">
+							<div className="card-body">
+								<ul>
+									<li>
+										<span className="icon-[tabler--hash] pt-2" />
+										<p className="skeleton skeleton-animated pr-70" />
+									</li>
+									<li>
+										<span className="icon-[tabler--hash] pt-2" />
+										<p className="skeleton skeleton-animated pr-70" />
+									</li>
+									<li>
+										<span className="icon-[tabler--download] pt-2" />
+										<p className="skeleton skeleton-animated pr-70" />
+									</li>
+									<li>
+										<span className="icon-[tabler--user] pt-2" />
+										<p className="skeleton skeleton-animated pr-70" />
+									</li>
+									<li>
+										<span className="icon-[tabler--heart] pt-2" />
+										<p className="skeleton skeleton-animated pr-70" />
+									</li>
+									<li>
+										<span className="icon-[tabler--category] pt-2" />
+										<p className="skeleton skeleton-animated pr-70" />
+									</li>
+									<li>
+										<span className="icon-[tabler--text-caption] pt-2" />
+										<p className="skeleton skeleton-animated pr-70" />
+									</li>
+									<li>
+										<span className="icon-[tabler--link] pt-2" />
+										<p className="skeleton skeleton-animated pr-70" />
+									</li>
+								</ul>
+							</div>
+							<div className="absolute start-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform">
+								<span className="loading loading-spinner loading-lg text-primary" />
+							</div>
+						</div>
+					</div>
+				)}
+			</div>
 
 			{/* <!-- Footer --> */}
 			<footer className="footer bg-base-200 px-6 py-4 mb-4 rounded-2xl absolute -bottom-px sticky start-0 w-full">
