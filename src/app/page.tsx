@@ -1,13 +1,34 @@
 "use client";
-import { useEffect, useState } from "react";
+import { type ChangeEvent, Fragment, type FragmentInstance, useEffect, useRef, useState } from "react";
 import axios from "axios";
-
-// import Image from "next/image";
+import Fuse from "fuse.js";
 import type { APIModsResponse } from "./api/addons/route";
 import Card from "@/components/Card";
 
+// import Image from "next/image";
+
+const defaultCardAmount = 9;
+const defaultAddCardAmont = 9;
+const defaultScrollPercentage = 60
+
+const defaultDisplayCardAmount = process.env.NEXT_PUBLIC_DEFAULT_CARD_AMOUNT
+	? Math.abs(Number.parseInt(process.env.NEXT_PUBLIC_DEFAULT_CARD_AMOUNT)) || defaultCardAmount
+	: defaultCardAmount
+
+const addCardAmount = process.env.NEXT_PUBLIC_ADD_CARD_AMOUNT
+	? Math.abs(Number.parseInt(process.env.NEXT_PUBLIC_ADD_CARD_AMOUNT)) || defaultAddCardAmont
+	: defaultAddCardAmont;
+
+let addCardScrollPercentage = process.env.NEXT_PUBLIC_ADD_CARD_SCROLL_PERCENTAGE
+	? Number.parseInt(process.env.NEXT_PUBLIC_ADD_CARD_SCROLL_PERCENTAGE) || defaultScrollPercentage
+	: defaultScrollPercentage;
+
+if (addCardScrollPercentage > 100) addCardScrollPercentage = 100;
+else if (addCardScrollPercentage < 0) addCardScrollPercentage = defaultScrollPercentage;
+
 export default function Home() {
 	const [mods, setMods] = useState<APIModsResponse>([]);
+	const [filteredMods, setFilteredMods] = useState<APIModsResponse>([]);
 	const [loader, setLoader] = useState<
 		APIModsResponse[0]["modloaders"][0] | "all"
 	>("all");
@@ -16,19 +37,97 @@ export default function Home() {
 	>("all");
 	const [search, setSearch] = useState<string>("");
 
+	const [displayCardAmount, setDisplayCardAmount] = useState<number>(defaultDisplayCardAmount);
+
+	const [isLoadingMore, setIsLoadingMore] = useState(false);
+
 	useEffect(() => {
 		const fetchMods = async () => {
 			const res = await axios.get("/api/addons");
 
 			const data = (await res.data) as APIModsResponse;
+
 			setMods(data);
+			setFilteredMods(data);
 		};
 
 		fetchMods().catch((err) => console.error(err));
 	}, []);
 
+	useEffect(() => {
+		const fuse = new Fuse(mods, {
+			keys: ["name", "description", "slug"],
+			threshold: 0.4,
+		});
+
+		if (search === "") {
+			setFilteredMods(mods);
+
+			return;
+		}
+
+		const searchResult = fuse.search(search);
+		const resultMods = searchResult.map((result) => result.item);
+
+		setFilteredMods(resultMods)
+	}, [search, mods]);
+
+		useEffect(() => {
+        const handleScroll = () => {
+            if (isLoadingMore) return;
+
+            const scrollPosition = window.scrollY + window.innerHeight;
+            const scrollThreshold = (addCardScrollPercentage / 100) * document.body.scrollHeight;
+
+            if (scrollPosition >= scrollThreshold) {
+                setIsLoadingMore(true);
+                setDisplayCardAmount((prev) => prev + addCardAmount);
+            }
+        };
+
+        window.addEventListener("scroll", handleScroll);
+
+        return () => {
+            window.removeEventListener("scroll", handleScroll);
+        };
+    }, [isLoadingMore]);
+
+    useEffect(() => {
+        if (isLoadingMore) {
+            // Simulate loading delay to avoid too many re-renders
+            const timeout = setTimeout(() => {
+                setIsLoadingMore(false);
+            }, 500);
+
+            return () => clearTimeout(timeout);
+        }
+    }, [isLoadingMore]);
+
+	function handleLoaderSelect(data: ChangeEvent<HTMLSelectElement>) {
+		const loader = data.target.value as
+			| APIModsResponse[0]["modloaders"][0]
+			| "all";
+
+		setLoader(loader);
+		setDisplayCardAmount(defaultDisplayCardAmount);
+	}
+
+	function handleVersionSelect(data: ChangeEvent<HTMLSelectElement>) {
+		const version = data.target.value;
+
+		setVersion(version);
+		setDisplayCardAmount(defaultDisplayCardAmount);
+	}
+
+	function handleSearch(data: ChangeEvent<HTMLInputElement>) {
+		const searchTerm = data.target.value;
+
+		setSearch(searchTerm);
+		setDisplayCardAmount(defaultDisplayCardAmount);
+	}
+
 	return (
-		<>
+		<div>
 				{/* // <!-- Navbar --> */}
 				<nav className="navbar rounded-box shadow-base-300/20 shadow-sm mt-4">
 					<a
@@ -51,13 +150,7 @@ export default function Home() {
 								aria-label="Select floating label"
 								defaultValue="all"
 								id="selectFloating"
-								onChange={(data) => {
-									const loader = data.target.value as
-										| APIModsResponse[0]["modloaders"][0]
-										| "all";
-	
-									setLoader(loader);
-								}}
+								onChange={handleLoaderSelect}
 							>
 								<option value="all">All</option>
 								<option value="fabric">Fabric</option>
@@ -76,11 +169,7 @@ export default function Home() {
 								className="select"
 								aria-label="Select floating label"
 								id="selectFloating"
-								onChange={(data) => {
-									const version = data.target.value;
-	
-									setVersion(version);
-								}}
+								onChange={handleVersionSelect}
 							>
 								<option value="all">All</option>
 								{mods
@@ -107,33 +196,23 @@ export default function Home() {
 							className="grow"
 							placeholder="Search"
 							id="searchInput"
-							onChange={(data) => {
-								const searchTerm = data.target.value;
-	
-								setSearch(searchTerm);
-							}}
+							onChange={handleSearch}
 						/>
 					</div>
 				</div>
 	
 				{/* <!-- Mods --> */}
 				<div className="py-2 my-2 sm:flex sm:flex-row sm:flex-wrap sm:gap-4">
-					{/* for orangc, <Card> element is in /src/components/Card.tsx */}
-	
-					{mods.length > 0 ? (
+					{filteredMods.length > 0 ? (
 						<>
-							{mods
+							{filteredMods
 								.filter((mod) => {
 									return (
 										(loader === "all" || mod.modloaders.includes(loader)) &&
-										(version === "all" || mod.versions.includes(version)) &&
-										(mod.name.toLowerCase().includes(search.toLowerCase()) ||
-											mod.slug.toLowerCase().includes(search.toLowerCase()) ||
-											mod.description
-												.toLowerCase()
-												.includes(search.toLowerCase()))
+										(version === "all" || mod.versions.includes(version))
 									);
 								})
+								.slice(0, displayCardAmount)
 								.map((mod) => (
 									<Card
 										author={mod.author}
@@ -157,103 +236,103 @@ export default function Home() {
 							<div className="card sm:max-w-lg my-4 sm:my-0 skeleton skeleton-animated sm:flex-auto">
 								<div className="card-body">
 									<ul>
-										<li><span className="icon-[tabler--hash] pt-2" /><p className="skeleton skeleton-animated pr-70"></p></li>
-										<li><span className="icon-[tabler--hash] pt-2" /><p className="skeleton skeleton-animated pr-70"></p></li>
-										<li><span className="icon-[tabler--download] pt-2" /><p className="skeleton skeleton-animated pr-70"></p></li>
-										<li><span className="icon-[tabler--user] pt-2" /><p className="skeleton skeleton-animated pr-70"></p></li>
-										<li><span className="icon-[tabler--heart] pt-2" /><p className="skeleton skeleton-animated pr-70"></p></li>
-										<li><span className="icon-[tabler--category] pt-2" /><p className="skeleton skeleton-animated pr-70"></p></li>
-										<li><span className="icon-[tabler--text-caption] pt-2" /><p className="skeleton skeleton-animated pr-70"></p></li>
-										<li><span className="icon-[tabler--link] pt-2" /><p className="skeleton skeleton-animated pr-70"></p></li>
+										<li><span className="icon-[tabler--hash] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
+										<li><span className="icon-[tabler--hash] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
+										<li><span className="icon-[tabler--download] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
+										<li><span className="icon-[tabler--user] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
+										<li><span className="icon-[tabler--heart] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
+										<li><span className="icon-[tabler--category] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
+										<li><span className="icon-[tabler--text-caption] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
+										<li><span className="icon-[tabler--link] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
 									</ul>
 								</div>
 								<div className="absolute start-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform">
-									<span className="loading loading-spinner loading-lg text-primary"></span>
+									<span className="loading loading-spinner loading-lg text-primary" />
 								</div>
 							</div>
 							<div className="card sm:max-w-lg my-4 sm:my-0 skeleton skeleton-animated sm:flex-auto">
 								<div className="card-body">
 									<ul>
-										<li><span className="icon-[tabler--hash] pt-2" /><p className="skeleton skeleton-animated pr-70"></p></li>
-										<li><span className="icon-[tabler--hash] pt-2" /><p className="skeleton skeleton-animated pr-70"></p></li>
-										<li><span className="icon-[tabler--download] pt-2" /><p className="skeleton skeleton-animated pr-70"></p></li>
-										<li><span className="icon-[tabler--user] pt-2" /><p className="skeleton skeleton-animated pr-70"></p></li>
-										<li><span className="icon-[tabler--heart] pt-2" /><p className="skeleton skeleton-animated pr-70"></p></li>
-										<li><span className="icon-[tabler--category] pt-2" /><p className="skeleton skeleton-animated pr-70"></p></li>
-										<li><span className="icon-[tabler--text-caption] pt-2" /><p className="skeleton skeleton-animated pr-70"></p></li>
-										<li><span className="icon-[tabler--link] pt-2" /><p className="skeleton skeleton-animated pr-70"></p></li>
+										<li><span className="icon-[tabler--hash] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
+										<li><span className="icon-[tabler--hash] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
+										<li><span className="icon-[tabler--download] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
+										<li><span className="icon-[tabler--user] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
+										<li><span className="icon-[tabler--heart] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
+										<li><span className="icon-[tabler--category] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
+										<li><span className="icon-[tabler--text-caption] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
+										<li><span className="icon-[tabler--link] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
 									</ul>
 								</div>
 								<div className="absolute start-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform">
-									<span className="loading loading-spinner loading-lg text-primary"></span>
+									<span className="loading loading-spinner loading-lg text-primary" />
 								</div>
 							</div>
 							<div className="card sm:max-w-lg my-4 sm:my-0 skeleton skeleton-animated sm:flex-auto">
 								<div className="card-body">
 									<ul>
-										<li><span className="icon-[tabler--hash] pt-2" /><p className="skeleton skeleton-animated pr-70"></p></li>
-										<li><span className="icon-[tabler--hash] pt-2" /><p className="skeleton skeleton-animated pr-70"></p></li>
-										<li><span className="icon-[tabler--download] pt-2" /><p className="skeleton skeleton-animated pr-70"></p></li>
-										<li><span className="icon-[tabler--user] pt-2" /><p className="skeleton skeleton-animated pr-70"></p></li>
-										<li><span className="icon-[tabler--heart] pt-2" /><p className="skeleton skeleton-animated pr-70"></p></li>
-										<li><span className="icon-[tabler--category] pt-2" /><p className="skeleton skeleton-animated pr-70"></p></li>
-										<li><span className="icon-[tabler--text-caption] pt-2" /><p className="skeleton skeleton-animated pr-70"></p></li>
-										<li><span className="icon-[tabler--link] pt-2" /><p className="skeleton skeleton-animated pr-70"></p></li>
+										<li><span className="icon-[tabler--hash] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
+										<li><span className="icon-[tabler--hash] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
+										<li><span className="icon-[tabler--download] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
+										<li><span className="icon-[tabler--user] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
+										<li><span className="icon-[tabler--heart] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
+										<li><span className="icon-[tabler--category] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
+										<li><span className="icon-[tabler--text-caption] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
+										<li><span className="icon-[tabler--link] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
 									</ul>
 								</div>
 								<div className="absolute start-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform">
-									<span className="loading loading-spinner loading-lg text-primary"></span>
+									<span className="loading loading-spinner loading-lg text-primary" />
 								</div>
 							</div>
 							<div className="card sm:max-w-lg my-4 sm:my-0 skeleton skeleton-animated sm:flex-auto">
 								<div className="card-body">
 									<ul>
-										<li><span className="icon-[tabler--hash] pt-2" /><p className="skeleton skeleton-animated pr-70"></p></li>
-										<li><span className="icon-[tabler--hash] pt-2" /><p className="skeleton skeleton-animated pr-70"></p></li>
-										<li><span className="icon-[tabler--download] pt-2" /><p className="skeleton skeleton-animated pr-70"></p></li>
-										<li><span className="icon-[tabler--user] pt-2" /><p className="skeleton skeleton-animated pr-70"></p></li>
-										<li><span className="icon-[tabler--heart] pt-2" /><p className="skeleton skeleton-animated pr-70"></p></li>
-										<li><span className="icon-[tabler--category] pt-2" /><p className="skeleton skeleton-animated pr-70"></p></li>
-										<li><span className="icon-[tabler--text-caption] pt-2" /><p className="skeleton skeleton-animated pr-70"></p></li>
-										<li><span className="icon-[tabler--link] pt-2" /><p className="skeleton skeleton-animated pr-70"></p></li>
+										<li><span className="icon-[tabler--hash] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
+										<li><span className="icon-[tabler--hash] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
+										<li><span className="icon-[tabler--download] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
+										<li><span className="icon-[tabler--user] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
+										<li><span className="icon-[tabler--heart] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
+										<li><span className="icon-[tabler--category] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
+										<li><span className="icon-[tabler--text-caption] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
+										<li><span className="icon-[tabler--link] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
 									</ul>
 								</div>
 								<div className="absolute start-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform">
-									<span className="loading loading-spinner loading-lg text-primary"></span>
+									<span className="loading loading-spinner loading-lg text-primary" />
 								</div>
 							</div>
 							<div className="card sm:max-w-lg my-4 sm:my-0 skeleton skeleton-animated sm:flex-auto">
 								<div className="card-body">
 									<ul>
-										<li><span className="icon-[tabler--hash] pt-2" /><p className="skeleton skeleton-animated pr-70"></p></li>
-										<li><span className="icon-[tabler--hash] pt-2" /><p className="skeleton skeleton-animated pr-70"></p></li>
-										<li><span className="icon-[tabler--download] pt-2" /><p className="skeleton skeleton-animated pr-70"></p></li>
-										<li><span className="icon-[tabler--user] pt-2" /><p className="skeleton skeleton-animated pr-70"></p></li>
-										<li><span className="icon-[tabler--heart] pt-2" /><p className="skeleton skeleton-animated pr-70"></p></li>
-										<li><span className="icon-[tabler--category] pt-2" /><p className="skeleton skeleton-animated pr-70"></p></li>
-										<li><span className="icon-[tabler--text-caption] pt-2" /><p className="skeleton skeleton-animated pr-70"></p></li>
-										<li><span className="icon-[tabler--link] pt-2" /><p className="skeleton skeleton-animated pr-70"></p></li>
+										<li><span className="icon-[tabler--hash] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
+										<li><span className="icon-[tabler--hash] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
+										<li><span className="icon-[tabler--download] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
+										<li><span className="icon-[tabler--user] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
+										<li><span className="icon-[tabler--heart] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
+										<li><span className="icon-[tabler--category] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
+										<li><span className="icon-[tabler--text-caption] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
+										<li><span className="icon-[tabler--link] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
 									</ul>
 								</div>
 								<div className="absolute start-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform">
-									<span className="loading loading-spinner loading-lg text-primary"></span>
+									<span className="loading loading-spinner loading-lg text-primary" />
 								</div>
 							</div>
 							<div className="card sm:max-w-lg my-4 sm:my-0 skeleton skeleton-animated sm:flex-auto">
 								<div className="card-body">
 									<ul>
-										<li><span className="icon-[tabler--hash] pt-2" /><p className="skeleton skeleton-animated pr-70"></p></li>
-										<li><span className="icon-[tabler--hash] pt-2" /><p className="skeleton skeleton-animated pr-70"></p></li>
-										<li><span className="icon-[tabler--download] pt-2" /><p className="skeleton skeleton-animated pr-70"></p></li>
-										<li><span className="icon-[tabler--user] pt-2" /><p className="skeleton skeleton-animated pr-70"></p></li>
-										<li><span className="icon-[tabler--heart] pt-2" /><p className="skeleton skeleton-animated pr-70"></p></li>
-										<li><span className="icon-[tabler--category] pt-2" /><p className="skeleton skeleton-animated pr-70"></p></li>
-										<li><span className="icon-[tabler--text-caption] pt-2" /><p className="skeleton skeleton-animated pr-70"></p></li>
-										<li><span className="icon-[tabler--link] pt-2" /><p className="skeleton skeleton-animated pr-70"></p></li>
+										<li><span className="icon-[tabler--hash] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
+										<li><span className="icon-[tabler--hash] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
+										<li><span className="icon-[tabler--download] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
+										<li><span className="icon-[tabler--user] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
+										<li><span className="icon-[tabler--heart] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
+										<li><span className="icon-[tabler--category] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
+										<li><span className="icon-[tabler--text-caption] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
+										<li><span className="icon-[tabler--link] pt-2" /><p className="skeleton skeleton-animated pr-70" /></li>
 									</ul>
 								</div>
 								<div className="absolute start-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform">
-									<span className="loading loading-spinner loading-lg text-primary"></span>
+									<span className="loading loading-spinner loading-lg text-primary" />
 								</div>
 							</div>
 						</div>
@@ -287,6 +366,6 @@ export default function Home() {
 					</div>
 				</div>
 			</footer>
-		</>
+		</div>
 	);
 }
