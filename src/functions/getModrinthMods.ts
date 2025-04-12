@@ -110,7 +110,7 @@ export default async function getModrinthMods(): Promise<
 
 			console.log(
 				index,
-				`Skipped mod ${mod.slug} for error ${error?.response?.status} ()${error?.response?.statusText})`,
+				`Skipped mod ${mod.slug} for error ${error?.response?.status} (${error?.response?.statusText})`,
 			);
 		}
 
