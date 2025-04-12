@@ -165,12 +165,15 @@ export default function Home() {
 						<Select
 							defaultValue={modloaderOptions[0]}
 							options={modloaderOptions}
+							components={{
+								DropdownIndicator: () => null,
+								IndicatorSeparator: () => null,
+							}}
 							unstyled
 							classNames={{
 								control: ({ isFocused }) => "select",
-								// option: ({ isSelected }) => isSelected ? "bg-red-500" : "bg-red-400",
-								menuList: () => "bg-green-500 border-[#ad8c92] rounded-lg",
-								
+								option: ({ isSelected }) => isSelected ? "bg-base-200 rounded-2xl my-1 p-2" : "bg-base-100  rounded-2xl my-1 p-2 hover:bg-base-200",
+								menuList: () => "rounded-2xl bg-base-100 py-4 shadow-lg px-2 mt-1",
 							}}
 						/>
 					</div>
@@ -211,12 +214,15 @@ export default function Home() {
 									label: version,
 								}))
 							]}
+							components={{
+								DropdownIndicator: () => null,
+								IndicatorSeparator: () => null,
+							}}
 							unstyled
 							classNames={{
 								control: ({ isFocused }) => "select",
-								// option: ({ isSelected }) => isSelected ? "bg-red-500" : "bg-red-400",
-								menuList: () => "bg-green-500 border-[#ad8c92] rounded-lg",
-								
+								option: ({ isSelected }) => isSelected ? "bg-base-200 rounded-2xl my-1 p-2" : "bg-base-100  rounded-2xl my-1 p-2 hover:bg-base-200",
+								menuList: () => "rounded-2xl bg-base-100 py-4 shadow-lg px-2 mt-1",
 							}}
 						/>
 					</div>
