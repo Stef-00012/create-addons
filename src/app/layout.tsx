@@ -2,13 +2,13 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-	title: "Create Mod Index",
+	title: "Create Addons Index",
 	description:
-		"An open source index of all the Create Minecraft mod related plugins.",
+		"An open source index of all the Create Minecraft mod related addons.",
 	openGraph: {
-		title: "Create Mod Index",
+		title: "Create Addons Index",
 		description:
-			"An open source index of all the Create Minecraft mod related plugins.",
+			"An open source index of all the Create Minecraft mod related addons.",
 		type: "website",
 	},
 };

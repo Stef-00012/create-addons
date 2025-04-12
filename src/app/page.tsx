@@ -126,7 +126,7 @@ export default function Home() {
 					// biome-ignore lint/a11y/useValidAnchor: <explanation>
 					href="#"
 				>
-					Create Mod Index
+					Create Addons Index
 				</a>
 			</nav>
 			<br />
