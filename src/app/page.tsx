@@ -324,6 +324,7 @@ export default function Home() {
 			</div>
 
 			{/* <!-- Mods --> */}
+			{/*<div className="py-2 my-2"> this is for list view */}
 			<div className="py-2 my-2 sm:flex sm:flex-row sm:flex-wrap sm:gap-4">
 				{mods.length > 0 ? (
 					<>
