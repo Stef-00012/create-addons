@@ -4,7 +4,7 @@ import axios from "axios";
 import Fuse from "fuse.js";
 import type { APIModsResponse } from "./api/addons/route";
 import Card from "@/components/Card";
-import Select, { StylesConfig } from 'react-select';
+import Select from 'react-select';
 
 // import Image from "next/image";
 
@@ -103,19 +103,19 @@ export default function Home() {
 		};
 	}, []);
 
-	function handleLoaderSelect(data: ChangeEvent<HTMLSelectElement>) {
-		const loader = data.target.value as
+	function handleLoaderSelect(newValue: { label: string; value: string } | null) {
+		const loader = newValue?.value as
 			| APIModsResponse[0]["modloaders"][0]
 			| "all";
 
-		setLoader(loader);
+		setLoader(loader || "all");
 		setDisplayCardAmount(defaultDisplayCardAmount);
 	}
 
-	function handleVersionSelect(data: ChangeEvent<HTMLSelectElement>) {
-		const version = data.target.value;
+	function handleVersionSelect(newValue: { label: string; value: string } | null) {
+		const version = newValue?.value;
 
-		setVersion(version);
+		setVersion(version || "all");
 		setDisplayCardAmount(defaultDisplayCardAmount);
 	}
 
@@ -145,61 +145,43 @@ export default function Home() {
 				<div className="md:flex md:justify-start">
 					{/* <!-- Filter by modloader --> */}
 					<div className="select-floating w-96 my-6 md:my-0 mr-4">
-						{/* <select
-							className="select"
-							aria-label="Select floating label"
-							defaultValue="all"
-							id="selectFloating"
-							onChange={handleLoaderSelect}
-						>
-							<option value="all">All</option>
-							<option value="fabric">Fabric</option>
-							<option value="forge">Forge</option>
-							<option value="neoforge">NeoForge</option>
-							<option value="quilt">Quilt</option>
-						</select>
-						<label className="select-floating-label rounded-2xl px-2" htmlFor="selectFloating">
+						<label className="select-floating-label rounded-2xl px-2 z-10" htmlFor="selectFloating">
 							Filter by modloader
-						</label> */}
+						</label>
 
 						<Select
+							id="selectFloating"
 							defaultValue={modloaderOptions[0]}
 							options={modloaderOptions}
+							unstyled
+							isSearchable={false}
+							isLoading={mods.length === 0}
+							isDisabled={mods.length === 0}
 							components={{
 								DropdownIndicator: () => null,
 								IndicatorSeparator: () => null,
 							}}
-							unstyled
 							classNames={{
-								control: ({ isFocused }) => "select",
-								option: ({ isSelected }) => isSelected ? "bg-base-200 rounded-2xl my-1 p-2" : "bg-base-100  rounded-2xl my-1 p-2 hover:bg-base-200",
+								control: () => "select",
+								option: ({ isSelected }) => `rounded-2xl my-1 p-2 ${isSelected ? "bg-base-200" : "bg-base-100 hover:bg-base-200"}`,
 								menuList: () => "rounded-2xl bg-base-100 py-4 shadow-lg px-2 mt-1",
 							}}
+							onChange={handleLoaderSelect}
 						/>
 					</div>
 
 					{/* <!-- Filter by version --> */}
 					<div className="select-floating w-96 my-6 md:my-0">
-						{/* <select
-							className="select"
-							aria-label="Select floating label"
-							id="selectFloating"
-							onChange={handleVersionSelect}
-						>
-							<option value="all">All</option>
-							{mods
-								.find((mod) => mod.slug === "create")
-								?.versions.map((version) => (
-									<option value={version} key={version}>
-										{version}
-									</option>
-								))}
-						</select>
-						<label className="select-floating-label rounded-2xl px-2" htmlFor="selectFloating">
+						<label className="select-floating-label rounded-2xl px-2 z-10" htmlFor="selectFloating">
 							Filter by version
-						</label> */}
+						</label>
 
 						<Select
+							id="selectFloating"
+							unstyled
+							isSearchable={false}
+							isLoading={mods.length === 0}
+							isDisabled={mods.length === 0}
 							defaultValue={{
 								value: "all",
 								label: "All",
@@ -218,12 +200,12 @@ export default function Home() {
 								DropdownIndicator: () => null,
 								IndicatorSeparator: () => null,
 							}}
-							unstyled
 							classNames={{
-								control: ({ isFocused }) => "select",
-								option: ({ isSelected }) => isSelected ? "bg-base-200 rounded-2xl my-1 p-2" : "bg-base-100  rounded-2xl my-1 p-2 hover:bg-base-200",
+								control: () => "select",
+								option: ({ isSelected }) => `rounded-2xl my-1 p-2 ${isSelected ? "bg-base-200" : "bg-base-100 hover:bg-base-200"}`,
 								menuList: () => "rounded-2xl bg-base-100 py-4 shadow-lg px-2 mt-1",
 							}}
+							onChange={handleVersionSelect}
 						/>
 					</div>
 				</div>
@@ -234,6 +216,7 @@ export default function Home() {
 						Mod name
 					</label>
 					<input
+						disabled={mods.length === 0}
 						type="search"
 						className="grow"
 						placeholder="Search"
