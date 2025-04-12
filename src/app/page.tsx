@@ -172,7 +172,7 @@ export default function Home() {
 							unstyled
 							classNames={{
 								control: ({ isFocused }) => "select",
-								option: ({ isSelected }) => isSelected ? "bg-base-200 rounded-2xl my-1 p-2" : "bg-base-100  rounded-2xl my-1 p-2 hover:bg-base-200",
+								option: ({ isSelected }) => isSelected ? "bg-base-200 rounded-2xl my-1 p-2" : "bg-base-100 rounded-2xl my-1 p-2 hover:bg-base-200",
 								menuList: () => "rounded-2xl bg-base-100 py-4 shadow-lg px-2 mt-1",
 							}}
 						/>
@@ -221,7 +221,7 @@ export default function Home() {
 							unstyled
 							classNames={{
 								control: ({ isFocused }) => "select",
-								option: ({ isSelected }) => isSelected ? "bg-base-200 rounded-2xl my-1 p-2" : "bg-base-100  rounded-2xl my-1 p-2 hover:bg-base-200",
+								option: ({ isSelected }) => isSelected ? "bg-base-200 rounded-2xl my-1 p-2" : "bg-base-100 rounded-2xl my-1 p-2 hover:bg-base-200",
 								menuList: () => "rounded-2xl bg-base-100 py-4 shadow-lg px-2 mt-1",
 							}}
 						/>
