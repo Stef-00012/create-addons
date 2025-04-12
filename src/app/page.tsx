@@ -9,6 +9,7 @@ import { useSearchParams } from "next/navigation";
 import SkeletonCard from "@/components/SkeletonCard";
 import List from "@/components/List";
 import { useRouter } from 'next/navigation';
+import SkeletonList from "@/components/SkeletonList";
 
 const defaultCardAmount = 9;
 const defaultAddCardAmont = 9;
@@ -60,7 +61,7 @@ export default function Home() {
 		APIModsResponse[0]["modloaders"][0] | "all"
 	>("all");
 	const [sortBy, setSortBy] = useState<SortByType>("downloads");
-	const [compactMode, setCompactMode] = useState(false);
+	const [compactMode, setCompactMode] = useState(searchParams.get("compact") === "1");
 	const [version, setVersion] = useState<
 		APIModsResponse[0]["versions"][0] | "all"
 	>("all");
@@ -98,7 +99,6 @@ export default function Home() {
 			| "all";
 		const search = searchParams.get("search") as string;
 		const sortBy = searchParams.get("sortBy") as SortByType;
-		const compactMode = searchParams.get("compact") === "1";
 
 		if (versions.includes(version)) {
 			setVersion(version);
@@ -112,7 +112,6 @@ export default function Home() {
 			setSortBy(sortBy);
 		}
 
-		setCompactMode(compactMode);
 		setSearch(decodeURIComponent(search || ""));
 	}, [mods, searchParams.get]);
 
@@ -437,14 +436,28 @@ export default function Home() {
 						)}
 					</>
 				) : (
-					<div className="py-2 my-2 sm:flex sm:flex-row sm:flex-wrap sm:gap-4">
-						<SkeletonCard />
-						<SkeletonCard />
-						<SkeletonCard />
-						<SkeletonCard />
-						<SkeletonCard />
-						<SkeletonCard />
-						<SkeletonCard />
+					<div className={`py-2 my-2 ${compactMode ? "" : "sm:flex sm:flex-row sm:flex-wrap sm:gap-4"}`}>
+						{compactMode ? (
+							<>
+								<SkeletonList />
+								<SkeletonList />
+								<SkeletonList />
+								<SkeletonList />
+								<SkeletonList />
+								<SkeletonList />
+								<SkeletonList />
+							</>
+						) : (
+							<>
+								<SkeletonCard />
+								<SkeletonCard />
+								<SkeletonCard />
+								<SkeletonCard />
+								<SkeletonCard />
+								<SkeletonCard />
+								<SkeletonCard />
+							</>
+						)}
 					</div>
 				)}
 			</div>
