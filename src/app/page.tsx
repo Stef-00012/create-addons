@@ -86,7 +86,7 @@ export default function Home() {
 			setLoader(loader);
 		}
 
-		setSearch(decodeURIComponent(search))
+		setSearch(decodeURIComponent(search || ""));
 	}, [mods, searchParams.get]);
 
 	useEffect(() => {
