@@ -41,7 +41,7 @@ export default function Card({
 }: Props) {
 	return (
 		<div className="card sm:max-w-lg my-4 sm:my-0 sm:flex-auto">
-			<div className="card-body sm:flex-grow">
+			<div className="card-body">
 				<h5 className="card-title mb-0">
 					<Image
 						src={icon === "" ? defaultModIcon : icon}

@@ -126,16 +126,16 @@ export default function Home() {
 					// biome-ignore lint/a11y/useValidAnchor: <explanation>
 					href="#"
 				>
-					Create Mod Index
+					Create Addons Index
 				</a>
 			</nav>
 			<br />
 
 			{/* <!-- Search & Filter --> */}
-			<div className="sm:flex sm:justify-between">
-				<div className="sm:flex sm:justify-start">
+			<div className="md:flex md:justify-between">
+				<div className="md:flex md:justify-start">
 					{/* <!-- Filter by modloader --> */}
-					<div className="select-floating w-96 my-6 sm:my-0 mr-4">
+					<div className="select-floating w-96 my-6 md:my-0 mr-4">
 						<select
 							className="select"
 							aria-label="Select floating label"
@@ -155,7 +155,7 @@ export default function Home() {
 					</div>
 
 					{/* <!-- Filter by version --> */}
-					<div className="select-floating w-96 my-6 sm:my-0">
+					<div className="select-floating w-96 my-6 md:my-0">
 						<select
 							className="select"
 							aria-label="Select floating label"
@@ -534,7 +534,7 @@ export default function Home() {
 							<a href="https://orangc.net" className="link2 text-[#fab387]">
 								orangc
 							</a>
-							.
+							. This project is not affiliated with or endorsed by Mojang® or the Create mod.
 						</p>
 					</aside>
 					<div className="flex gap-4 h-5">
