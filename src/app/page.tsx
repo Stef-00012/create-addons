@@ -38,6 +38,13 @@ const modloaderOptions = [
 	{ value: "quilt", label: "Quilt" },
 ];
 
+const sortByOptions = [
+	{ value: "name", label: "Name" },
+	{ value: "downloads", label: "downloads" },
+	{ value: "followers", label: "Followers" },
+	{ value: "lastUpdated", label: "Last Updated" },
+];
+
 export default function Home() {
 	const searchParams = useSearchParams()
 
@@ -77,7 +84,7 @@ export default function Home() {
 		const version = searchParams.get("version") as APIModsResponse[0]["versions"][0] | "all";
 		const loader = searchParams.get("modloader") as APIModsResponse[0]["modloaders"][0] | "all";
 		const search = searchParams.get("search") as string;
-		
+
 		if (versions.includes(version)) {
 			setVersion(version);
 		}
@@ -151,20 +158,16 @@ export default function Home() {
 	return (
 		<div>
 			{/* // <!-- Navbar --> */}
-			<nav className="navbar rounded-box shadow-base-300/20 shadow-sm mt-4">
-				<a
-					className="link text-base-content link-neutral text-xl no-underline"
-					// biome-ignore lint/a11y/useValidAnchor: <explanation>
-					href="#"
-				>
-					Create Addons Index
-				</a>
-			</nav>
+			<nav className="navbar rounded-box shadow-base-300/20 shadow-sm mt-4">Create Addons Index</nav>
 			<br />
 
-			{/* <!-- Search & Filter --> */}
+			{/* <!-- Search & Filter & Sort & View type --> */}
 			<div className="md:flex md:justify-between">
 				<div className="md:flex md:justify-start">
+					{/* <!-- Grid/list view toggle --> */}
+					<div className="my-6 md:my-0 mr-2">
+						<button className="btn border-base-content/50 bg-accent-content"><span className="icon-[tabler--grid] text-base-content"></span></button>
+					</div>
 					{/* <!-- Filter by modloader --> */}
 					<div className="select-floating w-96 my-6 md:my-0 mr-4">
 						<label className="select-floating-label rounded-2xl px-2 z-10" htmlFor="selectFloating">
@@ -233,6 +236,32 @@ export default function Home() {
 								menuList: () => "rounded-2xl bg-base-100 py-4 shadow-lg px-2 mt-1",
 							}}
 							onChange={handleVersionSelect}
+						/>
+					</div>
+					{/* <!-- Sort by --> */}
+					<div className="select-floating w-96 my-6 md:my-0 md:ml-4">
+						<label className="select-floating-label rounded-2xl px-2 z-10" htmlFor="selectFloating">
+							Sort by
+						</label>
+
+						<Select
+							id="selectFloating"
+							defaultValue={sortByOptions[0]}
+							options={sortByOptions}
+							unstyled
+							isSearchable={false}
+							isLoading={mods.length === 0}
+							isDisabled={mods.length === 0}
+							components={{
+								DropdownIndicator: () => null,
+								IndicatorSeparator: () => null,
+							}}
+							classNames={{
+								control: () => "select",
+								option: ({ isSelected }) => `rounded-2xl my-1 p-2 ${isSelected ? "bg-base-200" : "bg-base-100 hover:bg-base-200"}`,
+								menuList: () => "rounded-2xl bg-base-100 py-4 shadow-lg px-2 mt-1",
+							}}
+							onChange={handleLoaderSelect}
 						/>
 					</div>
 				</div>
