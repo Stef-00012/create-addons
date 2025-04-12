@@ -98,6 +98,7 @@ export default function Home() {
 			| "all";
 		const search = searchParams.get("search") as string;
 		const sortBy = searchParams.get("sortBy") as SortByType;
+		const compactMode = searchParams.get("compact") === "1";
 
 		if (versions.includes(version)) {
 			setVersion(version);
@@ -111,6 +112,7 @@ export default function Home() {
 			setSortBy(sortBy);
 		}
 
+		setCompactMode(compactMode);
 		setSearch(decodeURIComponent(search || ""));
 	}, [mods, searchParams.get]);
 
@@ -151,8 +153,8 @@ export default function Home() {
 	}, []);
 
 	useEffect(() => {
-		router.replace(`?version=${version}&modloader=${loader}&search=${encodeURIComponent(search)}&sortBy=${sortBy}`)
-	}, [sortBy, search, loader, version, router.replace]);
+		router.replace(`?version=${version}&modloader=${loader}&sortBy=${sortBy}&compact=${compactMode ? 1 : 0}&search=${encodeURIComponent(search)}`)
+	}, [sortBy, search, loader, version, compactMode, router.replace]);
 
 	function handleLoaderSelect(
 		newValue: { label: string; value: string } | null,
