@@ -8,6 +8,7 @@ import defaultModIcon from "#/assets/defaultModIcon.svg";
 import { modloaderNames } from "@/constants/loaders";
 import type { APIModsResponse } from "@/app/api/addons/route";
 import millify from "millify";
+import { Tooltip } from 'react-tooltip'
 
 interface Props {
 	platform: APIModsResponse[0]["platform"];
@@ -53,40 +54,60 @@ export default function Card({
 						{name}
 					</a>
 					{modloaders.includes("fabric") && (
-						<Image
-							src={fabric}
-							alt="fabric logo"
-							className="mask mask-squircle size-6 inline-block mx-1"
-							width={32}
-							height={32}
-						/>
+						<>
+							<Image
+								src={fabric}
+								alt="fabric logo"
+								className="mask mask-squircle size-6 inline-block mx-1"
+								width={32}
+								height={32}
+								data-tooltip-content="Fabric"
+								data-tooltip-id="fabric-tooltip"
+							/>
+							<Tooltip id="fabric-tooltip" className="rounded-lg" />
+						</>
 					)}
 					{modloaders.includes("forge") && (
-						<Image
-							src={forge}
-							alt="forge logo"
-							className="mask mask-squircle size-6 inline-block mx-1"
-							width={32}
-							height={32}
-						/>
+						<>
+							<Image
+								src={forge}
+								alt="forge logo"
+								className="mask mask-squircle size-6 inline-block mx-1"
+								width={32}
+								height={32}
+								data-tooltip-content="Forge"
+								data-tooltip-id="forge-tooltip"
+							/>
+							<Tooltip id="forge-tooltip" className="rounded-lg" />
+						</>
 					)}
 					{modloaders.includes("neoforge") && (
-						<Image
-							src={neoforge}
-							alt="neoforge logo"
-							className="mask mask-squircle size-6 inline-block mx-1"
-							width={32}
-							height={32}
-						/>
+						<>
+							<Image
+								src={neoforge}
+								alt="neoforge logo"
+								className="mask mask-squircle size-6 inline-block mx-1"
+								width={32}
+								height={32}
+								data-tooltip-content="NeoForge"
+								data-tooltip-id="neoforge-tooltip"
+							/>
+							<Tooltip id="neoforge-tooltip" className="rounded-lg" />
+						</>
 					)}
 					{modloaders.includes("quilt") && (
-						<Image
-							src={quilt}
-							alt="quilt logo"
-							className="mask mask-squircle size-6 inline-block mx-1"
-							width={32}
-							height={32}
-						/>
+						<>
+							<Image
+								src={quilt}
+								alt="quilt logo"
+								className="mask mask-squircle size-6 inline-block mx-1"
+								width={32}
+								height={32}
+								data-tooltip-content="Quilt"
+								data-tooltip-id="quilt-tooltip"
+							/>
+							<Tooltip id="quilt-tooltip" className="rounded-lg" />
+						</>
 					)}
 				</h5>
 				<ul>
