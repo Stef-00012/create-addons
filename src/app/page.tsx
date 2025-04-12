@@ -29,7 +29,6 @@ export default function Home() {
 
 	return (
 		<>
-			<div className="flex-grow">
 				{/* // <!-- Navbar --> */}
 				<nav className="navbar rounded-box shadow-base-300/20 shadow-sm mt-4">
 					<a
@@ -260,10 +259,9 @@ export default function Home() {
 						</div>
 					)}
 				</div>
-			</div>
 
 			{/* <!-- Footer --> */}
-			<footer className="footer bg-base-200/60 px-6 py-4 mb-4 rounded-2xl">
+			<footer className="footer bg-base-200 px-6 py-4 mb-4 rounded-2xl absolute -bottom-px sticky start-0 w-full">
 				<div className="flex w-full items-center justify-between">
 					<aside className="grid-flow-col items-center">
 						<p>
