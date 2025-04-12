@@ -44,7 +44,7 @@ export default function Card({
 				<h5 className="card-title mb-0">
 					<Image
 						src={icon === "" ? defaultModIcon : icon}
-						className="size-12 inline-block rounded-2xl mr-2"
+						className="size-10 inline-block rounded-2xl mr-2"
 						alt="mod logo"
 						width={20}
 						height={20}
@@ -56,7 +56,7 @@ export default function Card({
 						<Image
 							src={fabric}
 							alt="fabric logo"
-							className="mask mask-squircle size-8 inline-block mx-1"
+							className="mask mask-squircle size-6 inline-block mx-1"
 							width={32}
 							height={32}
 						/>
@@ -65,7 +65,7 @@ export default function Card({
 						<Image
 							src={forge}
 							alt="forge logo"
-							className="mask mask-squircle size-8 inline-block mx-1"
+							className="mask mask-squircle size-6 inline-block mx-1"
 							width={32}
 							height={32}
 						/>
@@ -74,7 +74,7 @@ export default function Card({
 						<Image
 							src={neoforge}
 							alt="neoforge logo"
-							className="mask mask-squircle size-8 inline-block mx-1"
+							className="mask mask-squircle size-6 inline-block mx-1"
 							width={32}
 							height={32}
 						/>
@@ -83,7 +83,7 @@ export default function Card({
 						<Image
 							src={quilt}
 							alt="quilt logo"
-							className="mask mask-squircle size-8 inline-block mx-1"
+							className="mask mask-squircle size-6 inline-block mx-1"
 							width={32}
 							height={32}
 						/>
