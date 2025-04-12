@@ -4,7 +4,7 @@
 @plugin "flyonui";
 
 
-@import url(https://fonts.bunny.net/css?family=lexend:500|martian-mono:500|merriweather:700);
+@import url(https://fonts.bunny.net/css?family=lexend:500);
 
 @theme {
   /* colours */
@@ -26,8 +26,8 @@
 
   /* fonts */
   --font-sans: "Lexend", "sans-serif";
-  --font-serif: "Merriweather", "serif";
-  --font-mono: "Martian Mono", "monospace";
+  --font-serif: "serif";
+  --font-mono: "monospace";
 }
 
 
