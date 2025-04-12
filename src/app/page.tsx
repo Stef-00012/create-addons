@@ -1,11 +1,14 @@
 "use client";
-import { type ChangeEvent, useEffect, useState } from "react";
+import { type ChangeEvent, Fragment, useEffect, useState } from "react";
 import axios from "axios";
 import Fuse from "fuse.js";
 import type { APIModsResponse } from "./api/addons/route";
 import Card from "@/components/Card";
 import Select from "react-select";
 import { useSearchParams } from "next/navigation";
+import SkeletonCard from "@/components/SkeletonCard";
+import List from "@/components/List";
+import { useRouter } from 'next/navigation';
 
 const defaultCardAmount = 9;
 const defaultAddCardAmont = 9;
@@ -40,7 +43,7 @@ const modloaderOptions = [
 
 const sortByOptions = [
 	{ value: "name", label: "Name" },
-	{ value: "downloads", label: "downloads" },
+	{ value: "downloads", label: "Downloads" },
 	{ value: "followers", label: "Followers" },
 	{ value: "lastUpdated", label: "Last Updated" },
 ];
@@ -48,6 +51,7 @@ const sortByOptions = [
 type SortByType = "name" | "downloads" | "followers" | "lastUpdated";
 
 export default function Home() {
+	const router = useRouter();
 	const searchParams = useSearchParams();
 
 	const [mods, setMods] = useState<APIModsResponse>([]);
@@ -55,7 +59,7 @@ export default function Home() {
 	const [loader, setLoader] = useState<
 		APIModsResponse[0]["modloaders"][0] | "all"
 	>("all");
-	const [sortBy, setSortBy] = useState<SortByType>("name")
+	const [sortBy, setSortBy] = useState<SortByType>("downloads");
 	const [compactMode, setCompactMode] = useState(false);
 	const [version, setVersion] = useState<
 		APIModsResponse[0]["versions"][0] | "all"
@@ -84,6 +88,7 @@ export default function Home() {
 
 		const versions = mods.find((mod) => mod.slug === "create")?.versions || [];
 		const modloaders = modloaderOptions.map((modloader) => modloader.value);
+		const sortByOrders = sortByOptions.map((sortOption) => sortOption.value);
 
 		const version = searchParams.get("version") as
 			| APIModsResponse[0]["versions"][0]
@@ -92,6 +97,7 @@ export default function Home() {
 			| APIModsResponse[0]["modloaders"][0]
 			| "all";
 		const search = searchParams.get("search") as string;
+		const sortBy = searchParams.get("sortBy") as SortByType;
 
 		if (versions.includes(version)) {
 			setVersion(version);
@@ -99,6 +105,10 @@ export default function Home() {
 
 		if (modloaders.includes(loader)) {
 			setLoader(loader);
+		}
+
+		if (sortByOrders.includes(sortBy)) {
+			setSortBy(sortBy);
 		}
 
 		setSearch(decodeURIComponent(search || ""));
@@ -140,6 +150,10 @@ export default function Home() {
 		};
 	}, []);
 
+	useEffect(() => {
+		router.replace(`?version=${version}&modloader=${loader}&search=${encodeURIComponent(search)}&sortBy=${sortBy}`)
+	}, [sortBy, search, loader, version, router.replace]);
+
 	function handleLoaderSelect(
 		newValue: { label: string; value: string } | null,
 	) {
@@ -157,6 +171,15 @@ export default function Home() {
 		const version = newValue?.value;
 
 		setVersion(version || "all");
+		setDisplayCardAmount(defaultDisplayCardAmount);
+	}
+
+	function handleSortSelect(
+		newValue: { label: string; value: string } | null,
+	) {
+		const sort = newValue?.value as SortByType;
+
+		setSortBy(sort || "name");
 		setDisplayCardAmount(defaultDisplayCardAmount);
 	}
 
@@ -184,8 +207,14 @@ export default function Home() {
 				<div className="md:flex md:justify-start">
 					{/* <!-- Grid/list view toggle --> */}
 					<div className="my-6 md:my-0 mr-2">
-						<button type="button" className="btn border-base-content/50 bg-accent-content" onClick={handleCompactMode}>
-							<span className={`${compactMode ? "icon-[tabler--list]" : "icon-[tabler--grid]"} text-base-content`} />
+						<button
+							type="button"
+							className="btn border-base-content/50 bg-accent-content"
+							onClick={handleCompactMode}
+						>
+							<span
+								className={`${compactMode ? "icon-[tabler--grid]" : "icon-[tabler--list]"} text-base-content`}
+							/>
 						</button>
 					</div>
 					{/* <!-- Filter by modloader --> */}
@@ -286,6 +315,7 @@ export default function Home() {
 							id="selectFloating"
 							defaultValue={sortByOptions[0]}
 							options={sortByOptions}
+							value={sortByOptions.find((option) => option.value === sortBy) || null}
 							unstyled
 							isSearchable={false}
 							isLoading={mods.length === 0}
@@ -301,7 +331,7 @@ export default function Home() {
 								menuList: () =>
 									"rounded-2xl bg-base-100 py-4 shadow-lg px-2 mt-1",
 							}}
-							onChange={handleLoaderSelect}
+							onChange={handleSortSelect}
 						/>
 					</div>
 				</div>
@@ -324,8 +354,7 @@ export default function Home() {
 			</div>
 
 			{/* <!-- Mods --> */}
-			{/*<div className="py-2 my-2"> this is for list view */}
-			<div className="py-2 my-2 sm:flex sm:flex-row sm:flex-wrap sm:gap-4">
+			<div className={`py-2 my-2 ${compactMode ? "" : "sm:flex sm:flex-row sm:flex-wrap sm:gap-4"}`}>
 				{mods.length > 0 ? (
 					<>
 						{filteredMods.length > 0 ? (
@@ -341,37 +370,61 @@ export default function Home() {
 										if (sortBy === "downloads") {
 											return b.downloads - a.downloads;
 										}
-										
+
 										if (sortBy === "followers") {
 											return b.follows - a.follows;
 										}
-										
+
 										if (sortBy === "lastUpdated") {
 											return (
 												new Date(b.modified).getTime() -
 												new Date(a.modified).getTime()
 											);
-										} 
-										
-										return a.name.localeCompare(b.name);
+										}
+
+										if (sortBy === "name") {
+											return a.name.localeCompare(b.name);
+										}
+
+										return 0;
 									})
 									.slice(0, displayCardAmount)
 									.map((mod) => (
-										<Card
-											author={mod.author}
-											categories={mod.categories}
-											description={mod.description}
-											downloads={mod.downloads}
-											follows={mod.follows}
-											icon={mod.icon}
-											name={mod.name}
-											platform={mod.platform}
-											slug={mod.slug}
-											version={mod.version}
-											versions={mod.versions}
-											key={mod.slug}
-											modloaders={mod.modloaders}
-										/>
+										<Fragment key={mod.slug}>
+											{compactMode ? (
+												<List
+													author={mod.author}
+													categories={mod.categories}
+													description={mod.description}
+													downloads={mod.downloads}
+													follows={mod.follows}
+													icon={mod.icon}
+													name={mod.name}
+													platform={mod.platform}
+													slug={mod.slug}
+													version={mod.version}
+													versions={mod.versions}
+													key={mod.slug}
+													modloaders={mod.modloaders}
+												/>
+											) : (
+												<Card
+													author={mod.author}
+													categories={mod.categories}
+													description={mod.description}
+													downloads={mod.downloads}
+													follows={mod.follows}
+													icon={mod.icon}
+													name={mod.name}
+													platform={mod.platform}
+													slug={mod.slug}
+													version={mod.version}
+													versions={mod.versions}
+													key={mod.slug}
+													modloaders={mod.modloaders}
+												/>
+											)}
+										</Fragment>
 									))}
 							</>
 						) : (
@@ -383,293 +436,13 @@ export default function Home() {
 					</>
 				) : (
 					<div className="py-2 my-2 sm:flex sm:flex-row sm:flex-wrap sm:gap-4">
-						<div className="card sm:max-w-lg my-4 sm:my-0 skeleton skeleton-animated sm:flex-auto">
-							<div className="card-body">
-								<ul>
-									<li>
-										<span className="icon-[tabler--hash] pt-2" />
-										<p className="skeleton skeleton-animated pr-70" />
-									</li>
-									<li>
-										<span className="icon-[tabler--hash] pt-2" />
-										<p className="skeleton skeleton-animated pr-70" />
-									</li>
-									<li>
-										<span className="icon-[tabler--download] pt-2" />
-										<p className="skeleton skeleton-animated pr-70" />
-									</li>
-									<li>
-										<span className="icon-[tabler--user] pt-2" />
-										<p className="skeleton skeleton-animated pr-70" />
-									</li>
-									<li>
-										<span className="icon-[tabler--heart] pt-2" />
-										<p className="skeleton skeleton-animated pr-70" />
-									</li>
-									<li>
-										<span className="icon-[tabler--category] pt-2" />
-										<p className="skeleton skeleton-animated pr-70" />
-									</li>
-									<li>
-										<span className="icon-[tabler--text-caption] pt-2" />
-										<p className="skeleton skeleton-animated pr-70" />
-									</li>
-									<li>
-										<span className="icon-[tabler--link] pt-2" />
-										<p className="skeleton skeleton-animated pr-70" />
-									</li>
-								</ul>
-							</div>
-							<div className="absolute start-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform">
-								<span className="loading loading-spinner loading-lg text-primary" />
-							</div>
-						</div>
-						<div className="card sm:max-w-lg my-4 sm:my-0 skeleton skeleton-animated sm:flex-auto">
-							<div className="card-body">
-								<ul>
-									<li>
-										<span className="icon-[tabler--hash] pt-2" />
-										<p className="skeleton skeleton-animated pr-70" />
-									</li>
-									<li>
-										<span className="icon-[tabler--hash] pt-2" />
-										<p className="skeleton skeleton-animated pr-70" />
-									</li>
-									<li>
-										<span className="icon-[tabler--download] pt-2" />
-										<p className="skeleton skeleton-animated pr-70" />
-									</li>
-									<li>
-										<span className="icon-[tabler--user] pt-2" />
-										<p className="skeleton skeleton-animated pr-70" />
-									</li>
-									<li>
-										<span className="icon-[tabler--heart] pt-2" />
-										<p className="skeleton skeleton-animated pr-70" />
-									</li>
-									<li>
-										<span className="icon-[tabler--category] pt-2" />
-										<p className="skeleton skeleton-animated pr-70" />
-									</li>
-									<li>
-										<span className="icon-[tabler--text-caption] pt-2" />
-										<p className="skeleton skeleton-animated pr-70" />
-									</li>
-									<li>
-										<span className="icon-[tabler--link] pt-2" />
-										<p className="skeleton skeleton-animated pr-70" />
-									</li>
-								</ul>
-							</div>
-							<div className="absolute start-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform">
-								<span className="loading loading-spinner loading-lg text-primary" />
-							</div>
-						</div>
-						<div className="card sm:max-w-lg my-4 sm:my-0 skeleton skeleton-animated sm:flex-auto">
-							<div className="card-body">
-								<ul>
-									<li>
-										<span className="icon-[tabler--hash] pt-2" />
-										<p className="skeleton skeleton-animated pr-70" />
-									</li>
-									<li>
-										<span className="icon-[tabler--hash] pt-2" />
-										<p className="skeleton skeleton-animated pr-70" />
-									</li>
-									<li>
-										<span className="icon-[tabler--download] pt-2" />
-										<p className="skeleton skeleton-animated pr-70" />
-									</li>
-									<li>
-										<span className="icon-[tabler--user] pt-2" />
-										<p className="skeleton skeleton-animated pr-70" />
-									</li>
-									<li>
-										<span className="icon-[tabler--heart] pt-2" />
-										<p className="skeleton skeleton-animated pr-70" />
-									</li>
-									<li>
-										<span className="icon-[tabler--category] pt-2" />
-										<p className="skeleton skeleton-animated pr-70" />
-									</li>
-									<li>
-										<span className="icon-[tabler--text-caption] pt-2" />
-										<p className="skeleton skeleton-animated pr-70" />
-									</li>
-									<li>
-										<span className="icon-[tabler--link] pt-2" />
-										<p className="skeleton skeleton-animated pr-70" />
-									</li>
-								</ul>
-							</div>
-							<div className="absolute start-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform">
-								<span className="loading loading-spinner loading-lg text-primary" />
-							</div>
-						</div>
-						<div className="card sm:max-w-lg my-4 sm:my-0 skeleton skeleton-animated sm:flex-auto">
-							<div className="card-body">
-								<ul>
-									<li>
-										<span className="icon-[tabler--hash] pt-2" />
-										<p className="skeleton skeleton-animated pr-70" />
-									</li>
-									<li>
-										<span className="icon-[tabler--hash] pt-2" />
-										<p className="skeleton skeleton-animated pr-70" />
-									</li>
-									<li>
-										<span className="icon-[tabler--download] pt-2" />
-										<p className="skeleton skeleton-animated pr-70" />
-									</li>
-									<li>
-										<span className="icon-[tabler--user] pt-2" />
-										<p className="skeleton skeleton-animated pr-70" />
-									</li>
-									<li>
-										<span className="icon-[tabler--heart] pt-2" />
-										<p className="skeleton skeleton-animated pr-70" />
-									</li>
-									<li>
-										<span className="icon-[tabler--category] pt-2" />
-										<p className="skeleton skeleton-animated pr-70" />
-									</li>
-									<li>
-										<span className="icon-[tabler--text-caption] pt-2" />
-										<p className="skeleton skeleton-animated pr-70" />
-									</li>
-									<li>
-										<span className="icon-[tabler--link] pt-2" />
-										<p className="skeleton skeleton-animated pr-70" />
-									</li>
-								</ul>
-							</div>
-							<div className="absolute start-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform">
-								<span className="loading loading-spinner loading-lg text-primary" />
-							</div>
-						</div>
-						<div className="card sm:max-w-lg my-4 sm:my-0 skeleton skeleton-animated sm:flex-auto">
-							<div className="card-body">
-								<ul>
-									<li>
-										<span className="icon-[tabler--hash] pt-2" />
-										<p className="skeleton skeleton-animated pr-70" />
-									</li>
-									<li>
-										<span className="icon-[tabler--hash] pt-2" />
-										<p className="skeleton skeleton-animated pr-70" />
-									</li>
-									<li>
-										<span className="icon-[tabler--download] pt-2" />
-										<p className="skeleton skeleton-animated pr-70" />
-									</li>
-									<li>
-										<span className="icon-[tabler--user] pt-2" />
-										<p className="skeleton skeleton-animated pr-70" />
-									</li>
-									<li>
-										<span className="icon-[tabler--heart] pt-2" />
-										<p className="skeleton skeleton-animated pr-70" />
-									</li>
-									<li>
-										<span className="icon-[tabler--category] pt-2" />
-										<p className="skeleton skeleton-animated pr-70" />
-									</li>
-									<li>
-										<span className="icon-[tabler--text-caption] pt-2" />
-										<p className="skeleton skeleton-animated pr-70" />
-									</li>
-									<li>
-										<span className="icon-[tabler--link] pt-2" />
-										<p className="skeleton skeleton-animated pr-70" />
-									</li>
-								</ul>
-							</div>
-							<div className="absolute start-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform">
-								<span className="loading loading-spinner loading-lg text-primary" />
-							</div>
-						</div>
-						<div className="card sm:max-w-lg my-4 sm:my-0 skeleton skeleton-animated sm:flex-auto">
-							<div className="card-body">
-								<ul>
-									<li>
-										<span className="icon-[tabler--hash] pt-2" />
-										<p className="skeleton skeleton-animated pr-70" />
-									</li>
-									<li>
-										<span className="icon-[tabler--hash] pt-2" />
-										<p className="skeleton skeleton-animated pr-70" />
-									</li>
-									<li>
-										<span className="icon-[tabler--download] pt-2" />
-										<p className="skeleton skeleton-animated pr-70" />
-									</li>
-									<li>
-										<span className="icon-[tabler--user] pt-2" />
-										<p className="skeleton skeleton-animated pr-70" />
-									</li>
-									<li>
-										<span className="icon-[tabler--heart] pt-2" />
-										<p className="skeleton skeleton-animated pr-70" />
-									</li>
-									<li>
-										<span className="icon-[tabler--category] pt-2" />
-										<p className="skeleton skeleton-animated pr-70" />
-									</li>
-									<li>
-										<span className="icon-[tabler--text-caption] pt-2" />
-										<p className="skeleton skeleton-animated pr-70" />
-									</li>
-									<li>
-										<span className="icon-[tabler--link] pt-2" />
-										<p className="skeleton skeleton-animated pr-70" />
-									</li>
-								</ul>
-							</div>
-							<div className="absolute start-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform">
-								<span className="loading loading-spinner loading-lg text-primary" />
-							</div>
-						</div>
-						<div className="card sm:max-w-lg my-4 sm:my-0 skeleton skeleton-animated sm:flex-auto">
-							<div className="card-body">
-								<ul>
-									<li>
-										<span className="icon-[tabler--hash] pt-2" />
-										<p className="skeleton skeleton-animated pr-70" />
-									</li>
-									<li>
-										<span className="icon-[tabler--hash] pt-2" />
-										<p className="skeleton skeleton-animated pr-70" />
-									</li>
-									<li>
-										<span className="icon-[tabler--download] pt-2" />
-										<p className="skeleton skeleton-animated pr-70" />
-									</li>
-									<li>
-										<span className="icon-[tabler--user] pt-2" />
-										<p className="skeleton skeleton-animated pr-70" />
-									</li>
-									<li>
-										<span className="icon-[tabler--heart] pt-2" />
-										<p className="skeleton skeleton-animated pr-70" />
-									</li>
-									<li>
-										<span className="icon-[tabler--category] pt-2" />
-										<p className="skeleton skeleton-animated pr-70" />
-									</li>
-									<li>
-										<span className="icon-[tabler--text-caption] pt-2" />
-										<p className="skeleton skeleton-animated pr-70" />
-									</li>
-									<li>
-										<span className="icon-[tabler--link] pt-2" />
-										<p className="skeleton skeleton-animated pr-70" />
-									</li>
-								</ul>
-							</div>
-							<div className="absolute start-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform">
-								<span className="loading loading-spinner loading-lg text-primary" />
-							</div>
-						</div>
+						<SkeletonCard />
+						<SkeletonCard />
+						<SkeletonCard />
+						<SkeletonCard />
+						<SkeletonCard />
+						<SkeletonCard />
+						<SkeletonCard />
 					</div>
 				)}
 			</div>

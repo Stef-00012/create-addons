@@ -5,7 +5,6 @@ import neoforge from "#/assets/neoforge.png";
 import quilt from "#/assets/quilt.svg";
 import defaultModIcon from "#/assets/defaultModIcon.svg";
 
-import { modloaderNames } from "@/constants/loaders";
 import type { APIModsResponse } from "@/app/api/addons/route";
 import millify from "millify";
 import { Tooltip } from 'react-tooltip'
@@ -25,7 +24,7 @@ interface Props {
     modloaders: APIModsResponse[0]["modloaders"];
 }
 
-export default function Card({
+export default function List({
     icon,
     name,
     version,
@@ -155,7 +154,7 @@ export default function Card({
                                 .join(", ")}
                         </p>
                     </div>
-                    <p className="flex-grow"></p>
+                    <p className="flex-grow" />
                 </div>
             </div>
         </div>

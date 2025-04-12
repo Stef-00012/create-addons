@@ -16,7 +16,7 @@ export const mods = sqliteTable(
 		follows: integer("follows").notNull(),
 		created: text("created").notNull(),
 		modified: text("modified").notNull(),
-		color: integer("color").notNull().default(1825130),
+		color: integer("color").default(1825130).notNull(),
 		license: text("license").notNull(),
 		clientSide: text("client_side").notNull().default("unknown"),
 		serverSide: text("server_side").notNull().default("unknown"),

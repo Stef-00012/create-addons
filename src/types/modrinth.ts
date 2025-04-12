@@ -8,7 +8,7 @@ interface ModrinthSearchMod {
 	project_type: "mod" | "modpack" | "resourcepack" | "shader";
 	downloads: number;
 	icon_url: string;
-	color: number;
+	color: number | null;
 	thread_id: string;
 	monetization_status: "monetized" | "demonetized" | "force-demonetized";
 	author: string;
