@@ -149,7 +149,7 @@ export default function Home() {
 							<option value="neoforge">NeoForge</option>
 							<option value="quilt">Quilt</option>
 						</select>
-						<label className="select-floating-label rounded-lg" htmlFor="selectFloating">
+						<label className="select-floating-label rounded-2xl px-2" htmlFor="selectFloating">
 							Filter by modloader
 						</label>
 					</div>
@@ -171,7 +171,7 @@ export default function Home() {
 									</option>
 								))}
 						</select>
-						<label className="select-floating-label rounded-lg" htmlFor="selectFloating">
+						<label className="select-floating-label rounded-2xl px-2" htmlFor="selectFloating">
 							Filter by version
 						</label>
 					</div>
@@ -225,11 +225,52 @@ export default function Home() {
 									))}
 							</>
 						) : (
-							<p>No Mods found</p>
+							<p className="text-center mx-auto text-4xl my-6 flex items-center"><span className="icon-[tabler--alert-triangle-filled] me-2 mt-1 text-error" />Sorry! No results were found...</p>
 						)}
 					</>
 				) : (
 					<div className="py-2 my-2 sm:flex sm:flex-row sm:flex-wrap sm:gap-4">
+						<div className="card sm:max-w-lg my-4 sm:my-0 skeleton skeleton-animated sm:flex-auto">
+							<div className="card-body">
+								<ul>
+									<li>
+										<span className="icon-[tabler--hash] pt-2" />
+										<p className="skeleton skeleton-animated pr-70" />
+									</li>
+									<li>
+										<span className="icon-[tabler--hash] pt-2" />
+										<p className="skeleton skeleton-animated pr-70" />
+									</li>
+									<li>
+										<span className="icon-[tabler--download] pt-2" />
+										<p className="skeleton skeleton-animated pr-70" />
+									</li>
+									<li>
+										<span className="icon-[tabler--user] pt-2" />
+										<p className="skeleton skeleton-animated pr-70" />
+									</li>
+									<li>
+										<span className="icon-[tabler--heart] pt-2" />
+										<p className="skeleton skeleton-animated pr-70" />
+									</li>
+									<li>
+										<span className="icon-[tabler--category] pt-2" />
+										<p className="skeleton skeleton-animated pr-70" />
+									</li>
+									<li>
+										<span className="icon-[tabler--text-caption] pt-2" />
+										<p className="skeleton skeleton-animated pr-70" />
+									</li>
+									<li>
+										<span className="icon-[tabler--link] pt-2" />
+										<p className="skeleton skeleton-animated pr-70" />
+									</li>
+								</ul>
+							</div>
+							<div className="absolute start-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform">
+								<span className="loading loading-spinner loading-lg text-primary" />
+							</div>
+						</div>
 						<div className="card sm:max-w-lg my-4 sm:my-0 skeleton skeleton-animated sm:flex-auto">
 							<div className="card-body">
 								<ul>

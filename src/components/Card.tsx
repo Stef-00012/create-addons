@@ -92,7 +92,7 @@ export default function Card({
 				<ul>
 					<li>
 						<span className="icon-[tabler--brand-minecraft] pt-2" />{" "}
-						Modloader(s):
+						Modloaders:
 						{` ${modloaders
 							.map((modloader) => modloaderNames[modloader])
 							.join(", ")}`}
