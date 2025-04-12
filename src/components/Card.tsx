@@ -40,7 +40,7 @@ export default function Card({
 }: Props) {
 	return (
 		<div className="card sm:max-w-lg my-4 sm:my-0 sm:flex-auto">
-			<div className="card-body">
+			<div className="card-body sm:flex-grow">
 				<h5 className="card-title mb-0">
 					<Image
 						src={icon === "" ? defaultModIcon : icon}
@@ -140,10 +140,12 @@ export default function Card({
 							: description}
 					</li>
 				</ul>
-				<a href={`https://modrinth.com/mod/${slug}`} className="btn btn-outline btn-primary flex items-center">
-					<span className="icon-[tabler--link] mt-1 me-1" />
-					Modrinth
-				</a>
+				<div className="card-actions mt-auto pt-2 -mb-3">
+					<a href={`https://modrinth.com/mod/${slug}`} className="btn btn-outline btn-primary flex items-center">
+						<span className="icon-[tabler--link] mt-1 me-1" />
+						Modrinth
+					</a>
+				</div>
 			</div>
 		</div>
 	);
