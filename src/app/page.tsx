@@ -45,8 +45,6 @@ export default function Home() {
 		defaultDisplayCardAmount,
 	);
 
-	const [isLoadingMore, setIsLoadingMore] = useState(false);
-
 	useEffect(() => {
 		const fetchMods = async () => {
 			const res = await axios.get("/api/addons");
@@ -62,7 +60,7 @@ export default function Home() {
 
 	useEffect(() => {
 		const fuse = new Fuse(mods, {
-			keys: ["name", "description", "slug"],
+			keys: ["name", "description", "slug", "categories"],
 			threshold: 0.4,
 		});
 
@@ -80,14 +78,11 @@ export default function Home() {
 
 	useEffect(() => {
 		const handleScroll = () => {
-			if (isLoadingMore) return;
-
 			const scrollPosition = window.scrollY + window.innerHeight;
 			const scrollThreshold =
 				(addCardScrollPercentage / 100) * document.body.scrollHeight;
 
 			if (scrollPosition >= scrollThreshold) {
-				setIsLoadingMore(true);
 				setDisplayCardAmount((prev) => prev + addCardAmount);
 			}
 		};
@@ -97,18 +92,7 @@ export default function Home() {
 		return () => {
 			window.removeEventListener("scroll", handleScroll);
 		};
-	}, [isLoadingMore]);
-
-	useEffect(() => {
-		if (isLoadingMore) {
-			// Simulate loading delay to avoid too many re-renders
-			const timeout = setTimeout(() => {
-				setIsLoadingMore(false);
-			}, 500);
-
-			return () => clearTimeout(timeout);
-		}
-	}, [isLoadingMore]);
+	}, []);
 
 	function handleLoaderSelect(data: ChangeEvent<HTMLSelectElement>) {
 		const loader = data.target.value as

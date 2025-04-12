@@ -7,6 +7,7 @@ import defaultModIcon from "#/assets/defaultModIcon.svg";
 
 import { modloaderNames } from "@/constants/loaders";
 import type { APIModsResponse } from "@/app/api/addons/route";
+import millify from "millify";
 
 interface Props {
 	platform: APIModsResponse[0]["platform"];
@@ -102,7 +103,9 @@ export default function Card({
 					</li>
 					<li>
 						<span className="icon-[tabler--download] pt-2" /> Downloads:{" "}
-						{downloads}
+						{millify(downloads, {
+							precision: 2,
+						})}
 					</li>
 					<li>
 						<span className="icon-[tabler--user] pt-2" /> Creator:{" "}
@@ -116,7 +119,10 @@ export default function Card({
 						</a>
 					</li>
 					<li>
-						<span className="icon-[tabler--heart] pt-2" /> Followers: {follows}
+						<span className="icon-[tabler--heart] pt-2" /> Followers:{" "}
+						{millify(follows, {
+							precision: 2,
+						})}
 					</li>
 					<li>
 						<span className="icon-[tabler--category] pt-2" /> Categories:{" "}
