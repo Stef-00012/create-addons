@@ -197,7 +197,11 @@ export default function Home() {
 						</label> */}
 
 						<Select
-							defaultValue={[
+							defaultValue={{
+								value: "all",
+								label: "All",
+							}}
+							options={[
 								{
 									value: "all",
 									label: "All",
@@ -207,7 +211,6 @@ export default function Home() {
 									label: version,
 								}))
 							]}
-							options={modloaderOptions}
 							unstyled
 							classNames={{
 								control: ({ isFocused }) => "select",
