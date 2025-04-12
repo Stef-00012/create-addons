@@ -134,19 +134,16 @@ export default function Card({
 							.join(", ")}
 					</li>
 					<li>
-						<span className="icon-[tabler--link] pt-2" /> Modrinth Link:{" "}
-						<a
-							href={`https://modrinth.com/mod/${slug}`}
-							className="text-primary hover:underline"
-						>{`modrinth.com/mod/${slug}`}</a>
-					</li>
-					<li>
 						<span className="icon-[tabler--text-caption] pt-2" /> Description:{" "}
 						{description.length > 300
 							? `${description.substring(0, 300)}...`
 							: description}
 					</li>
 				</ul>
+				<a href={`https://modrinth.com/mod/${slug}`} className="btn btn-outline btn-primary flex items-center">
+					<span className="icon-[tabler--link] mt-1 me-1" />
+					Modrinth
+				</a>
 			</div>
 		</div>
 	);
