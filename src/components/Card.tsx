@@ -113,23 +113,23 @@ export default function Card({
 				<ul>
 					<li>
 						<span className="icon-[tabler--brand-minecraft] pt-2" />{" "}
-						Modloaders:
+						<strong>Modloaders:</strong>
 						{` ${modloaders
 							.map((modloader) => modloaderNames[modloader])
 							.join(", ")}`}
 					</li>
 					<li>
-						<span className="icon-[tabler--hash] pt-2" /> Versions:{" "}
+						<span className="icon-[tabler--hash] pt-2" /> <strong>Versions:</strong>{" "}
 						{versions.join(", ")}
 					</li>
 					<li>
-						<span className="icon-[tabler--download] pt-2" /> Downloads:{" "}
+						<span className="icon-[tabler--download] pt-2" /> <strong>Downloads:</strong>{" "}
 						{millify(downloads, {
 							precision: 2,
 						})}
 					</li>
 					<li>
-						<span className="icon-[tabler--user] pt-2" /> Creator:{" "}
+						<span className="icon-[tabler--user] pt-2" /> <strong>Creator:</strong>{" "}
 						<a
 							className="text-primary hover:underline"
 							href={`https://modrinth.com/user/${author}`}
@@ -140,13 +140,13 @@ export default function Card({
 						</a>
 					</li>
 					<li>
-						<span className="icon-[tabler--heart] pt-2" /> Followers:{" "}
+						<span className="icon-[tabler--heart] pt-2" /> <strong>Followers:</strong>{" "}
 						{millify(follows, {
 							precision: 2,
 						})}
 					</li>
 					<li>
-						<span className="icon-[tabler--category] pt-2" /> Categories:{" "}
+						<span className="icon-[tabler--category] pt-2" /> <strong>Categories:</strong>{" "}
 						{categories
 							.map(
 								(category) =>
@@ -155,7 +155,7 @@ export default function Card({
 							.join(", ")}
 					</li>
 					<li>
-						<span className="icon-[tabler--text-caption] pt-2" /> Description:{" "}
+						<span className="icon-[tabler--text-caption] pt-2" /> <strong>Description:</strong>{" "}
 						{description.length > 300
 							? `${description.substring(0, 300)}...`
 							: description}
