@@ -163,7 +163,7 @@ export default function Card({
 				</ul>
 				<div className="card-actions mt-auto pt-2 -mb-3">
 					<a href={`https://modrinth.com/mod/${slug}`} className="btn btn-outline btn-primary flex items-center">
-						<span className="icon-[tabler--link] mt-1 me-1" />
+						<span className="icon-[tabler--link] me-1" />
 						Modrinth
 					</a>
 				</div>
