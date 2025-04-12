@@ -35,6 +35,12 @@ async function handleFetching() {
 				versions: JSON.stringify(mod.versions),
 				categories: JSON.stringify(mod.categories),
 				follows: mod.follows,
+				created: mod.date_created,
+				modified: mod.date_modified,
+				color: mod.color,
+				license: mod.license,
+				clientSide: mod.client_side,
+				serverSide: mod.server_side,
 			})
 			.onConflictDoUpdate({
 				target: [modsSchema.slug, modsSchema.platform],
@@ -48,6 +54,12 @@ async function handleFetching() {
 					categories: JSON.stringify(mod.categories),
 					follows: mod.follows,
 					author: mod.author,
+					created: mod.date_created,
+					modified: mod.date_modified,
+					color: mod.color,
+					license: mod.license,
+					clientSide: mod.client_side,
+					serverSide: mod.server_side,
 				},
 			});
 	}

@@ -13,6 +13,12 @@ export type APIModsResponse = {
 	versions: string[];
 	categories: string[];
 	follows: number;
+	created: string;
+	modified: string;
+	color: number;
+	license: string;
+	clientSide: string;
+	serverSide: string;
 }[];
 
 export async function GET(_req: Request) {

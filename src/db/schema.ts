@@ -14,6 +14,12 @@ export const mods = sqliteTable(
 		versions: text("versions", { mode: "json" }).notNull(),
 		categories: text("categories", { mode: "json" }).notNull(),
 		follows: integer("follows").notNull(),
+		created: text("created").notNull(),
+		modified: text("modified").notNull(),
+		color: integer("color").notNull().default(1825130),
+		license: text("license").notNull(),
+		clientSide: text("client_side").notNull().default("unknown"),
+		serverSide: text("server_side").notNull().default("unknown"),
 	},
 	(table) => [unique().on(table.slug, table.platform)],
 );

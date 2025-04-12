@@ -4,8 +4,8 @@ import axios from "axios";
 import Fuse from "fuse.js";
 import type { APIModsResponse } from "./api/addons/route";
 import Card from "@/components/Card";
-import Select from 'react-select';
-import { useSearchParams } from 'next/navigation'
+import Select from "react-select";
+import { useSearchParams } from "next/navigation";
 
 const defaultCardAmount = 9;
 const defaultAddCardAmont = 9;
@@ -13,17 +13,17 @@ const defaultScrollPercentage = 60;
 
 const defaultDisplayCardAmount = process.env.NEXT_PUBLIC_DEFAULT_CARD_AMOUNT
 	? Math.abs(Number.parseInt(process.env.NEXT_PUBLIC_DEFAULT_CARD_AMOUNT)) ||
-	defaultCardAmount
+		defaultCardAmount
 	: defaultCardAmount;
 
 const addCardAmount = process.env.NEXT_PUBLIC_ADD_CARD_AMOUNT
 	? Math.abs(Number.parseInt(process.env.NEXT_PUBLIC_ADD_CARD_AMOUNT)) ||
-	defaultAddCardAmont
+		defaultAddCardAmont
 	: defaultAddCardAmont;
 
 let addCardScrollPercentage = process.env.NEXT_PUBLIC_ADD_CARD_SCROLL_PERCENTAGE
 	? Number.parseInt(process.env.NEXT_PUBLIC_ADD_CARD_SCROLL_PERCENTAGE) ||
-	defaultScrollPercentage
+		defaultScrollPercentage
 	: defaultScrollPercentage;
 
 if (addCardScrollPercentage > 100) addCardScrollPercentage = 100;
@@ -45,14 +45,18 @@ const sortByOptions = [
 	{ value: "lastUpdated", label: "Last Updated" },
 ];
 
+type SortByType = "name" | "downloads" | "followers" | "lastUpdated";
+
 export default function Home() {
-	const searchParams = useSearchParams()
+	const searchParams = useSearchParams();
 
 	const [mods, setMods] = useState<APIModsResponse>([]);
 	const [filteredMods, setFilteredMods] = useState<APIModsResponse>([]);
 	const [loader, setLoader] = useState<
 		APIModsResponse[0]["modloaders"][0] | "all"
 	>("all");
+	const [sortBy, setSortBy] = useState<SortByType>("name")
+	const [compactMode, setCompactMode] = useState(false);
 	const [version, setVersion] = useState<
 		APIModsResponse[0]["versions"][0] | "all"
 	>("all");
@@ -78,11 +82,15 @@ export default function Home() {
 	useEffect(() => {
 		if (mods.length === 0) return;
 
-		const versions = mods.find(mod => mod.slug === "create")?.versions || [];
-		const modloaders = modloaderOptions.map(modloader => modloader.value);
+		const versions = mods.find((mod) => mod.slug === "create")?.versions || [];
+		const modloaders = modloaderOptions.map((modloader) => modloader.value);
 
-		const version = searchParams.get("version") as APIModsResponse[0]["versions"][0] | "all";
-		const loader = searchParams.get("modloader") as APIModsResponse[0]["modloaders"][0] | "all";
+		const version = searchParams.get("version") as
+			| APIModsResponse[0]["versions"][0]
+			| "all";
+		const loader = searchParams.get("modloader") as
+			| APIModsResponse[0]["modloaders"][0]
+			| "all";
 		const search = searchParams.get("search") as string;
 
 		if (versions.includes(version)) {
@@ -132,7 +140,9 @@ export default function Home() {
 		};
 	}, []);
 
-	function handleLoaderSelect(newValue: { label: string; value: string } | null) {
+	function handleLoaderSelect(
+		newValue: { label: string; value: string } | null,
+	) {
 		const loader = newValue?.value as
 			| APIModsResponse[0]["modloaders"][0]
 			| "all";
@@ -141,7 +151,9 @@ export default function Home() {
 		setDisplayCardAmount(defaultDisplayCardAmount);
 	}
 
-	function handleVersionSelect(newValue: { label: string; value: string } | null) {
+	function handleVersionSelect(
+		newValue: { label: string; value: string } | null,
+	) {
 		const version = newValue?.value;
 
 		setVersion(version || "all");
@@ -155,10 +167,16 @@ export default function Home() {
 		setDisplayCardAmount(defaultDisplayCardAmount);
 	}
 
+	function handleCompactMode() {
+		setCompactMode((prev) => !prev);
+	}
+
 	return (
 		<div>
 			{/* // <!-- Navbar --> */}
-			<nav className="navbar rounded-box shadow-base-300/20 shadow-sm mt-4">Create Addons Index</nav>
+			<nav className="navbar rounded-box shadow-base-300/20 shadow-sm mt-4">
+				Create Addons Index
+			</nav>
 			<br />
 
 			{/* <!-- Search & Filter & Sort & View type --> */}
@@ -166,11 +184,16 @@ export default function Home() {
 				<div className="md:flex md:justify-start">
 					{/* <!-- Grid/list view toggle --> */}
 					<div className="my-6 md:my-0 mr-2">
-						<button className="btn border-base-content/50 bg-accent-content"><span className="icon-[tabler--grid] text-base-content"></span></button>
+						<button type="button" className="btn border-base-content/50 bg-accent-content" onClick={handleCompactMode}>
+							<span className={`${compactMode ? "icon-[tabler--list]" : "icon-[tabler--grid]"} text-base-content`} />
+						</button>
 					</div>
 					{/* <!-- Filter by modloader --> */}
 					<div className="select-floating w-96 my-6 md:my-0 mr-4">
-						<label className="select-floating-label rounded-2xl px-2 z-10" htmlFor="selectFloating">
+						<label
+							className="select-floating-label rounded-2xl px-2 z-10"
+							htmlFor="selectFloating"
+						>
 							Filter by modloader
 						</label>
 
@@ -178,7 +201,10 @@ export default function Home() {
 							id="selectFloating"
 							defaultValue={modloaderOptions[0]}
 							options={modloaderOptions}
-							value={modloaderOptions.find((option) => option.value === loader) || null}
+							value={
+								modloaderOptions.find((option) => option.value === loader) ||
+								null
+							}
 							unstyled
 							isSearchable={false}
 							isLoading={mods.length === 0}
@@ -189,8 +215,10 @@ export default function Home() {
 							}}
 							classNames={{
 								control: () => "select",
-								option: ({ isSelected }) => `rounded-2xl my-1 p-2 ${isSelected ? "bg-base-200" : "bg-base-100 hover:bg-base-200"}`,
-								menuList: () => "rounded-2xl bg-base-100 py-4 shadow-lg px-2 mt-1",
+								option: ({ isSelected }) =>
+									`rounded-2xl my-1 p-2 ${isSelected ? "bg-base-200" : "bg-base-100 hover:bg-base-200"}`,
+								menuList: () =>
+									"rounded-2xl bg-base-100 py-4 shadow-lg px-2 mt-1",
 							}}
 							onChange={handleLoaderSelect}
 						/>
@@ -198,7 +226,10 @@ export default function Home() {
 
 					{/* <!-- Filter by version --> */}
 					<div className="select-floating w-96 my-6 md:my-0">
-						<label className="select-floating-label rounded-2xl px-2 z-10" htmlFor="selectFloating">
+						<label
+							className="select-floating-label rounded-2xl px-2 z-10"
+							htmlFor="selectFloating"
+						>
 							Filter by version
 						</label>
 
@@ -221,10 +252,12 @@ export default function Home() {
 									value: "all",
 									label: "All",
 								},
-								...(mods.find((mod) => mod.slug === "create")?.versions || []).map((version) => ({
+								...(
+									mods.find((mod) => mod.slug === "create")?.versions || []
+								).map((version) => ({
 									value: version,
 									label: version,
-								}))
+								})),
 							]}
 							components={{
 								DropdownIndicator: () => null,
@@ -232,15 +265,20 @@ export default function Home() {
 							}}
 							classNames={{
 								control: () => "select",
-								option: ({ isSelected }) => `rounded-2xl my-1 p-2 ${isSelected ? "bg-base-200" : "bg-base-100 hover:bg-base-200"}`,
-								menuList: () => "rounded-2xl bg-base-100 py-4 shadow-lg px-2 mt-1",
+								option: ({ isSelected }) =>
+									`rounded-2xl my-1 p-2 ${isSelected ? "bg-base-200" : "bg-base-100 hover:bg-base-200"}`,
+								menuList: () =>
+									"rounded-2xl bg-base-100 py-4 shadow-lg px-2 mt-1",
 							}}
 							onChange={handleVersionSelect}
 						/>
 					</div>
 					{/* <!-- Sort by --> */}
 					<div className="select-floating w-96 my-6 md:my-0 md:ml-4">
-						<label className="select-floating-label rounded-2xl px-2 z-10" htmlFor="selectFloating">
+						<label
+							className="select-floating-label rounded-2xl px-2 z-10"
+							htmlFor="selectFloating"
+						>
 							Sort by
 						</label>
 
@@ -258,8 +296,10 @@ export default function Home() {
 							}}
 							classNames={{
 								control: () => "select",
-								option: ({ isSelected }) => `rounded-2xl my-1 p-2 ${isSelected ? "bg-base-200" : "bg-base-100 hover:bg-base-200"}`,
-								menuList: () => "rounded-2xl bg-base-100 py-4 shadow-lg px-2 mt-1",
+								option: ({ isSelected }) =>
+									`rounded-2xl my-1 p-2 ${isSelected ? "bg-base-200" : "bg-base-100 hover:bg-base-200"}`,
+								menuList: () =>
+									"rounded-2xl bg-base-100 py-4 shadow-lg px-2 mt-1",
 							}}
 							onChange={handleLoaderSelect}
 						/>
@@ -296,6 +336,24 @@ export default function Home() {
 											(version === "all" || mod.versions.includes(version))
 										);
 									})
+									.sort((a, b) => {
+										if (sortBy === "downloads") {
+											return b.downloads - a.downloads;
+										}
+										
+										if (sortBy === "followers") {
+											return b.follows - a.follows;
+										}
+										
+										if (sortBy === "lastUpdated") {
+											return (
+												new Date(b.modified).getTime() -
+												new Date(a.modified).getTime()
+											);
+										} 
+										
+										return a.name.localeCompare(b.name);
+									})
 									.slice(0, displayCardAmount)
 									.map((mod) => (
 										<Card
@@ -316,7 +374,10 @@ export default function Home() {
 									))}
 							</>
 						) : (
-							<p className="text-center mx-auto text-4xl my-6 flex items-center"><span className="icon-[tabler--alert-triangle-filled] me-2 mt-1 text-error" />Sorry! No results were found...</p>
+							<p className="text-center mx-auto text-4xl my-6 flex items-center">
+								<span className="icon-[tabler--alert-triangle-filled] me-2 mt-1 text-error" />
+								Sorry! No results were found...
+							</p>
 						)}
 					</>
 				) : (
@@ -625,7 +686,8 @@ export default function Home() {
 							<a href="https://orangc.net" className="link2 text-[#fab387]">
 								orangc
 							</a>
-							. This project is not affiliated with or endorsed by Mojang® or the Create mod.
+							. This project is not affiliated with or endorsed by Mojang® or
+							the Create mod.
 						</p>
 					</aside>
 					<div className="flex gap-4 h-5">
