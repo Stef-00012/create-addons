@@ -88,11 +88,10 @@ export default function Card({
 				</h5>
 				<ul>
 					<li>
-						<span className="icon-[tabler--hash] pt-2" /> Version: {version} (
-						{modloaders
+						<span className="icon-[tabler--brand-minecraft] pt-2" /> Modloader(s):
+						{" " + modloaders
 							.map((modloader) => modloaderNames[modloader])
 							.join(", ")}
-						)
 					</li>
 					<li>
 						<span className="icon-[tabler--hash] pt-2" /> Versions:{" "}
@@ -105,7 +104,7 @@ export default function Card({
 					<li>
 						<span className="icon-[tabler--user] pt-2" /> Creator:{" "}
 						<a
-							className="underline"
+							className="link-primary link-animated"
 							href={`https://modrinth.com/user/${author}`}
 							target="_blank"
 							rel="noreferrer"
@@ -121,14 +120,14 @@ export default function Card({
 						{categories.join(", ")}
 					</li>
 					<li>
+						<span className="icon-[tabler--link] pt-2" /> Modrinth Link:{" "}
+						<a href={"https://modrinth.com/mod/" + slug} className="link-primary link-animated">{"modrinth.com/mod/" + slug}</a>
+					</li>
+					<li>
 						<span className="icon-[tabler--text-caption] pt-2" /> Description:{" "}
 						{description.length > 300
 							? `${description.substring(0, 300)}...`
 							: description}
-					</li>
-					<li>
-						<span className="icon-[tabler--link] pt-2" /> Modrinth Link:{" "}
-						<a href={"https://modrinth.com/mod/" + slug} className="link-primary link-animated">{"modrinth.com/mod/" + slug}</a>
 					</li>
 				</ul>
 			</div>
