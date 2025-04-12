@@ -79,7 +79,7 @@ export default function Card({
 					{modloaders.includes("quilt") && (
 						<Image
 							src={quilt}
-							alt="qulit logo"
+							alt="quilt logo"
 							className="mask mask-squircle size-8 inline-block mx-1"
 							width={32}
 							height={32}
@@ -88,7 +88,7 @@ export default function Card({
 				</h5>
 				<ul>
 					<li>
-						<span className="icon-[tabler--hash] pt-2" /> Version: {version}(
+						<span className="icon-[tabler--hash] pt-2" /> Version: {version} (
 						{modloaders
 							.map((modloader) => modloaderNames[modloader])
 							.join(", ")}
