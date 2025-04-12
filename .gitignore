@@ -47,3 +47,6 @@ default.nix
 # db
 /data/data.db
 /drizzle
+
+# vscode
+/.vscode
