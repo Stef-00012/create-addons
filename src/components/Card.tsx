@@ -38,22 +38,22 @@ export default function Card({
 	modloaders,
 }: Props) {
 	return (
-		<div className="card sm:max-w-lg my-2">
+		<div className="card sm:max-w-lg my-4 sm:my-0 sm:flex-auto">
 			<div className="card-body">
 				<h5 className="card-title mb-0">
 					<Image
 						src={icon === "" ? defaultModIcon : icon}
-						className="size-12 inline-block rounded-2xl"
+						className="size-12 inline-block rounded-2xl mr-2"
 						alt="mod logo"
 						width={20}
 						height={20}
 					/>
-					{name}
+					<a href={"https://modrinth.com/mod/" + slug} className="link-primary">{name}</a>
 					{modloaders.includes("fabric") && (
 						<Image
 							src={fabric}
 							alt="fabric logo"
-							className="mask mask-squircle size-8 inline-block"
+							className="mask mask-squircle size-8 inline-block mx-1"
 							width={32}
 							height={32}
 						/>
@@ -62,7 +62,7 @@ export default function Card({
 						<Image
 							src={forge}
 							alt="forge logo"
-							className="mask mask-squircle size-8 inline-block"
+							className="mask mask-squircle size-8 inline-block mx-1"
 							width={32}
 							height={32}
 						/>
@@ -71,7 +71,7 @@ export default function Card({
 						<Image
 							src={neoforge}
 							alt="neoforge logo"
-							className="mask mask-squircle size-8 inline-block"
+							className="mask mask-squircle size-8 inline-block mx-1"
 							width={32}
 							height={32}
 						/>
@@ -80,7 +80,7 @@ export default function Card({
 						<Image
 							src={quilt}
 							alt="qulit logo"
-							className="mask mask-squircle size-8 inline-block"
+							className="mask mask-squircle size-8 inline-block mx-1"
 							width={32}
 							height={32}
 						/>
@@ -125,6 +125,10 @@ export default function Card({
 						{description.length > 300
 							? `${description.substring(0, 300)}...`
 							: description}
+					</li>
+					<li>
+						<span className="icon-[tabler--link] pt-2" /> Modrinth Link:{" "}
+						<a href={"https://modrinth.com/mod/" + slug} className="link-primary link-animated">{"modrinth.com/mod/" + slug}</a>
 					</li>
 				</ul>
 			</div>

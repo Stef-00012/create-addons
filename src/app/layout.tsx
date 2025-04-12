@@ -36,7 +36,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="bg-rbase">
       <body
-        className={`antialiased justify-center mx-auto max-w-7xl p-3 text-lg bg-rbase text-rtext`}
+        className={`antialiased justify-center mx-auto max-w-7xl p-3 text-lg bg-rbase text-rtext flex flex-col min-h-screen`}
       >
         {children}
 
