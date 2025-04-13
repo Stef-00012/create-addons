@@ -1,9 +1,10 @@
 import axios, {
+	type AxiosRequestConfig,
 	type AxiosResponse,
 	type AxiosError,
-	type AxiosRequestConfig,
 } from "axios";
 import { promisify } from "node:util";
+
 const sleep = promisify(setTimeout);
 
 export async function ratelimitFetch(

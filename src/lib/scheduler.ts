@@ -1,7 +1,7 @@
 import getModrinthMods from "@/functions/getModrinthMods";
+import { mods as modsSchema } from "@/db/schema";
 import schedule from "node-schedule";
 import db from "@/db/db";
-import { mods as modsSchema } from "@/db/schema";
 
 export const startScheduler = () => {
 	console.log("Started fetching the mods from Modrinth");

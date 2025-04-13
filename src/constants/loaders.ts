@@ -1,9 +1,9 @@
 export const modloaderNames = {
-	quilt: "Quilt",
-	fabric: "Fabric",
-	forge: "Forge",
-	neoforge: "NeoForge",
-	liteloader: "LiteLoader",
 	modloader: "Risugami's ModLoader",
+	liteloader: "LiteLoader",
+	neoforge: "NeoForge",
+	fabric: "Fabric",
+	quilt: "Quilt",
+	forge: "Forge",
 	rift: "Rift",
 };

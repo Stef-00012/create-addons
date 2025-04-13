@@ -1,13 +1,16 @@
-import Image from "next/image";
+import defaultModIcon from "#/assets/defaultModIcon.svg";
+import neoforge from "#/assets/neoforge.png";
 import fabric from "#/assets/fabric.png";
 import forge from "#/assets/forge.ico";
-import neoforge from "#/assets/neoforge.png";
 import quilt from "#/assets/quilt.svg";
-import defaultModIcon from "#/assets/defaultModIcon.svg";
+import Image from "next/image";
+
+import millify from "millify";
 
 import { modloaderNames } from "@/constants/loaders";
+
 import type { APIModsResponse } from "@/app/api/addons/route";
-import millify from "millify";
+
 import { Tooltip } from "react-tooltip";
 
 interface Props {

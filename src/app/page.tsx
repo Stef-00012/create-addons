@@ -1,15 +1,17 @@
 "use client";
+
 import { type ChangeEvent, Fragment, useEffect, useState } from "react";
-import axios from "axios";
-import Fuse from "fuse.js";
-import type { APIModsResponse } from "./api/addons/route";
-import Card from "@/components/Card";
 import Select from "react-select";
-import { useSearchParams } from "next/navigation";
+import Fuse from "fuse.js";
+import axios from "axios";
+
+import type { APIModsResponse } from "@/app/api/addons/route";
+
+import { useSearchParams, useRouter } from "next/navigation";
 import SkeletonCard from "@/components/SkeletonCard";
-import List from "@/components/List";
-import { useRouter } from "next/navigation";
 import SkeletonList from "@/components/SkeletonList";
+import Card from "@/components/Card";
+import List from "@/components/List";
 
 const defaultCardAmount = 9;
 const defaultAddCardAmont = 9;
@@ -424,23 +426,15 @@ export default function Home() {
 					>
 						{compactMode ? (
 							<>
-								<SkeletonList />
-								<SkeletonList />
-								<SkeletonList />
-								<SkeletonList />
-								<SkeletonList />
-								<SkeletonList />
-								<SkeletonList />
+								{[...Array(7).keys()].map((i) => (
+									<SkeletonList key={i} />
+								))}
 							</>
 						) : (
 							<>
-								<SkeletonCard />
-								<SkeletonCard />
-								<SkeletonCard />
-								<SkeletonCard />
-								<SkeletonCard />
-								<SkeletonCard />
-								<SkeletonCard />
+								{[...Array(7).keys()].map((i) => (
+									<SkeletonCard key={i} />
+								))}
 							</>
 						)}
 					</div>
