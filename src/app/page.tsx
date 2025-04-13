@@ -244,7 +244,7 @@ export default function Home() {
 								IndicatorSeparator: () => null,
 							}}
 							classNames={{
-								control: () => "select",
+								control: ({ isDisabled }) => `select ${isDisabled ? "bg-base-100/50 border-none text-base-content/50" : ""}`,
 								option: ({ isSelected }) =>
 									`rounded-2xl my-1 p-2 ${isSelected ? "bg-base-200" : "bg-base-100 hover:bg-base-200"}`,
 								menuList: () =>
@@ -294,7 +294,7 @@ export default function Home() {
 								IndicatorSeparator: () => null,
 							}}
 							classNames={{
-								control: () => "select",
+								control: ({ isDisabled }) => `select ${isDisabled ? "bg-base-100/50 border-none text-base-content/50" : ""}`,
 								option: ({ isSelected }) =>
 									`rounded-2xl my-1 p-2 ${isSelected ? "bg-base-200" : "bg-base-100 hover:bg-base-200"}`,
 								menuList: () =>
@@ -326,7 +326,7 @@ export default function Home() {
 								IndicatorSeparator: () => null,
 							}}
 							classNames={{
-								control: () => "select",
+								control: ({ isDisabled }) => `select ${isDisabled ? "bg-base-100/50 border-none text-base-content/50" : ""}`,
 								option: ({ isSelected }) =>
 									`rounded-2xl my-1 p-2 ${isSelected ? "bg-base-200" : "bg-base-100 hover:bg-base-200"}`,
 								menuList: () =>
