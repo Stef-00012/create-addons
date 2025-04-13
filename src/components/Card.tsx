@@ -8,7 +8,7 @@ import defaultModIcon from "#/assets/defaultModIcon.svg";
 import { modloaderNames } from "@/constants/loaders";
 import type { APIModsResponse } from "@/app/api/addons/route";
 import millify from "millify";
-import { Tooltip } from 'react-tooltip'
+import { Tooltip } from "react-tooltip";
 
 interface Props {
 	platform: APIModsResponse[0]["platform"];
@@ -50,7 +50,12 @@ export default function Card({
 						width={20}
 						height={20}
 					/>
-					<a href={`https://modrinth.com/mod/${slug}`} className="link-primary">
+					<a
+						href={`https://modrinth.com/mod/${slug}`}
+						className="link-primary"
+						target="_blank"
+						rel="noreferrer"
+					>
 						{name}
 					</a>
 					{modloaders.includes("fabric") && (
@@ -64,7 +69,11 @@ export default function Card({
 								data-tooltip-content="Fabric"
 								data-tooltip-id="fabric-tooltip"
 							/>
-							<Tooltip id="fabric-tooltip" disableStyleInjection={true} className="rounded-2xl bg-base-200 px-2 p-1 text-lg shadow" />
+							<Tooltip
+								id="fabric-tooltip"
+								disableStyleInjection={true}
+								className="rounded-2xl bg-base-200 px-2 p-1 text-lg shadow"
+							/>
 						</>
 					)}
 					{modloaders.includes("forge") && (
@@ -78,7 +87,11 @@ export default function Card({
 								data-tooltip-content="Forge"
 								data-tooltip-id="forge-tooltip"
 							/>
-							<Tooltip id="forge-tooltip" disableStyleInjection={true} className="rounded-2xl bg-base-200 px-2 p-1 text-lg shadow" />
+							<Tooltip
+								id="forge-tooltip"
+								disableStyleInjection={true}
+								className="rounded-2xl bg-base-200 px-2 p-1 text-lg shadow"
+							/>
 						</>
 					)}
 					{modloaders.includes("neoforge") && (
@@ -92,7 +105,11 @@ export default function Card({
 								data-tooltip-content="NeoForge"
 								data-tooltip-id="neoforge-tooltip"
 							/>
-							<Tooltip id="neoforge-tooltip" disableStyleInjection={true} className="rounded-2xl bg-base-200 px-2 p-1 text-lg shadow" />
+							<Tooltip
+								id="neoforge-tooltip"
+								disableStyleInjection={true}
+								className="rounded-2xl bg-base-200 px-2 p-1 text-lg shadow"
+							/>
 						</>
 					)}
 					{modloaders.includes("quilt") && (
@@ -106,7 +123,11 @@ export default function Card({
 								data-tooltip-content="Quilt"
 								data-tooltip-id="quilt-tooltip"
 							/>
-							<Tooltip id="quilt-tooltip" disableStyleInjection={true} className="rounded-2xl bg-base-200 px-2 p-1 text-lg shadow" />
+							<Tooltip
+								id="quilt-tooltip"
+								disableStyleInjection={true}
+								className="rounded-2xl bg-base-200 px-2 p-1 text-lg shadow"
+							/>
 						</>
 					)}
 				</h5>
@@ -119,17 +140,19 @@ export default function Card({
 							.join(", ")}`}
 					</li>
 					<li>
-						<span className="icon-[tabler--hash] pt-2" /> <strong>Versions:</strong>{" "}
-						{versions.join(", ")}
+						<span className="icon-[tabler--hash] pt-2" />{" "}
+						<strong>Versions:</strong> {versions.join(", ")}
 					</li>
 					<li>
-						<span className="icon-[tabler--download] pt-2" /> <strong>Downloads:</strong>{" "}
+						<span className="icon-[tabler--download] pt-2" />{" "}
+						<strong>Downloads:</strong>{" "}
 						{millify(downloads, {
 							precision: 2,
 						})}
 					</li>
 					<li>
-						<span className="icon-[tabler--user] pt-2" /> <strong>Creator:</strong>{" "}
+						<span className="icon-[tabler--user] pt-2" />{" "}
+						<strong>Creator:</strong>{" "}
 						<a
 							className="text-primary hover:underline"
 							href={`https://modrinth.com/user/${author}`}
@@ -140,13 +163,15 @@ export default function Card({
 						</a>
 					</li>
 					<li>
-						<span className="icon-[tabler--heart] pt-2" /> <strong>Followers:</strong>{" "}
+						<span className="icon-[tabler--heart] pt-2" />{" "}
+						<strong>Followers:</strong>{" "}
 						{millify(follows, {
 							precision: 2,
 						})}
 					</li>
 					<li>
-						<span className="icon-[tabler--category] pt-2" /> <strong>Categories:</strong>{" "}
+						<span className="icon-[tabler--category] pt-2" />{" "}
+						<strong>Categories:</strong>{" "}
 						{categories
 							.map(
 								(category) =>
@@ -155,14 +180,20 @@ export default function Card({
 							.join(", ")}
 					</li>
 					<li>
-						<span className="icon-[tabler--text-caption] pt-2" /> <strong>Description:</strong>{" "}
+						<span className="icon-[tabler--text-caption] pt-2" />{" "}
+						<strong>Description:</strong>{" "}
 						{description.length > 300
 							? `${description.substring(0, 300)}...`
 							: description}
 					</li>
 				</ul>
 				<div className="card-actions mt-auto pt-2 -mb-3">
-					<a href={`https://modrinth.com/mod/${slug}`} className="btn btn-outline btn-primary flex items-center">
+					<a
+						href={`https://modrinth.com/mod/${slug}`}
+						className="btn btn-outline btn-primary flex items-center"
+						target="_blank"
+						rel="noreferrer"
+					>
 						<span className="icon-[tabler--link] me-1" />
 						Modrinth
 					</a>
