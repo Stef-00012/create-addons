@@ -168,8 +168,8 @@ export default function Home() {
 			| APIModsResponse[0]["modloaders"][0]
 			| "all";
 
-		setLoader(loader || "all");
 		setDisplayCardAmount(defaultDisplayCardAmount);
+		setLoader(loader || "all");
 	}
 
 	function handleVersionSelect(
@@ -177,25 +177,26 @@ export default function Home() {
 	) {
 		const version = newValue?.value;
 
-		setVersion(version || "all");
 		setDisplayCardAmount(defaultDisplayCardAmount);
+		setVersion(version || "all");
 	}
 
 	function handleSortSelect(newValue: { label: string; value: string } | null) {
 		const sort = newValue?.value as SortByType;
 
-		setSortBy(sort || "name");
 		setDisplayCardAmount(defaultDisplayCardAmount);
+		setSortBy(sort || "name");
 	}
 
 	function handleSearch(data: ChangeEvent<HTMLInputElement>) {
 		const searchTerm = data.target.value;
 
-		setSearch(searchTerm);
 		setDisplayCardAmount(defaultDisplayCardAmount);
+		setSearch(searchTerm);
 	}
 
 	function handleCompactMode() {
+		setDisplayCardAmount(defaultDisplayCardAmount);
 		setCompactMode((prev) => !prev);
 	}
 
