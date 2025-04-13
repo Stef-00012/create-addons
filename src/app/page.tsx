@@ -13,29 +13,6 @@ import Card from "@/components/Card";
 import List from "@/components/List";
 import Select from "react-select";
 
-const defaultCardAmount = 9;
-const defaultAddCardAmont = 9;
-const defaultScrollPercentage = 60;
-
-const defaultDisplayCardAmount = process.env.NEXT_PUBLIC_DEFAULT_CARD_AMOUNT
-	? Math.abs(Number.parseInt(process.env.NEXT_PUBLIC_DEFAULT_CARD_AMOUNT)) ||
-	defaultCardAmount
-	: defaultCardAmount;
-
-const addCardAmount = process.env.NEXT_PUBLIC_ADD_CARD_AMOUNT
-	? Math.abs(Number.parseInt(process.env.NEXT_PUBLIC_ADD_CARD_AMOUNT)) ||
-	defaultAddCardAmont
-	: defaultAddCardAmont;
-
-let addCardScrollPercentage = process.env.NEXT_PUBLIC_ADD_CARD_SCROLL_PERCENTAGE
-	? Number.parseInt(process.env.NEXT_PUBLIC_ADD_CARD_SCROLL_PERCENTAGE) ||
-	defaultScrollPercentage
-	: defaultScrollPercentage;
-
-if (addCardScrollPercentage > 100) addCardScrollPercentage = 100;
-else if (addCardScrollPercentage < 0)
-	addCardScrollPercentage = defaultScrollPercentage;
-
 const modloaderOptions = [
 	{ value: "all", label: "All" },
 	{ value: "fabric", label: "Fabric" },
@@ -51,62 +28,52 @@ const sortByOptions = [
 	{ value: "lastUpdated", label: "Last Updated" },
 ];
 
+const modloaders = modloaderOptions.map((modloader) => modloader.value);
+const sortByOrders = sortByOptions.map((sortOption) => sortOption.value);
+
 type SortByType = "name" | "downloads" | "followers" | "lastUpdated";
 
 export default function Home() {
 	const router = useRouter();
 	const searchParams = useSearchParams();
 
-	const [mods, setMods] = useState<APIModsResponse>([]);
-	const [filteredMods, setFilteredMods] = useState<APIModsResponse>([]);
+	const [versions, setVersions] = useState<string[]>([]);
+	const [page, setPage] = useState<number>(0);
+	const [addonsData, setAddonsData] = useState<APIModsResponse | null>(null);
 	const [loader, setLoader] = useState<
-		APIModsResponse[0]["modloaders"][0] | "all"
+		APIModsResponse["mods"][0]["modloaders"][0] | "all"
 	>("all");
 	const [sortBy, setSortBy] = useState<SortByType>("downloads");
 	const [compactMode, setCompactMode] = useState(
 		searchParams.get("compact") === "1",
 	);
 	const [version, setVersion] = useState<
-		APIModsResponse[0]["versions"][0] | "all"
+		APIModsResponse["mods"][0]["versions"][0] | "all"
 	>("all");
 	const [search, setSearch] = useState<string>("");
 
-	const [displayCardAmount, setDisplayCardAmount] = useState<number>(
-		defaultDisplayCardAmount,
-	);
-
 	useEffect(() => {
-		console.log(`Currently displaying ${displayCardAmount} mods out of ${mods.length}`)
-	}, [displayCardAmount, mods])
+		async function fetchVersions() {
+			const res = await axios.get("/api/versions");
 
-	useEffect(() => {
-		const fetchMods = async () => {
-			const res = await axios.get("/api/addons");
+			const data = res.data as string[];
 
-			const data = (await res.data) as APIModsResponse;
+			setVersions(data);
+		}
 
-			setMods(data);
-			setFilteredMods(data);
-		};
-
-		fetchMods().catch((err) => console.error(err));
+		fetchVersions().catch((err) => console.error(err));
 	}, []);
 
 	useEffect(() => {
-		if (mods.length === 0) return;
-
-		const versions = mods.find((mod) => mod.slug === "create")?.versions || [];
-		const modloaders = modloaderOptions.map((modloader) => modloader.value);
-		const sortByOrders = sortByOptions.map((sortOption) => sortOption.value);
-
 		const version = searchParams.get("version") as
-			| APIModsResponse[0]["versions"][0]
+			| APIModsResponse["mods"][0]["versions"][0]
 			| "all";
 		const loader = searchParams.get("modloader") as
-			| APIModsResponse[0]["modloaders"][0]
+			| APIModsResponse["mods"][0]["modloaders"][0]
 			| "all";
 		const search = searchParams.get("search") as string;
-		const sortBy = searchParams.get("sortBy") as SortByType;
+		const sortBy = searchParams.get("sort") as SortByType;
+		const page = searchParams.get("page") as string;
 
 		if (versions.includes(version)) {
 			setVersion(version);
@@ -120,59 +87,50 @@ export default function Home() {
 			setSortBy(sortBy);
 		}
 
+		setPage(Number.parseInt(page) < 0 ? 0 : Number.parseInt(page));
 		setSearch(decodeURIComponent(search || ""));
-	}, [mods, searchParams.get]);
+	}, [searchParams, versions]);
 
 	useEffect(() => {
-		const fuse = new Fuse(mods, {
-			keys: ["name", "description", "slug", "categories"],
-			threshold: 0.4,
-		});
+		const fetchAddonsData = async () => {
+			const apiSearchParams = new URLSearchParams({
+				page: String(page),
+				version: version,
+				modloader: loader,
+				sort: sortBy,
+				search: encodeURIComponent(search),
+			});
 
-		if (search === "") {
-			setFilteredMods(mods);
+			const res = await axios.get(`/api/addons?${apiSearchParams}`);
 
-			return;
-		}
+			const data = (await res.data) as APIModsResponse;
 
-		const searchResult = fuse.search(search);
-		const resultMods = searchResult.map((result) => result.item);
-
-		setFilteredMods(resultMods);
-	}, [search, mods]);
-
-	useEffect(() => {
-		const handleScroll = () => {
-			const scrollPosition = window.scrollY + window.innerHeight;
-			const scrollThreshold =
-				(addCardScrollPercentage / 100) * document.body.scrollHeight;
-
-			if (scrollPosition >= scrollThreshold) {
-				setDisplayCardAmount((prev) => Math.min(mods.length, prev + addCardAmount));
-			}
+			setAddonsData(data);
 		};
 
-		window.addEventListener("scroll", handleScroll);
-
-		return () => {
-			window.removeEventListener("scroll", handleScroll);
-		};
-	}, [mods]);
+		fetchAddonsData().catch((err) => console.error(err));
+	}, [page, loader, sortBy, version, search]);
 
 	useEffect(() => {
-		router.replace(
-			`?version=${version}&modloader=${loader}&sortBy=${sortBy}&compact=${compactMode ? 1 : 0}&search=${encodeURIComponent(search)}`,
-		);
-	}, [sortBy, search, loader, version, compactMode, router.replace]);
+		const setSearchParams = new URLSearchParams();
+
+		if (page > 0) setSearchParams.append("page", String(page));
+		if (version !== "all") setSearchParams.append("version", version);
+		if (loader !== "all") setSearchParams.append("modloader", loader);
+		if (search) setSearchParams.append("search", encodeURIComponent(search));
+		if (sortBy !== "downloads") setSearchParams.append("sort", sortBy);
+		if (compactMode) setSearchParams.append("compact", "1");
+
+		router.replace(`?${setSearchParams}`);
+	}, [sortBy, search, loader, version, compactMode, page, router.replace]);
 
 	function handleLoaderSelect(
 		newValue: { label: string; value: string } | null,
 	) {
 		const loader = newValue?.value as
-			| APIModsResponse[0]["modloaders"][0]
+			| APIModsResponse["mods"][0]["modloaders"][0]
 			| "all";
 
-		setDisplayCardAmount(defaultDisplayCardAmount);
 		setLoader(loader || "all");
 	}
 
@@ -181,26 +139,22 @@ export default function Home() {
 	) {
 		const version = newValue?.value;
 
-		setDisplayCardAmount(defaultDisplayCardAmount);
 		setVersion(version || "all");
 	}
 
 	function handleSortSelect(newValue: { label: string; value: string } | null) {
 		const sort = newValue?.value as SortByType;
 
-		setDisplayCardAmount(defaultDisplayCardAmount);
 		setSortBy(sort || "name");
 	}
 
 	function handleSearch(data: ChangeEvent<HTMLInputElement>) {
 		const searchTerm = data.target.value;
 
-		setDisplayCardAmount(defaultDisplayCardAmount);
 		setSearch(searchTerm);
 	}
 
 	function handleCompactMode() {
-		setDisplayCardAmount(defaultDisplayCardAmount);
 		setCompactMode((prev) => !prev);
 	}
 
@@ -249,8 +203,8 @@ export default function Home() {
 								}
 								unstyled
 								isSearchable={false}
-								isLoading={mods.length === 0}
-								isDisabled={mods.length === 0}
+								isLoading={!addonsData}
+								isDisabled={!addonsData}
 								components={{
 									DropdownIndicator: () => null,
 									IndicatorSeparator: () => null,
@@ -281,8 +235,8 @@ export default function Home() {
 								id="selectFloating"
 								unstyled
 								isSearchable={false}
-								isLoading={mods.length === 0}
-								isDisabled={mods.length === 0}
+								isLoading={!addonsData}
+								isDisabled={!addonsData}
 								defaultValue={{
 									value: "all",
 									label: "All",
@@ -296,9 +250,7 @@ export default function Home() {
 										value: "all",
 										label: "All",
 									},
-									...(
-										mods.find((mod) => mod.slug === "create")?.versions || []
-									).map((version) => ({
+									...versions.map((version) => ({
 										value: version,
 										label: version,
 									})),
@@ -333,12 +285,13 @@ export default function Home() {
 								defaultValue={sortByOptions[0]}
 								options={sortByOptions}
 								value={
-									sortByOptions.find((option) => option.value === sortBy) || null
+									sortByOptions.find((option) => option.value === sortBy) ||
+									null
 								}
 								unstyled
 								isSearchable={false}
-								isLoading={mods.length === 0}
-								isDisabled={mods.length === 0}
+								isLoading={!addonsData}
+								isDisabled={!addonsData}
 								components={{
 									DropdownIndicator: () => null,
 									IndicatorSeparator: () => null,
@@ -359,7 +312,7 @@ export default function Home() {
 					<div className="input-floating rounded-full max-w-56">
 						<input
 							placeholder="Search"
-							disabled={mods.length === 0}
+							disabled={!addonsData}
 							type="search"
 							value={search}
 							onChange={handleSearch}
@@ -378,47 +331,21 @@ export default function Home() {
 
 				{/* Mods */}
 				<div className="py-2 my-2">
-					<p className="p-1 mb-2 rounded-2xl">{mods.length} total addons served.</p>
-					<div className={`${compactMode ? "" : "sm:flex sm:flex-row sm:flex-wrap sm:gap-4"}`}>
-						{mods.length > 0 ? (
+					<p className="p-1 mb-2 rounded-2xl">
+						{addonsData?.totalMods} total addons served.
+					</p>
+					<div
+						className={`${compactMode ? "" : "sm:flex sm:flex-row sm:flex-wrap sm:gap-4"}`}
+					>
+						{addonsData ? (
 							<>
-								{filteredMods.length > 0 ? (
+								{addonsData.mods.length > 0 ? (
 									<>
-										{filteredMods
-											.filter((mod) => {
-												return (
-													(loader === "all" || mod.modloaders.includes(loader)) &&
-													(version === "all" || mod.versions.includes(version))
-												);
-											})
-											.sort((a, b) => {
-												if (sortBy === "downloads") {
-													return b.downloads - a.downloads;
-												}
-
-												if (sortBy === "followers") {
-													return b.follows - a.follows;
-												}
-
-												if (sortBy === "lastUpdated") {
-													return (
-														new Date(b.modified).getTime() -
-														new Date(a.modified).getTime()
-													);
-												}
-
-												if (sortBy === "name") {
-													return a.name.localeCompare(b.name);
-												}
-
-												return 0;
-											})
-											.slice(0, displayCardAmount)
-											.map((mod) => (
-												<Fragment key={mod.slug}>
-													{compactMode ? <List mod={mod} /> : <Card mod={mod} />}
-												</Fragment>
-											))}
+										{addonsData.mods.map((mod) => (
+											<Fragment key={mod.slug}>
+												{compactMode ? <List mod={mod} /> : <Card mod={mod} />}
+											</Fragment>
+										))}
 									</>
 								) : (
 									<p className="text-center mx-auto text-4xl my-6 flex items-center">
@@ -452,13 +379,33 @@ export default function Home() {
 
 			{/* Pagination */}
 			<nav className="flex items-center gap-x-2 justify-center mb-6">
-				<button type="button" className="btn btn-soft"><span className="icon-[tabler--arrow-left] size-6" /></button>
+				<button type="button" className="btn btn-soft">
+					<span className="icon-[tabler--arrow-left] size-6" />
+				</button>
 				<div className="flex items-center gap-x-2">
-					<button type="button" className="btn btn-soft btn-square aria-[current='page']:text-bg-soft-primary">1</button>
-					<button type="button" className="btn btn-soft btn-square aria-[current='page']:text-bg-soft-primary" aria-current="page">2</button>
-					<button type="button" className="btn btn-soft btn-square aria-[current='page']:text-bg-soft-primary">3</button>
+					<button
+						type="button"
+						className="btn btn-soft btn-square aria-[current='page']:text-bg-soft-primary"
+					>
+						1
+					</button>
+					<button
+						type="button"
+						className="btn btn-soft btn-square aria-[current='page']:text-bg-soft-primary"
+						aria-current="page"
+					>
+						2
+					</button>
+					<button
+						type="button"
+						className="btn btn-soft btn-square aria-[current='page']:text-bg-soft-primary"
+					>
+						3
+					</button>
 				</div>
-				<button type="button" className="btn btn-soft"><span className="icon-[tabler--arrow-right] size-6" /></button>
+				<button type="button" className="btn btn-soft">
+					<span className="icon-[tabler--arrow-right] size-6" />
+				</button>
 			</nav>
 
 			{/* Footer */}

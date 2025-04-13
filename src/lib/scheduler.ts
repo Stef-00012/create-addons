@@ -18,6 +18,16 @@ export const startScheduler = () => {
 async function handleFetching() {
 	const mods = await getModrinthMods();
 
+	const modLoaders = [
+		"quilt",
+		"fabric",
+		"forge",
+		"neoforge",
+		"liteloader",
+		"modloader",
+		"rift",
+	];
+
 	for (const mod of mods) {
 		console.log("Inserting mod", mod.slug);
 
@@ -32,8 +42,10 @@ async function handleFetching() {
 				icon: mod.icon_url,
 				name: mod.title,
 				version: mod.versions[mod.versions.length - 1],
-				versions: JSON.stringify(mod.versions),
-				categories: JSON.stringify(mod.categories),
+				versions: mod.versions,
+				categories: mod.categories.filter(
+					(category: string) => !modLoaders.includes(category),
+				),
 				follows: mod.follows,
 				created: mod.date_created,
 				modified: mod.date_modified,
@@ -41,6 +53,9 @@ async function handleFetching() {
 				license: mod.license,
 				clientSide: mod.client_side,
 				serverSide: mod.server_side,
+				modloaders: mod.categories.filter((category: string) =>
+					modLoaders.includes(category),
+				),
 			})
 			.onConflictDoUpdate({
 				target: [modsSchema.slug, modsSchema.platform],
@@ -50,8 +65,10 @@ async function handleFetching() {
 					icon: mod.icon_url,
 					name: mod.title,
 					version: mod.versions[mod.versions.length - 1],
-					versions: JSON.stringify(mod.versions),
-					categories: JSON.stringify(mod.categories),
+					versions: mod.versions,
+					categories: mod.categories.filter(
+						(category: string) => !modLoaders.includes(category),
+					),
 					follows: mod.follows,
 					author: mod.author,
 					created: mod.date_created,
@@ -60,6 +77,9 @@ async function handleFetching() {
 					license: mod.license,
 					clientSide: mod.client_side,
 					serverSide: mod.server_side,
+					modloaders: mod.categories.filter((category: string) =>
+						modLoaders.includes(category),
+					),
 				},
 			});
 	}
