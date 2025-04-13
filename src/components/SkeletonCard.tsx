@@ -2,6 +2,7 @@ export default function SkeletonCard() {
     return (
         <div className="card sm:max-w-lg my-4 sm:my-0 skeleton skeleton-animated sm:flex-auto">
             <div className="card-body">
+            <h5 className="card-title mb-0">Loading...</h5>
                 <ul>
                     <li>
                         <span className="icon-[tabler--hash] pt-2" />
