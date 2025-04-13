@@ -120,6 +120,12 @@ export default function Home() {
 	}, [page, loader, sortBy, version, search]);
 
 	useEffect(() => {
+		if (page > (addonsData?.totalPages || 1)) {
+			setPage(addonsData?.totalPages || 1);
+		}
+	}, [addonsData, page])
+
+	useEffect(() => {
 		const setSearchParams = new URLSearchParams();
 
 		if (page > 1) setSearchParams.append("page", String(page));
