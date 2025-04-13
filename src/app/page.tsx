@@ -19,17 +19,17 @@ const defaultScrollPercentage = 60;
 
 const defaultDisplayCardAmount = process.env.NEXT_PUBLIC_DEFAULT_CARD_AMOUNT
 	? Math.abs(Number.parseInt(process.env.NEXT_PUBLIC_DEFAULT_CARD_AMOUNT)) ||
-	defaultCardAmount
+		defaultCardAmount
 	: defaultCardAmount;
 
 const addCardAmount = process.env.NEXT_PUBLIC_ADD_CARD_AMOUNT
 	? Math.abs(Number.parseInt(process.env.NEXT_PUBLIC_ADD_CARD_AMOUNT)) ||
-	defaultAddCardAmont
+		defaultAddCardAmont
 	: defaultAddCardAmont;
 
 let addCardScrollPercentage = process.env.NEXT_PUBLIC_ADD_CARD_SCROLL_PERCENTAGE
 	? Number.parseInt(process.env.NEXT_PUBLIC_ADD_CARD_SCROLL_PERCENTAGE) ||
-	defaultScrollPercentage
+		defaultScrollPercentage
 	: defaultScrollPercentage;
 
 if (addCardScrollPercentage > 100) addCardScrollPercentage = 100;
@@ -201,16 +201,16 @@ export default function Home() {
 
 	return (
 		<div>
-			{ /* // <!-- Navbar --> */}
+			{/* // <!-- Navbar --> */}
 			<nav className="navbar rounded-box shadow-base-300/20 shadow-sm mt-4">
 				Create Addons Index
 			</nav>
 			<br />
 
-			{ /* <!-- Search & Filter & Sort & View type --> */}
+			{/* <!-- Search & Filter & Sort & View type --> */}
 			<div className="md:flex md:justify-between md:flex-wrap gap-4">
 				<div className="md:flex md:justify-start gap-2 md:gap-6 xl:gap-2 md:flex-wrap">
-					{ /* <!-- Grid/list view toggle --> */}
+					{/* <!-- Grid/list view toggle --> */}
 					<div className="">
 						<button
 							type="button"
@@ -222,7 +222,7 @@ export default function Home() {
 							/>
 						</button>
 					</div>
-					{ /* <!-- Filter by modloader --> */}
+					{/* <!-- Filter by modloader --> */}
 					<div className="select-floating w-96 my-4 md:my-0">
 						<label
 							className="select-floating-label rounded-2xl px-2 z-10 flex items-center"
@@ -249,7 +249,8 @@ export default function Home() {
 								IndicatorSeparator: () => null,
 							}}
 							classNames={{
-								control: ({ isDisabled }) => `select ${isDisabled ? "bg-base-100/50 border-none text-base-content/50" : ""}`,
+								control: ({ isDisabled }) =>
+									`select ${isDisabled ? "bg-base-100/50 border-none text-base-content/50" : ""}`,
 								option: ({ isSelected }) =>
 									`rounded-2xl my-1 p-2 ${isSelected ? "bg-base-200" : "bg-base-100 hover:bg-base-200"}`,
 								menuList: () =>
@@ -259,7 +260,7 @@ export default function Home() {
 						/>
 					</div>
 
-					{ /* <!-- Filter by version --> */}
+					{/* <!-- Filter by version --> */}
 					<div className="select-floating w-96 my-4 md:my-0">
 						<label
 							className="select-floating-label rounded-2xl px-2 z-10 flex items-center"
@@ -300,7 +301,8 @@ export default function Home() {
 								IndicatorSeparator: () => null,
 							}}
 							classNames={{
-								control: ({ isDisabled }) => `select ${isDisabled ? "bg-base-100/50 border-none text-base-content/50" : ""}`,
+								control: ({ isDisabled }) =>
+									`select ${isDisabled ? "bg-base-100/50 border-none text-base-content/50" : ""}`,
 								option: ({ isSelected }) =>
 									`rounded-2xl my-1 p-2 ${isSelected ? "bg-base-200" : "bg-base-100 hover:bg-base-200"}`,
 								menuList: () =>
@@ -309,7 +311,7 @@ export default function Home() {
 							onChange={handleVersionSelect}
 						/>
 					</div>
-					{ /* <!-- Sort by --> */}
+					{/* <!-- Sort by --> */}
 					<div className="select-floating w-96 my-4 md:my-0">
 						<label
 							className="select-floating-label rounded-2xl px-2 z-10 flex items-center"
@@ -323,7 +325,9 @@ export default function Home() {
 							id="selectFloating"
 							defaultValue={sortByOptions[0]}
 							options={sortByOptions}
-							value={sortByOptions.find((option) => option.value === sortBy) || null}
+							value={
+								sortByOptions.find((option) => option.value === sortBy) || null
+							}
 							unstyled
 							isSearchable={false}
 							isLoading={mods.length === 0}
@@ -333,7 +337,8 @@ export default function Home() {
 								IndicatorSeparator: () => null,
 							}}
 							classNames={{
-								control: ({ isDisabled }) => `select ${isDisabled ? "bg-base-100/50 border-none text-base-content/50" : ""}`,
+								control: ({ isDisabled }) =>
+									`select ${isDisabled ? "bg-base-100/50 border-none text-base-content/50" : ""}`,
 								option: ({ isSelected }) =>
 									`rounded-2xl my-1 p-2 ${isSelected ? "bg-base-200" : "bg-base-100 hover:bg-base-200"}`,
 								menuList: () =>
@@ -345,21 +350,29 @@ export default function Home() {
 				</div>
 
 				<div className="input-floating rounded-full max-w-56">
-					<input placeholder="Search" disabled={mods.length === 0}
+					<input
+						placeholder="Search"
+						disabled={mods.length === 0}
 						type="search"
 						value={search}
 						onChange={handleSearch}
 						className="input disabled:border-none"
-						id="floatingInput" />
-					<label className="input-floating-label flex items-center rounded-2xl" htmlFor="floatingInput">
+						id="floatingInput"
+					/>
+					<label
+						className="input-floating-label flex items-center rounded-2xl"
+						htmlFor="floatingInput"
+					>
 						<span className="icon-[tabler--search] me-2 size-5 shrink-0 ml-1" />
 						<p className="mr-1 py-1">Search addons</p>
 					</label>
 				</div>
 			</div>
 
-			{ /* <!-- Mods --> */}
-			<div className={`py-2 my-2 ${compactMode ? "" : "sm:flex sm:flex-row sm:flex-wrap sm:gap-4"}`}>
+			{/* <!-- Mods --> */}
+			<div
+				className={`py-2 my-2 ${compactMode ? "" : "sm:flex sm:flex-row sm:flex-wrap sm:gap-4"}`}
+			>
 				{mods.length > 0 ? (
 					<>
 						{filteredMods.length > 0 ? (
@@ -408,7 +421,9 @@ export default function Home() {
 						)}
 					</>
 				) : (
-					<div className={`py-2 my-2 ${compactMode ? "" : "sm:flex sm:flex-row sm:flex-wrap sm:gap-4"}`}>
+					<div
+						className={`py-2 my-2 ${compactMode ? "" : "sm:flex sm:flex-row sm:flex-wrap sm:gap-4"}`}
+					>
 						{compactMode ? (
 							<>
 								{[...Array(7).keys()].map((i) => (
@@ -426,7 +441,7 @@ export default function Home() {
 				)}
 			</div>
 
-			{ /* <!-- Footer --> */}
+			{/* <!-- Footer --> */}
 			<footer className="footer shadow-lg bg-base-200 px-6 py-4 mb-4 rounded-2xl absolute -bottom-px sticky start-0 w-full">
 				<div className="flex w-full items-center justify-between">
 					<aside className="grid-flow-col items-center">
