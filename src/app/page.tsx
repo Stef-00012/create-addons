@@ -19,17 +19,17 @@ const defaultScrollPercentage = 60;
 
 const defaultDisplayCardAmount = process.env.NEXT_PUBLIC_DEFAULT_CARD_AMOUNT
 	? Math.abs(Number.parseInt(process.env.NEXT_PUBLIC_DEFAULT_CARD_AMOUNT)) ||
-		defaultCardAmount
+	defaultCardAmount
 	: defaultCardAmount;
 
 const addCardAmount = process.env.NEXT_PUBLIC_ADD_CARD_AMOUNT
 	? Math.abs(Number.parseInt(process.env.NEXT_PUBLIC_ADD_CARD_AMOUNT)) ||
-		defaultAddCardAmont
+	defaultAddCardAmont
 	: defaultAddCardAmont;
 
 let addCardScrollPercentage = process.env.NEXT_PUBLIC_ADD_CARD_SCROLL_PERCENTAGE
 	? Number.parseInt(process.env.NEXT_PUBLIC_ADD_CARD_SCROLL_PERCENTAGE) ||
-		defaultScrollPercentage
+	defaultScrollPercentage
 	: defaultScrollPercentage;
 
 if (addCardScrollPercentage > 100) addCardScrollPercentage = 100;
@@ -371,75 +371,76 @@ export default function Home() {
 			</div>
 
 			{/* Mods */}
-			<div
-				className={`py-2 my-2 ${compactMode ? "" : "sm:flex sm:flex-row sm:flex-wrap sm:gap-4"}`}
-			>
-				{mods.length > 0 ? (
-					<>
-						{filteredMods.length > 0 ? (
-							<>
-								{filteredMods
-									.filter((mod) => {
-										return (
-											(loader === "all" || mod.modloaders.includes(loader)) &&
-											(version === "all" || mod.versions.includes(version))
-										);
-									})
-									.sort((a, b) => {
-										if (sortBy === "downloads") {
-											return b.downloads - a.downloads;
-										}
-
-										if (sortBy === "followers") {
-											return b.follows - a.follows;
-										}
-
-										if (sortBy === "lastUpdated") {
+			<div className="py-2 my-2">
+				<p className="p-1 mb-2 rounded-2xl">(millify this ~ bigAssNumber) total addons served.</p>
+				<div className={compactMode ? "" : "sm:flex sm:flex-row sm:flex-wrap sm:gap-4"}>
+					{mods.length > 0 ? (
+						<>
+							{filteredMods.length > 0 ? (
+								<>
+									{filteredMods
+										.filter((mod) => {
 											return (
-												new Date(b.modified).getTime() -
-												new Date(a.modified).getTime()
+												(loader === "all" || mod.modloaders.includes(loader)) &&
+												(version === "all" || mod.versions.includes(version))
 											);
-										}
+										})
+										.sort((a, b) => {
+											if (sortBy === "downloads") {
+												return b.downloads - a.downloads;
+											}
 
-										if (sortBy === "name") {
-											return a.name.localeCompare(b.name);
-										}
+											if (sortBy === "followers") {
+												return b.follows - a.follows;
+											}
 
-										return 0;
-									})
-									.slice(0, displayCardAmount)
-									.map((mod) => (
-										<Fragment key={mod.slug}>
-											{compactMode ? <List mod={mod} /> : <Card mod={mod} />}
-										</Fragment>
+											if (sortBy === "lastUpdated") {
+												return (
+													new Date(b.modified).getTime() -
+													new Date(a.modified).getTime()
+												);
+											}
+
+											if (sortBy === "name") {
+												return a.name.localeCompare(b.name);
+											}
+
+											return 0;
+										})
+										.slice(0, displayCardAmount)
+										.map((mod) => (
+											<Fragment key={mod.slug}>
+												{compactMode ? <List mod={mod} /> : <Card mod={mod} />}
+											</Fragment>
+										))}
+								</>
+							) : (
+								<p className="text-center mx-auto text-4xl my-6 flex items-center">
+									<span className="icon-[tabler--alert-triangle-filled] me-2 mt-1 text-error" />
+									Sorry! No results were found...
+								</p>
+							)}
+						</>
+					) : (
+						<div
+							className={`py-2 my-2 ${compactMode ? "" : "sm:flex sm:flex-row sm:flex-wrap sm:gap-4"}`}
+						>
+							{compactMode ? (
+								<>
+									{[...Array(7).keys()].map((i) => (
+										<SkeletonList key={i} />
 									))}
-							</>
-						) : (
-							<p className="text-center mx-auto text-4xl my-6 flex items-center">
-								<span className="icon-[tabler--alert-triangle-filled] me-2 mt-1 text-error" />
-								Sorry! No results were found...
-							</p>
-						)}
-					</>
-				) : (
-					<div
-						className={`py-2 my-2 ${compactMode ? "" : "sm:flex sm:flex-row sm:flex-wrap sm:gap-4"}`}
-					>
-						{compactMode ? (
-							<>
-								{[...Array(7).keys()].map((i) => (
-									<SkeletonList key={i} />
-								))}
-							</>
-						) : (
-							<>
-								{[...Array(7).keys()].map((i) => (
-									<SkeletonCard key={i} />
-								))}
-							</>
-						)}
-					</div>
-				)}
+								</>
+							) : (
+								<>
+									{[...Array(7).keys()].map((i) => (
+										<SkeletonCard key={i} />
+									))}
+								</>
+							)}
+						</div>
+					)}
+				</div>
 			</div>
 
 			{/* Footer */}
