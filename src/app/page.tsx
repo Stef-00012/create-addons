@@ -17,17 +17,17 @@ const defaultScrollPercentage = 60;
 
 const defaultDisplayCardAmount = process.env.NEXT_PUBLIC_DEFAULT_CARD_AMOUNT
 	? Math.abs(Number.parseInt(process.env.NEXT_PUBLIC_DEFAULT_CARD_AMOUNT)) ||
-		defaultCardAmount
+	defaultCardAmount
 	: defaultCardAmount;
 
 const addCardAmount = process.env.NEXT_PUBLIC_ADD_CARD_AMOUNT
 	? Math.abs(Number.parseInt(process.env.NEXT_PUBLIC_ADD_CARD_AMOUNT)) ||
-		defaultAddCardAmont
+	defaultAddCardAmont
 	: defaultAddCardAmont;
 
 let addCardScrollPercentage = process.env.NEXT_PUBLIC_ADD_CARD_SCROLL_PERCENTAGE
 	? Number.parseInt(process.env.NEXT_PUBLIC_ADD_CARD_SCROLL_PERCENTAGE) ||
-		defaultScrollPercentage
+	defaultScrollPercentage
 	: defaultScrollPercentage;
 
 if (addCardScrollPercentage > 100) addCardScrollPercentage = 100;
@@ -221,9 +221,10 @@ export default function Home() {
 					{/* <!-- Filter by modloader --> */}
 					<div className="select-floating w-96 my-6 md:my-0 mr-4">
 						<label
-							className="select-floating-label rounded-2xl px-2 z-10"
+							className="select-floating-label rounded-2xl px-2 z-10 flex items-center"
 							htmlFor="selectFloating"
 						>
+							<span className="icon-[tabler--filter] me-2 size-5 shrink-0" />
 							Filter by modloader
 						</label>
 
@@ -257,9 +258,10 @@ export default function Home() {
 					{/* <!-- Filter by version --> */}
 					<div className="select-floating w-96 my-6 md:my-0">
 						<label
-							className="select-floating-label rounded-2xl px-2 z-10"
+							className="select-floating-label rounded-2xl px-2 z-10 flex items-center"
 							htmlFor="selectFloating"
 						>
+							<span className="icon-[tabler--filter] me-2 size-5 shrink-0" />
 							Filter by version
 						</label>
 
@@ -306,9 +308,10 @@ export default function Home() {
 					{/* <!-- Sort by --> */}
 					<div className="select-floating w-96 my-6 md:my-0 md:ml-4">
 						<label
-							className="select-floating-label rounded-2xl px-2 z-10"
+							className="select-floating-label rounded-2xl px-2 z-10 flex items-center"
 							htmlFor="selectFloating"
 						>
+							<span className="icon-[tabler--arrows-sort] me-2 size-5 shrink-0" />
 							Sort by
 						</label>
 
@@ -337,20 +340,11 @@ export default function Home() {
 					</div>
 				</div>
 
-				<div className="input rounded-full max-w-56">
-					<span className="icon-[tabler--search] text-base-content/80 my-auto me-3 size-5 shrink-0" />
-					<label className="sr-only" htmlFor="searchInput">
-						Mod name
-					</label>
-					<input
-						disabled={mods.length === 0}
+				<div className="input-floating rounded-full max-w-56">
+					<input placeholder="Search" disabled={mods.length === 0}
 						type="search"
-						value={search}
-						className="grow"
-						placeholder="Search"
-						id="searchInput"
-						onChange={handleSearch}
-					/>
+						value={search} onChange={handleSearch} className="input disabled:bg-base-100/50 disabled:border-none disabled:text-base-content/50" id="floatingInput" />
+					<label className="input-floating-label flex items-center rounded-2xl px-2" htmlFor="floatingInput"><span className="icon-[tabler--search] text-base-content/80 me-2 size-5 shrink-0" /> Search addons</label>
 				</div>
 			</div>
 
