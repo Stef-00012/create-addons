@@ -355,25 +355,29 @@ export default function Home() {
 							/>
 						</div>
 					</div>
-
-					<div className="input-floating rounded-full max-w-56">
-						<input
-							placeholder="Search"
-							disabled={mods.length === 0}
-							type="search"
-							value={search}
-							onChange={handleSearch}
-							className="input disabled:border-none"
-							id="floatingInput"
-						/>
-						<label
-							className="input-floating-label flex items-center rounded-2xl"
-							htmlFor="floatingInput"
-						>
-							<span className="icon-[tabler--search] me-2 size-5 shrink-0 ml-1" />
-							<p className="mr-1 py-1">Search addons</p>
-						</label>
+					<div className="join rounded-full max-w-xs mx-auto">
+						<div className="input-floating join-item flex-grow">
+							<input
+								placeholder="Search"
+								disabled={mods.length === 0}
+								type="search"
+								value={search}
+								onChange={handleSearch}
+								className="input disabled:border-none rounded-l-full"
+								id="floatingInput"
+							/>
+							<label
+								className="input-floating-label flex items-center rounded-l-full"
+								htmlFor="floatingInput"
+							>
+								<p className="mr-1 py-1">Search addons</p>
+							</label>
+						</div>
+						<button className="btn btn-outline bg-accent-content hover:border-base-content/70 border-base-content/40 join-item h-auto rounded-r-full ">
+							<span className="icon-[tabler--search] size-5" />
+						</button>
 					</div>
+
 				</div>
 
 				{/* Mods */}
