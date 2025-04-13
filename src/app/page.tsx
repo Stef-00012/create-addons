@@ -450,6 +450,17 @@ export default function Home() {
 				</div>
 			</div>
 
+			{/* Pagination */}
+			<nav className="flex items-center gap-x-2 justify-center mb-6">
+				<button type="button" className="btn btn-soft"><span className="icon-[tabler--arrow-left] size-6" /></button>
+				<div className="flex items-center gap-x-2">
+					<button type="button" className="btn btn-soft btn-square aria-[current='page']:text-bg-soft-primary">1</button>
+					<button type="button" className="btn btn-soft btn-square aria-[current='page']:text-bg-soft-primary" aria-current="page">2</button>
+					<button type="button" className="btn btn-soft btn-square aria-[current='page']:text-bg-soft-primary">3</button>
+				</div>
+				<button type="button" className="btn btn-soft"><span className="icon-[tabler--arrow-right] size-6" /></button>
+			</nav>
+
 			{/* Footer */}
 			<footer className="footer shadow-lg bg-base-200 px-6 py-4 rounded-2xl sticky bottom-0">
 				<div className="flex w-full items-center justify-between">
