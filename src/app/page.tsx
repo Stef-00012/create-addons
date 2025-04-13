@@ -1,7 +1,6 @@
 "use client";
 
 import { type ChangeEvent, Fragment, useEffect, useState } from "react";
-import Fuse from "fuse.js";
 import axios from "axios";
 
 import type { APIModsResponse } from "@/app/api/addons/route";
@@ -38,7 +37,7 @@ export default function Home() {
 	const searchParams = useSearchParams();
 
 	const [versions, setVersions] = useState<string[]>([]);
-	const [page, setPage] = useState<number>(0);
+	const [page, setPage] = useState<number>(1);
 	const [addonsData, setAddonsData] = useState<APIModsResponse | null>(null);
 	const [loader, setLoader] = useState<
 		APIModsResponse["mods"][0]["modloaders"][0] | "all"
@@ -87,19 +86,28 @@ export default function Home() {
 			setSortBy(sortBy);
 		}
 
-		setPage(Number.parseInt(page) < 0 ? 0 : Number.parseInt(page));
+		if (Number.parseInt(page) > 1) {
+			setPage(Number.parseInt(page));
+		}
 		setSearch(decodeURIComponent(search || ""));
 	}, [searchParams, versions]);
 
 	useEffect(() => {
 		const fetchAddonsData = async () => {
 			const apiSearchParams = new URLSearchParams({
-				page: String(page),
+				page: String(page - 1),
 				version: version,
 				modloader: loader,
 				sort: sortBy,
 				search: encodeURIComponent(search),
 			});
+
+			scrollTo({
+				top: 0,
+				behavior: "smooth",
+			})
+
+			setAddonsData(null)
 
 			const res = await axios.get(`/api/addons?${apiSearchParams}`);
 
@@ -114,14 +122,16 @@ export default function Home() {
 	useEffect(() => {
 		const setSearchParams = new URLSearchParams();
 
-		if (page > 0) setSearchParams.append("page", String(page));
+		if (page > 1) setSearchParams.append("page", String(page));
 		if (version !== "all") setSearchParams.append("version", version);
 		if (loader !== "all") setSearchParams.append("modloader", loader);
 		if (search) setSearchParams.append("search", encodeURIComponent(search));
 		if (sortBy !== "downloads") setSearchParams.append("sort", sortBy);
 		if (compactMode) setSearchParams.append("compact", "1");
 
-		router.replace(`?${setSearchParams}`);
+		router.replace(`?${setSearchParams}`, {
+			scroll: false,
+		});
 	}, [sortBy, search, loader, version, compactMode, page, router.replace]);
 
 	function handleLoaderSelect(
@@ -156,6 +166,22 @@ export default function Home() {
 
 	function handleCompactMode() {
 		setCompactMode((prev) => !prev);
+	}
+
+	function handleFirstPage() {
+		setPage(1);
+	}
+
+	function handleLastPage() {
+		setPage(addonsData?.totalPages || 1);
+	}
+
+	function handlePreviousPage() {
+		setPage((prev) => prev - 1);
+	}
+
+	function handleNextPage() {
+		setPage((prev) => prev + 1);
 	}
 
 	return (
@@ -326,18 +352,22 @@ export default function Home() {
 								<p className="mr-1 py-1">Search addons</p>
 							</label>
 						</div>
-						<button className="btn btn-outline bg-accent-content hover:border-base-content/70 border-base-content/40 join-item h-auto rounded-r-2xl ">
+						<button
+							type="button"
+							className="btn btn-outline bg-accent-content hover:border-base-content/70 border-base-content/40 join-item h-auto rounded-r-2xl "
+						>
 							<span className="icon-[tabler--search] size-5" />
 						</button>
 					</div>
-
 				</div>
 
 				{/* Mods */}
 				<div className="py-2 my-2">
-					<p className="p-1 mb-2 rounded-2xl">
-						{addonsData?.totalMods} total addons served.
-					</p>
+					{addonsData && (
+						<p className="p-1 mb-2 rounded-2xl">
+							{addonsData.totalMods} total addons served.
+						</p>
+					)}
 					<div
 						className={`${compactMode ? "" : "sm:flex sm:flex-row sm:flex-wrap sm:gap-4"}`}
 					>
@@ -382,23 +412,72 @@ export default function Home() {
 			</div>
 
 			{/* Pagination */}
-			<nav className="flex items-center gap-x-2 justify-center mb-6">
-				<button type="button" className="btn btn-soft">
-					<span className="icon-[tabler--arrow-left] size-6" />
-				</button>
-				<div className="flex items-center gap-x-2">
-					<button type="button" className="btn btn-soft btn-square">1</button>
-					<p>—</p>
-					<button type="button" className="btn btn-soft btn-square">41</button>
-					<button type="button" className="btn btn-soft btn-square text-bg-soft-primary">42</button>
-					<button type="button" className="btn btn-soft btn-square">43</button>
-					<p>—</p>
-					<button type="button" className="btn btn-soft btn-square">520</button>
-				</div>
-				<button type="button" className="btn btn-soft">
-					<span className="icon-[tabler--arrow-right] size-6" />
-				</button>
-			</nav>
+			{(addonsData?.totalPages || 0) > 0 && (
+				<nav className="flex items-center gap-x-2 justify-center mb-6">
+					<button
+						type="button"
+						className="btn btn-soft"
+						disabled={page === 1}
+						onClick={handlePreviousPage}
+					>
+						<span className="icon-[tabler--arrow-left] size-6" />
+					</button>
+					<div className="flex items-center gap-x-2">
+						{page > 2 && (
+							<button
+								type="button"
+								className="btn btn-soft btn-square"
+								onClick={handleFirstPage}
+							>
+								1
+							</button>
+						)}
+						<p>—</p>
+						{page > 1 && (
+							<button
+								type="button"
+								className="btn btn-soft btn-square"
+								onClick={handlePreviousPage}
+							>
+								{page - 1}
+							</button>
+						)}
+						<button
+							type="button"
+							className="btn btn-soft btn-square text-bg-soft-primary"
+						>
+							{page}
+						</button>
+						{page < (addonsData?.totalPages || 1) && (
+							<button
+								type="button"
+								className="btn btn-soft btn-square"
+								onClick={handleNextPage}
+							>
+								{page + 1}
+							</button>
+						)}
+						<p>—</p>
+						{page < (addonsData?.totalPages || 1) - 1 && (
+							<button
+								type="button"
+								className="btn btn-soft btn-square"
+								onClick={handleLastPage}
+							>
+								{addonsData?.totalPages}
+							</button>
+						)}
+					</div>
+					<button
+						type="button"
+						className="btn btn-soft"
+						disabled={page === addonsData?.totalPages}
+						onClick={handleNextPage}
+					>
+						<span className="icon-[tabler--arrow-right] size-6" />
+					</button>
+				</nav>
+			)}
 
 			{/* Footer */}
 			<footer className="footer shadow-lg bg-base-200 px-6 py-4 rounded-2xl sticky bottom-0">
