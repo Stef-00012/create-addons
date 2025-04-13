@@ -463,7 +463,7 @@ export default function Home() {
 			</div>
 
 			{/* <!-- Footer --> */}
-			<footer className="footer bg-base-200 px-6 py-4 mb-4 rounded-2xl absolute -bottom-px sticky start-0 w-full">
+			<footer className="footer shadow-lg bg-base-200 px-6 py-4 mb-4 rounded-2xl absolute -bottom-px sticky start-0 w-full">
 				<div className="flex w-full items-center justify-between">
 					<aside className="grid-flow-col items-center">
 						<p>
