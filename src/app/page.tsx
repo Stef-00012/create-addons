@@ -308,25 +308,29 @@ export default function Home() {
 							/>
 						</div>
 					</div>
-
-					<div className="input-floating rounded-full max-w-56">
-						<input
-							placeholder="Search"
-							disabled={!addonsData}
-							type="search"
-							value={search}
-							onChange={handleSearch}
-							className="input disabled:border-none"
-							id="floatingInput"
-						/>
-						<label
-							className="input-floating-label flex items-center rounded-2xl"
-							htmlFor="floatingInput"
-						>
-							<span className="icon-[tabler--search] me-2 size-5 shrink-0 ml-1" />
-							<p className="mr-1 py-1">Search addons</p>
-						</label>
+					<div className="join rounded-2xl max-w-xs mx-auto">
+						<div className="input-floating join-item flex-grow">
+							<input
+								placeholder="Search"
+								disabled={!addonsData}
+								type="search"
+								value={search}
+								onChange={handleSearch}
+								className="input disabled:border-none rounded-l-2xl rounded-r-none"
+								id="floatingInput"
+							/>
+							<label
+								className="input-floating-label flex items-center rounded-2xl"
+								htmlFor="floatingInput"
+							>
+								<p className="mr-1 py-1">Search addons</p>
+							</label>
+						</div>
+						<button className="btn btn-outline bg-accent-content hover:border-base-content/70 border-base-content/40 join-item h-auto rounded-r-2xl ">
+							<span className="icon-[tabler--search] size-5" />
+						</button>
 					</div>
+
 				</div>
 
 				{/* Mods */}
@@ -383,25 +387,13 @@ export default function Home() {
 					<span className="icon-[tabler--arrow-left] size-6" />
 				</button>
 				<div className="flex items-center gap-x-2">
-					<button
-						type="button"
-						className="btn btn-soft btn-square aria-[current='page']:text-bg-soft-primary"
-					>
-						1
-					</button>
-					<button
-						type="button"
-						className="btn btn-soft btn-square aria-[current='page']:text-bg-soft-primary"
-						aria-current="page"
-					>
-						2
-					</button>
-					<button
-						type="button"
-						className="btn btn-soft btn-square aria-[current='page']:text-bg-soft-primary"
-					>
-						3
-					</button>
+					<button type="button" className="btn btn-soft btn-square">1</button>
+					<p>—</p>
+					<button type="button" className="btn btn-soft btn-square">41</button>
+					<button type="button" className="btn btn-soft btn-square text-bg-soft-primary">42</button>
+					<button type="button" className="btn btn-soft btn-square">43</button>
+					<p>—</p>
+					<button type="button" className="btn btn-soft btn-square">520</button>
 				</div>
 				<button type="button" className="btn btn-soft">
 					<span className="icon-[tabler--arrow-right] size-6" />
