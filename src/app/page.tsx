@@ -1,7 +1,6 @@
 "use client";
 
 import { type ChangeEvent, Fragment, useEffect, useState } from "react";
-import Select from "react-select";
 import Fuse from "fuse.js";
 import axios from "axios";
 
@@ -12,6 +11,7 @@ import SkeletonCard from "@/components/SkeletonCard";
 import SkeletonList from "@/components/SkeletonList";
 import Card from "@/components/Card";
 import List from "@/components/List";
+import Select from "react-select";
 
 const defaultCardAmount = 9;
 const defaultAddCardAmont = 9;
