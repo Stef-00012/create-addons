@@ -177,13 +177,10 @@ export default function Home() {
 
 	useEffect(() => {
 		const interval = setInterval(() => {
-			if (!document || !window) return;
+			if (!window) return;
 			const scrollPosition = window.scrollY + window.innerHeight;
 
-			const scrollThresholdTop =
-				(addCardScrollPercentageTop / 100) * document.body.scrollHeight;
-
-			if (scrollPosition <= scrollThresholdTop) {
+			if (scrollPosition <= 20) {
 				setDisplayCardAmount((prev) => Math.max(defaultDisplayCardAmount, prev - addCardAmount));
 			}
 		}, 500)
