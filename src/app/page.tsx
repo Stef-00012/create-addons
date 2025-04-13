@@ -343,10 +343,11 @@ export default function Home() {
 				<div className="input-floating rounded-full max-w-56">
 					<input placeholder="Search" disabled={mods.length === 0}
 						type="search"
-						value={search} onChange={handleSearch}
-						className="input disabled:bg-base-100/50 disabled:border-none disabled:text-base-content/50" id="floatingInput" />
-					<label
-						className="input-floating-label flex items-center rounded-2xl" htmlFor="floatingInput">
+						value={search}
+						onChange={handleSearch}
+						className="input disabled:border-none"
+						id="floatingInput" />
+					<label className="input-floating-label flex items-center rounded-2xl" htmlFor="floatingInput">
 						<span className="icon-[tabler--search] me-2 size-5 shrink-0 ml-1" />
 						<p className="mr-1 py-1">Search addons</p>
 					</label>
