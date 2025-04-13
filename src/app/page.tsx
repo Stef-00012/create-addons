@@ -202,16 +202,16 @@ export default function Home() {
 
 	return (
 		<div>
-			{/* // <!-- Navbar --> */}
+			{/* Navbar */}
 			<nav className="navbar rounded-box shadow-base-300/20 shadow-sm mt-4">
 				Create Addons Index
 			</nav>
 			<br />
 
-			{/* <!-- Search & Filter & Sort & View type --> */}
+			{/* Search & Filter & Sort & View type */}
 			<div className="md:flex md:justify-between md:flex-wrap gap-4">
 				<div className="md:flex md:justify-start gap-2 md:gap-6 xl:gap-2 md:flex-wrap">
-					{/* <!-- Grid/list view toggle --> */}
+					{/* Grid/list view toggle */}
 					<div className="">
 						<button
 							type="button"
@@ -223,7 +223,7 @@ export default function Home() {
 							/>
 						</button>
 					</div>
-					{/* <!-- Filter by modloader --> */}
+					{/* Filter by modloader */}
 					<div className="select-floating w-96 my-4 md:my-0">
 						<label
 							className="select-floating-label rounded-2xl px-2 z-10 flex items-center"
@@ -261,7 +261,7 @@ export default function Home() {
 						/>
 					</div>
 
-					{/* <!-- Filter by version --> */}
+					{/* Filter by version */}
 					<div className="select-floating w-96 my-4 md:my-0">
 						<label
 							className="select-floating-label rounded-2xl px-2 z-10 flex items-center"
@@ -312,7 +312,7 @@ export default function Home() {
 							onChange={handleVersionSelect}
 						/>
 					</div>
-					{/* <!-- Sort by --> */}
+					{/* Sort by */}
 					<div className="select-floating w-96 my-4 md:my-0">
 						<label
 							className="select-floating-label rounded-2xl px-2 z-10 flex items-center"
@@ -370,7 +370,7 @@ export default function Home() {
 				</div>
 			</div>
 
-			{/* <!-- Mods --> */}
+			{/* Mods */}
 			<div
 				className={`py-2 my-2 ${compactMode ? "" : "sm:flex sm:flex-row sm:flex-wrap sm:gap-4"}`}
 			>
@@ -442,7 +442,7 @@ export default function Home() {
 				)}
 			</div>
 
-			{/* <!-- Footer --> */}
+			{/* Footer */}
 			<footer className="footer shadow-lg bg-base-200 px-6 py-4 mb-4 rounded-2xl absolute -bottom-px sticky start-0 w-full">
 				<div className="flex w-full items-center justify-between">
 					<aside className="grid-flow-col items-center">
