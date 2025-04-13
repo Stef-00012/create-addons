@@ -1,6 +1,6 @@
 "use client";
 
-import { type ChangeEvent, Fragment, useEffect, useState } from "react";
+import { Fragment, type KeyboardEvent as ReactKeyboardEvent, useEffect, useRef, useState } from "react";
 import axios from "axios";
 
 import type { APIModsResponse } from "@/app/api/addons/route";
@@ -50,6 +50,8 @@ export default function Home() {
 		APIModsResponse["mods"][0]["versions"][0] | "all"
 	>("all");
 	const [search, setSearch] = useState<string>("");
+
+	const searchInput = useRef<HTMLInputElement>(null);
 
 	useEffect(() => {
 		async function fetchVersions() {
@@ -140,6 +142,14 @@ export default function Home() {
 		});
 	}, [sortBy, search, loader, version, compactMode, page, router.replace]);
 
+	useEffect(() => {
+		document.addEventListener("keydown", handleKeyboardShortcut);
+
+		return () => {
+			document.removeEventListener("keydown", handleKeyboardShortcut);
+		};
+	}, []) 
+
 	function handleLoaderSelect(
 		newValue: { label: string; value: string } | null,
 	) {
@@ -164,10 +174,8 @@ export default function Home() {
 		setSortBy(sort || "name");
 	}
 
-	function handleSearch(data: ChangeEvent<HTMLInputElement>) {
-		const searchTerm = data.target.value;
-
-		setSearch(searchTerm);
+	function handleSearch() {
+		setSearch(searchInput.current?.value || "");
 	}
 
 	function handleCompactMode() {
@@ -190,6 +198,25 @@ export default function Home() {
 		setPage((prev) => prev + 1);
 	}
 
+	function handleInputKeydown(event: ReactKeyboardEvent<HTMLInputElement>) {
+		if (event.key === "Enter") {
+			event.preventDefault()
+			handleSearch();
+		}
+
+		if (event.key === "Escape") {
+			event.preventDefault();
+			searchInput.current?.blur();
+		}
+	}
+
+	function handleKeyboardShortcut(event: KeyboardEvent) {
+		if ((event.ctrlKey && event.key === "k") || event.key === "/") {
+			event.preventDefault();
+			searchInput.current?.focus();
+		}
+	}
+
 	return (
 		<div className="flex flex-col min-h-screen">
 			{/* Main Content */}
@@ -198,6 +225,7 @@ export default function Home() {
 				<nav className="navbar rounded-box shadow-base-300/20 shadow-sm mt-4">
 					Create Addons Index
 				</nav>
+
 				<br />
 
 				{/* Search & Filter & Sort & View type */}
@@ -215,6 +243,7 @@ export default function Home() {
 								/>
 							</button>
 						</div>
+
 						{/* Filter by modloader */}
 						<div className="select-floating w-96 my-4 md:my-0">
 							<label
@@ -302,6 +331,7 @@ export default function Home() {
 								onChange={handleVersionSelect}
 							/>
 						</div>
+
 						{/* Sort by */}
 						<div className="select-floating w-96 my-4 md:my-0">
 							<label
@@ -340,17 +370,20 @@ export default function Home() {
 							/>
 						</div>
 					</div>
+
 					<div className="join rounded-2xl max-w-xs mx-auto">
 						<div className="input-floating join-item flex-grow">
 							<input
 								placeholder="Search"
 								disabled={!addonsData}
 								type="search"
-								value={search}
-								onChange={handleSearch}
-								className="input disabled:border-none rounded-l-2xl rounded-r-none"
+								defaultValue={search}
+								className="input disabled:border-none disabled:bg-base-100! rounded-l-2xl rounded-r-none"
 								id="floatingInput"
+								ref={searchInput}
+								onKeyDown={handleInputKeydown}
 							/>
+
 							<label
 								className="input-floating-label flex items-center rounded-2xl"
 								htmlFor="floatingInput"
@@ -358,9 +391,12 @@ export default function Home() {
 								<p className="mr-1 py-1">Search addons</p>
 							</label>
 						</div>
+
 						<button
 							type="button"
-							className="btn btn-outline bg-accent-content hover:border-base-content/70 border-base-content/40 join-item h-auto rounded-r-2xl "
+							className="btn btn-outline bg-accent-content hover:border-base-content/70 border-base-content/40 join-item h-auto rounded-r-2xl disabled:border-none"
+							onClick={handleSearch}
+							disabled={!addonsData}
 						>
 							<span className="icon-[tabler--search] size-5" />
 						</button>
@@ -374,6 +410,7 @@ export default function Home() {
 							{addonsData.totalMods} total addons served.
 						</p>
 					)}
+
 					<div
 						className={`${compactMode ? "" : "sm:flex sm:flex-row sm:flex-wrap sm:gap-4"}`}
 					>
@@ -398,19 +435,11 @@ export default function Home() {
 							<div
 								className={`py-2 my-2 ${compactMode ? "" : "sm:flex sm:flex-row sm:flex-wrap sm:gap-4"}`}
 							>
-								{compactMode ? (
-									<>
-										{[...Array(7).keys()].map((i) => (
-											<SkeletonList key={i} />
-										))}
-									</>
-								) : (
-									<>
-										{[...Array(7).keys()].map((i) => (
-											<SkeletonCard key={i} />
-										))}
-									</>
-								)}
+								{[...Array(7).keys()].map((i) => (
+										<>
+											{compactMode ? <SkeletonList key={i} /> : <SkeletonCard key={i} />}
+										</>
+									))}
 							</div>
 						)}
 					</div>
@@ -428,6 +457,7 @@ export default function Home() {
 					>
 						<span className="icon-[tabler--arrow-left] size-6" />
 					</button>
+
 					<div className="flex items-center gap-x-2">
 						{page > 2 && (
 							<button
@@ -438,7 +468,9 @@ export default function Home() {
 								1
 							</button>
 						)}
+
 						<p>—</p>
+
 						{page > 1 && (
 							<button
 								type="button"
@@ -448,12 +480,14 @@ export default function Home() {
 								{page - 1}
 							</button>
 						)}
+
 						<button
 							type="button"
 							className="btn btn-soft text-bg-soft-primary"
 						>
 							{page}
 						</button>
+
 						{page < (addonsData?.totalPages || 1) && (
 							<button
 								type="button"
@@ -463,7 +497,9 @@ export default function Home() {
 								{page + 1}
 							</button>
 						)}
+
 						<p>—</p>
+
 						{page < (addonsData?.totalPages || 1) - 1 && (
 							<button
 								type="button"
@@ -474,6 +510,7 @@ export default function Home() {
 							</button>
 						)}
 					</div>
+
 					<button
 						type="button"
 						className="btn btn-soft"
@@ -502,6 +539,7 @@ export default function Home() {
 							the Create mod.
 						</p>
 					</aside>
+					
 					<div className="flex gap-4 h-5">
 						<a
 							href="https://github.com/Stef-00012/create-addons"
