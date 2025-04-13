@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@libsql/client": "^0.15.2",
+    "@tanstack/react-virtual": "^3.13.6",
     "axios": "^1.8.4",
     "drizzle-orm": "^0.41.0",
     "flyonui": "^2.1.0",
