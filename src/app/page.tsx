@@ -373,9 +373,9 @@ export default function Home() {
 				</div>
 
 				{/* Mods */}
-				<div className={`2${compactMode ? "" : "sm:flex sm:flex-row sm:flex-wrap sm:gap-4"}`}>
-					<div className="py-2 my-2">
-						<p className="p-1 mb-2 rounded-2xl">bigAssNumber total addons served.</p>
+				<div className="py-2 my-2">
+					<p className="p-1 mb-2 rounded-2xl">bigAssNumber total addons served.</p>
+					<div className={`${compactMode ? "" : "sm:flex sm:flex-row sm:flex-wrap sm:gap-4"}`}>
 						{mods.length > 0 ? (
 							<>
 								{filteredMods.length > 0 ? (
