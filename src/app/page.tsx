@@ -426,7 +426,7 @@ export default function Home() {
 						{page > 2 && (
 							<button
 								type="button"
-								className="btn btn-soft btn-square"
+								className="btn btn-soft"
 								onClick={handleFirstPage}
 							>
 								1
@@ -436,7 +436,7 @@ export default function Home() {
 						{page > 1 && (
 							<button
 								type="button"
-								className="btn btn-soft btn-square"
+								className="btn btn-soft"
 								onClick={handlePreviousPage}
 							>
 								{page - 1}
@@ -444,14 +444,14 @@ export default function Home() {
 						)}
 						<button
 							type="button"
-							className="btn btn-soft btn-square text-bg-soft-primary"
+							className="btn btn-soft text-bg-soft-primary"
 						>
 							{page}
 						</button>
 						{page < (addonsData?.totalPages || 1) && (
 							<button
 								type="button"
-								className="btn btn-soft btn-square"
+								className="btn btn-soft"
 								onClick={handleNextPage}
 							>
 								{page + 1}
@@ -461,7 +461,7 @@ export default function Home() {
 						{page < (addonsData?.totalPages || 1) - 1 && (
 							<button
 								type="button"
-								className="btn btn-soft btn-square"
+								className="btn btn-soft"
 								onClick={handleLastPage}
 							>
 								{addonsData?.totalPages}
