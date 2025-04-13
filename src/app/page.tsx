@@ -8,7 +8,7 @@ import Select from "react-select";
 import { useSearchParams } from "next/navigation";
 import SkeletonCard from "@/components/SkeletonCard";
 import List from "@/components/List";
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
 import SkeletonList from "@/components/SkeletonList";
 
 const defaultCardAmount = 9;
@@ -17,17 +17,17 @@ const defaultScrollPercentage = 60;
 
 const defaultDisplayCardAmount = process.env.NEXT_PUBLIC_DEFAULT_CARD_AMOUNT
 	? Math.abs(Number.parseInt(process.env.NEXT_PUBLIC_DEFAULT_CARD_AMOUNT)) ||
-	defaultCardAmount
+		defaultCardAmount
 	: defaultCardAmount;
 
 const addCardAmount = process.env.NEXT_PUBLIC_ADD_CARD_AMOUNT
 	? Math.abs(Number.parseInt(process.env.NEXT_PUBLIC_ADD_CARD_AMOUNT)) ||
-	defaultAddCardAmont
+		defaultAddCardAmont
 	: defaultAddCardAmont;
 
 let addCardScrollPercentage = process.env.NEXT_PUBLIC_ADD_CARD_SCROLL_PERCENTAGE
 	? Number.parseInt(process.env.NEXT_PUBLIC_ADD_CARD_SCROLL_PERCENTAGE) ||
-	defaultScrollPercentage
+		defaultScrollPercentage
 	: defaultScrollPercentage;
 
 if (addCardScrollPercentage > 100) addCardScrollPercentage = 100;
@@ -61,7 +61,9 @@ export default function Home() {
 		APIModsResponse[0]["modloaders"][0] | "all"
 	>("all");
 	const [sortBy, setSortBy] = useState<SortByType>("downloads");
-	const [compactMode, setCompactMode] = useState(searchParams.get("compact") === "1");
+	const [compactMode, setCompactMode] = useState(
+		searchParams.get("compact") === "1",
+	);
 	const [version, setVersion] = useState<
 		APIModsResponse[0]["versions"][0] | "all"
 	>("all");
@@ -152,7 +154,9 @@ export default function Home() {
 	}, []);
 
 	useEffect(() => {
-		router.replace(`?version=${version}&modloader=${loader}&sortBy=${sortBy}&compact=${compactMode ? 1 : 0}&search=${encodeURIComponent(search)}`)
+		router.replace(
+			`?version=${version}&modloader=${loader}&sortBy=${sortBy}&compact=${compactMode ? 1 : 0}&search=${encodeURIComponent(search)}`,
+		);
 	}, [sortBy, search, loader, version, compactMode, router.replace]);
 
 	function handleLoaderSelect(
@@ -175,9 +179,7 @@ export default function Home() {
 		setDisplayCardAmount(defaultDisplayCardAmount);
 	}
 
-	function handleSortSelect(
-		newValue: { label: string; value: string } | null,
-	) {
+	function handleSortSelect(newValue: { label: string; value: string } | null) {
 		const sort = newValue?.value as SortByType;
 
 		setSortBy(sort || "name");
@@ -245,7 +247,8 @@ export default function Home() {
 								IndicatorSeparator: () => null,
 							}}
 							classNames={{
-								control: ({ isDisabled }) => `select ${isDisabled ? "bg-base-100/50 border-none text-base-content/50" : ""}`,
+								control: ({ isDisabled }) =>
+									`select ${isDisabled ? "bg-base-100/50 border-none text-base-content/50" : ""}`,
 								option: ({ isSelected }) =>
 									`rounded-2xl my-1 p-2 ${isSelected ? "bg-base-200" : "bg-base-100 hover:bg-base-200"}`,
 								menuList: () =>
@@ -296,7 +299,8 @@ export default function Home() {
 								IndicatorSeparator: () => null,
 							}}
 							classNames={{
-								control: ({ isDisabled }) => `select ${isDisabled ? "bg-base-100/50 border-none text-base-content/50" : ""}`,
+								control: ({ isDisabled }) =>
+									`select ${isDisabled ? "bg-base-100/50 border-none text-base-content/50" : ""}`,
 								option: ({ isSelected }) =>
 									`rounded-2xl my-1 p-2 ${isSelected ? "bg-base-200" : "bg-base-100 hover:bg-base-200"}`,
 								menuList: () =>
@@ -319,7 +323,9 @@ export default function Home() {
 							id="selectFloating"
 							defaultValue={sortByOptions[0]}
 							options={sortByOptions}
-							value={sortByOptions.find((option) => option.value === sortBy) || null}
+							value={
+								sortByOptions.find((option) => option.value === sortBy) || null
+							}
 							unstyled
 							isSearchable={false}
 							isLoading={mods.length === 0}
@@ -329,7 +335,8 @@ export default function Home() {
 								IndicatorSeparator: () => null,
 							}}
 							classNames={{
-								control: ({ isDisabled }) => `select ${isDisabled ? "bg-base-100/50 border-none text-base-content/50" : ""}`,
+								control: ({ isDisabled }) =>
+									`select ${isDisabled ? "bg-base-100/50 border-none text-base-content/50" : ""}`,
 								option: ({ isSelected }) =>
 									`rounded-2xl my-1 p-2 ${isSelected ? "bg-base-200" : "bg-base-100 hover:bg-base-200"}`,
 								menuList: () =>
@@ -341,13 +348,19 @@ export default function Home() {
 				</div>
 
 				<div className="input-floating rounded-full max-w-56">
-					<input placeholder="Search" disabled={mods.length === 0}
+					<input
+						placeholder="Search"
+						disabled={mods.length === 0}
 						type="search"
 						value={search}
 						onChange={handleSearch}
 						className="input disabled:border-none"
-						id="floatingInput" />
-					<label className="input-floating-label flex items-center rounded-2xl" htmlFor="floatingInput">
+						id="floatingInput"
+					/>
+					<label
+						className="input-floating-label flex items-center rounded-2xl"
+						htmlFor="floatingInput"
+					>
 						<span className="icon-[tabler--search] me-2 size-5 shrink-0 ml-1" />
 						<p className="mr-1 py-1">Search addons</p>
 					</label>
@@ -355,7 +368,9 @@ export default function Home() {
 			</div>
 
 			{/* <!-- Mods --> */}
-			<div className={`py-2 my-2 ${compactMode ? "" : "sm:flex sm:flex-row sm:flex-wrap sm:gap-4"}`}>
+			<div
+				className={`py-2 my-2 ${compactMode ? "" : "sm:flex sm:flex-row sm:flex-wrap sm:gap-4"}`}
+			>
 				{mods.length > 0 ? (
 					<>
 						{filteredMods.length > 0 ? (
@@ -392,39 +407,7 @@ export default function Home() {
 									.slice(0, displayCardAmount)
 									.map((mod) => (
 										<Fragment key={mod.slug}>
-											{compactMode ? (
-												<List
-													author={mod.author}
-													categories={mod.categories}
-													description={mod.description}
-													downloads={mod.downloads}
-													follows={mod.follows}
-													icon={mod.icon}
-													name={mod.name}
-													platform={mod.platform}
-													slug={mod.slug}
-													version={mod.version}
-													versions={mod.versions}
-													key={mod.slug}
-													modloaders={mod.modloaders}
-												/>
-											) : (
-												<Card
-													author={mod.author}
-													categories={mod.categories}
-													description={mod.description}
-													downloads={mod.downloads}
-													follows={mod.follows}
-													icon={mod.icon}
-													name={mod.name}
-													platform={mod.platform}
-													slug={mod.slug}
-													version={mod.version}
-													versions={mod.versions}
-													key={mod.slug}
-													modloaders={mod.modloaders}
-												/>
-											)}
+											{compactMode ? <List mod={mod} /> : <Card mod={mod} />}
 										</Fragment>
 									))}
 							</>
@@ -436,7 +419,9 @@ export default function Home() {
 						)}
 					</>
 				) : (
-					<div className={`py-2 my-2 ${compactMode ? "" : "sm:flex sm:flex-row sm:flex-wrap sm:gap-4"}`}>
+					<div
+						className={`py-2 my-2 ${compactMode ? "" : "sm:flex sm:flex-row sm:flex-wrap sm:gap-4"}`}
+					>
 						{compactMode ? (
 							<>
 								<SkeletonList />
