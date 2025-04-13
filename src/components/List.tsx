@@ -3,13 +3,13 @@ import neoforge from "#/assets/neoforge.png";
 import fabric from "#/assets/fabric.png";
 import forge from "#/assets/forge.ico";
 import quilt from "#/assets/quilt.svg";
-import Image from "next/image";
 
 import millify from "millify";
 
 import type { APIModsResponse } from "@/app/api/addons/route";
 
 import { Tooltip } from "react-tooltip";
+import Image from "next/image";
 
 interface Props {
 	mod: APIModsResponse[0];
