@@ -201,249 +201,252 @@ export default function Home() {
 	}
 
 	return (
-		<div>
-			{/* Navbar */}
-			<nav className="navbar rounded-box shadow-base-300/20 shadow-sm mt-4">
-				Create Addons Index
-			</nav>
-			<br />
+		<div className="flex flex-col min-h-screen">
+			{/* Main Content */}
+			<div className="flex-grow">
+				{/* Navbar */}
+				<nav className="navbar rounded-box shadow-base-300/20 shadow-sm mt-4">
+					Create Addons Index
+				</nav>
+				<br />
 
-			{/* Search & Filter & Sort & View type */}
-			<div className="md:flex md:justify-between md:flex-wrap gap-4">
-				<div className="md:flex md:justify-start gap-2 md:gap-6 xl:gap-2 md:flex-wrap">
-					{/* Grid/list view toggle */}
-					<div className="">
-						<button
-							type="button"
-							className="btn border-base-content/50 bg-accent-content"
-							onClick={handleCompactMode}
-						>
-							<span
-								className={`${compactMode ? "icon-[tabler--grid]" : "icon-[tabler--list]"} text-base-content`}
+				{/* Search & Filter & Sort & View type */}
+				<div className="md:flex md:justify-between md:flex-wrap gap-4">
+					<div className="md:flex md:justify-start gap-2 md:gap-6 xl:gap-2 md:flex-wrap">
+						{/* Grid/list view toggle */}
+						<div className="">
+							<button
+								type="button"
+								className="btn border-base-content/50 bg-accent-content"
+								onClick={handleCompactMode}
+							>
+								<span
+									className={`${compactMode ? "icon-[tabler--grid]" : "icon-[tabler--list]"} text-base-content`}
+								/>
+							</button>
+						</div>
+						{/* Filter by modloader */}
+						<div className="select-floating w-96 my-4 md:my-0">
+							<label
+								className="select-floating-label rounded-2xl px-2 z-10 flex items-center"
+								htmlFor="selectFloating"
+							>
+								<span className="icon-[tabler--filter] me-2 size-5 shrink-0" />
+								Filter by modloader
+							</label>
+
+							<Select
+								id="selectFloating"
+								defaultValue={modloaderOptions[0]}
+								options={modloaderOptions}
+								value={
+									modloaderOptions.find((option) => option.value === loader) ||
+									null
+								}
+								unstyled
+								isSearchable={false}
+								isLoading={mods.length === 0}
+								isDisabled={mods.length === 0}
+								components={{
+									DropdownIndicator: () => null,
+									IndicatorSeparator: () => null,
+								}}
+								classNames={{
+									control: ({ isDisabled }) =>
+										`select ${isDisabled ? "bg-base-100/50 border-none text-base-content/50" : ""}`,
+									option: ({ isSelected }) =>
+										`rounded-2xl my-1 p-2 ${isSelected ? "bg-base-200" : "bg-base-100 hover:bg-base-200"}`,
+									menuList: () =>
+										"rounded-2xl bg-base-100 py-4 shadow-lg px-2 mt-1",
+								}}
+								onChange={handleLoaderSelect}
 							/>
-						</button>
-					</div>
-					{/* Filter by modloader */}
-					<div className="select-floating w-96 my-4 md:my-0">
-						<label
-							className="select-floating-label rounded-2xl px-2 z-10 flex items-center"
-							htmlFor="selectFloating"
-						>
-							<span className="icon-[tabler--filter] me-2 size-5 shrink-0" />
-							Filter by modloader
-						</label>
+						</div>
 
-						<Select
-							id="selectFloating"
-							defaultValue={modloaderOptions[0]}
-							options={modloaderOptions}
-							value={
-								modloaderOptions.find((option) => option.value === loader) ||
-								null
-							}
-							unstyled
-							isSearchable={false}
-							isLoading={mods.length === 0}
-							isDisabled={mods.length === 0}
-							components={{
-								DropdownIndicator: () => null,
-								IndicatorSeparator: () => null,
-							}}
-							classNames={{
-								control: ({ isDisabled }) =>
-									`select ${isDisabled ? "bg-base-100/50 border-none text-base-content/50" : ""}`,
-								option: ({ isSelected }) =>
-									`rounded-2xl my-1 p-2 ${isSelected ? "bg-base-200" : "bg-base-100 hover:bg-base-200"}`,
-								menuList: () =>
-									"rounded-2xl bg-base-100 py-4 shadow-lg px-2 mt-1",
-							}}
-							onChange={handleLoaderSelect}
-						/>
-					</div>
+						{/* Filter by version */}
+						<div className="select-floating w-96 my-4 md:my-0">
+							<label
+								className="select-floating-label rounded-2xl px-2 z-10 flex items-center"
+								htmlFor="selectFloating"
+							>
+								<span className="icon-[tabler--filter] me-2 size-5 shrink-0" />
+								Filter by version
+							</label>
 
-					{/* Filter by version */}
-					<div className="select-floating w-96 my-4 md:my-0">
-						<label
-							className="select-floating-label rounded-2xl px-2 z-10 flex items-center"
-							htmlFor="selectFloating"
-						>
-							<span className="icon-[tabler--filter] me-2 size-5 shrink-0" />
-							Filter by version
-						</label>
-
-						<Select
-							id="selectFloating"
-							unstyled
-							isSearchable={false}
-							isLoading={mods.length === 0}
-							isDisabled={mods.length === 0}
-							defaultValue={{
-								value: "all",
-								label: "All",
-							}}
-							value={{
-								value: version,
-								label: version === "all" ? "All" : version,
-							}}
-							options={[
-								{
+							<Select
+								id="selectFloating"
+								unstyled
+								isSearchable={false}
+								isLoading={mods.length === 0}
+								isDisabled={mods.length === 0}
+								defaultValue={{
 									value: "all",
 									label: "All",
-								},
-								...(
-									mods.find((mod) => mod.slug === "create")?.versions || []
-								).map((version) => ({
+								}}
+								value={{
 									value: version,
-									label: version,
-								})),
-							]}
-							components={{
-								DropdownIndicator: () => null,
-								IndicatorSeparator: () => null,
-							}}
-							classNames={{
-								control: ({ isDisabled }) =>
-									`select ${isDisabled ? "bg-base-100/50 border-none text-base-content/50" : ""}`,
-								option: ({ isSelected }) =>
-									`rounded-2xl my-1 p-2 ${isSelected ? "bg-base-200" : "bg-base-100 hover:bg-base-200"}`,
-								menuList: () =>
-									"rounded-2xl bg-base-100 py-4 shadow-lg px-2 mt-1",
-							}}
-							onChange={handleVersionSelect}
-						/>
+									label: version === "all" ? "All" : version,
+								}}
+								options={[
+									{
+										value: "all",
+										label: "All",
+									},
+									...(
+										mods.find((mod) => mod.slug === "create")?.versions || []
+									).map((version) => ({
+										value: version,
+										label: version,
+									})),
+								]}
+								components={{
+									DropdownIndicator: () => null,
+									IndicatorSeparator: () => null,
+								}}
+								classNames={{
+									control: ({ isDisabled }) =>
+										`select ${isDisabled ? "bg-base-100/50 border-none text-base-content/50" : ""}`,
+									option: ({ isSelected }) =>
+										`rounded-2xl my-1 p-2 ${isSelected ? "bg-base-200" : "bg-base-100 hover:bg-base-200"}`,
+									menuList: () =>
+										"rounded-2xl bg-base-100 py-4 shadow-lg px-2 mt-1",
+								}}
+								onChange={handleVersionSelect}
+							/>
+						</div>
+						{/* Sort by */}
+						<div className="select-floating w-96 my-4 md:my-0">
+							<label
+								className="select-floating-label rounded-2xl px-2 z-10 flex items-center"
+								htmlFor="selectFloating"
+							>
+								<span className="icon-[tabler--arrows-sort] me-2 size-5 shrink-0" />
+								Sort by
+							</label>
+
+							<Select
+								id="selectFloating"
+								defaultValue={sortByOptions[0]}
+								options={sortByOptions}
+								value={
+									sortByOptions.find((option) => option.value === sortBy) || null
+								}
+								unstyled
+								isSearchable={false}
+								isLoading={mods.length === 0}
+								isDisabled={mods.length === 0}
+								components={{
+									DropdownIndicator: () => null,
+									IndicatorSeparator: () => null,
+								}}
+								classNames={{
+									control: ({ isDisabled }) =>
+										`select ${isDisabled ? "bg-base-100/50 border-none text-base-content/50" : ""}`,
+									option: ({ isSelected }) =>
+										`rounded-2xl my-1 p-2 ${isSelected ? "bg-base-200" : "bg-base-100 hover:bg-base-200"}`,
+									menuList: () =>
+										"rounded-2xl bg-base-100 py-4 shadow-lg px-2 mt-1",
+								}}
+								onChange={handleSortSelect}
+							/>
+						</div>
 					</div>
-					{/* Sort by */}
-					<div className="select-floating w-96 my-4 md:my-0">
+
+					<div className="input-floating rounded-full max-w-56">
+						<input
+							placeholder="Search"
+							disabled={mods.length === 0}
+							type="search"
+							value={search}
+							onChange={handleSearch}
+							className="input disabled:border-none"
+							id="floatingInput"
+						/>
 						<label
-							className="select-floating-label rounded-2xl px-2 z-10 flex items-center"
-							htmlFor="selectFloating"
+							className="input-floating-label flex items-center rounded-2xl"
+							htmlFor="floatingInput"
 						>
-							<span className="icon-[tabler--arrows-sort] me-2 size-5 shrink-0" />
-							Sort by
+							<span className="icon-[tabler--search] me-2 size-5 shrink-0 ml-1" />
+							<p className="mr-1 py-1">Search addons</p>
 						</label>
-
-						<Select
-							id="selectFloating"
-							defaultValue={sortByOptions[0]}
-							options={sortByOptions}
-							value={
-								sortByOptions.find((option) => option.value === sortBy) || null
-							}
-							unstyled
-							isSearchable={false}
-							isLoading={mods.length === 0}
-							isDisabled={mods.length === 0}
-							components={{
-								DropdownIndicator: () => null,
-								IndicatorSeparator: () => null,
-							}}
-							classNames={{
-								control: ({ isDisabled }) =>
-									`select ${isDisabled ? "bg-base-100/50 border-none text-base-content/50" : ""}`,
-								option: ({ isSelected }) =>
-									`rounded-2xl my-1 p-2 ${isSelected ? "bg-base-200" : "bg-base-100 hover:bg-base-200"}`,
-								menuList: () =>
-									"rounded-2xl bg-base-100 py-4 shadow-lg px-2 mt-1",
-							}}
-							onChange={handleSortSelect}
-						/>
 					</div>
 				</div>
 
-				<div className="input-floating rounded-full max-w-56">
-					<input
-						placeholder="Search"
-						disabled={mods.length === 0}
-						type="search"
-						value={search}
-						onChange={handleSearch}
-						className="input disabled:border-none"
-						id="floatingInput"
-					/>
-					<label
-						className="input-floating-label flex items-center rounded-2xl"
-						htmlFor="floatingInput"
-					>
-						<span className="icon-[tabler--search] me-2 size-5 shrink-0 ml-1" />
-						<p className="mr-1 py-1">Search addons</p>
-					</label>
-				</div>
-			</div>
-
-			{/* Mods */}
-			<div
-				className={`py-2 my-2 ${compactMode ? "" : "sm:flex sm:flex-row sm:flex-wrap sm:gap-4"}`}
-			>
-				{mods.length > 0 ? (
-					<>
-						{filteredMods.length > 0 ? (
-							<>
-								{filteredMods
-									.filter((mod) => {
-										return (
-											(loader === "all" || mod.modloaders.includes(loader)) &&
-											(version === "all" || mod.versions.includes(version))
-										);
-									})
-									.sort((a, b) => {
-										if (sortBy === "downloads") {
-											return b.downloads - a.downloads;
-										}
-
-										if (sortBy === "followers") {
-											return b.follows - a.follows;
-										}
-
-										if (sortBy === "lastUpdated") {
+				{/* Mods */}
+				<div
+					className={`py-2 my-2 ${compactMode ? "" : "sm:flex sm:flex-row sm:flex-wrap sm:gap-4"}`}
+				>
+					{mods.length > 0 ? (
+						<>
+							{filteredMods.length > 0 ? (
+								<>
+									{filteredMods
+										.filter((mod) => {
 											return (
-												new Date(b.modified).getTime() -
-												new Date(a.modified).getTime()
+												(loader === "all" || mod.modloaders.includes(loader)) &&
+												(version === "all" || mod.versions.includes(version))
 											);
-										}
+										})
+										.sort((a, b) => {
+											if (sortBy === "downloads") {
+												return b.downloads - a.downloads;
+											}
 
-										if (sortBy === "name") {
-											return a.name.localeCompare(b.name);
-										}
+											if (sortBy === "followers") {
+												return b.follows - a.follows;
+											}
 
-										return 0;
-									})
-									.slice(0, displayCardAmount)
-									.map((mod) => (
-										<Fragment key={mod.slug}>
-											{compactMode ? <List mod={mod} /> : <Card mod={mod} />}
-										</Fragment>
+											if (sortBy === "lastUpdated") {
+												return (
+													new Date(b.modified).getTime() -
+													new Date(a.modified).getTime()
+												);
+											}
+
+											if (sortBy === "name") {
+												return a.name.localeCompare(b.name);
+											}
+
+											return 0;
+										})
+										.slice(0, displayCardAmount)
+										.map((mod) => (
+											<Fragment key={mod.slug}>
+												{compactMode ? <List mod={mod} /> : <Card mod={mod} />}
+											</Fragment>
+										))}
+								</>
+							) : (
+								<p className="text-center mx-auto text-4xl my-6 flex items-center">
+									<span className="icon-[tabler--alert-triangle-filled] me-2 mt-1 text-error" />
+									Sorry! No results were found...
+								</p>
+							)}
+						</>
+					) : (
+						<div
+							className={`py-2 my-2 ${compactMode ? "" : "sm:flex sm:flex-row sm:flex-wrap sm:gap-4"}`}
+						>
+							{compactMode ? (
+								<>
+									{[...Array(7).keys()].map((i) => (
+										<SkeletonList key={i} />
 									))}
-							</>
-						) : (
-							<p className="text-center mx-auto text-4xl my-6 flex items-center">
-								<span className="icon-[tabler--alert-triangle-filled] me-2 mt-1 text-error" />
-								Sorry! No results were found...
-							</p>
-						)}
-					</>
-				) : (
-					<div
-						className={`py-2 my-2 ${compactMode ? "" : "sm:flex sm:flex-row sm:flex-wrap sm:gap-4"}`}
-					>
-						{compactMode ? (
-							<>
-								{[...Array(7).keys()].map((i) => (
-									<SkeletonList key={i} />
-								))}
-							</>
-						) : (
-							<>
-								{[...Array(7).keys()].map((i) => (
-									<SkeletonCard key={i} />
-								))}
-							</>
-						)}
-					</div>
-				)}
+								</>
+							) : (
+								<>
+									{[...Array(7).keys()].map((i) => (
+										<SkeletonCard key={i} />
+									))}
+								</>
+							)}
+						</div>
+					)}
+				</div>
 			</div>
 
 			{/* Footer */}
-			<footer className="footer shadow-lg bg-base-200 px-6 py-4 mb-4 rounded-2xl absolute -bottom-px sticky start-0 w-full">
+			<footer className="footer shadow-lg bg-base-200 px-6 py-4 rounded-2xl sticky bottom-0">
 				<div className="flex w-full items-center justify-between">
 					<aside className="grid-flow-col items-center">
 						<p>
