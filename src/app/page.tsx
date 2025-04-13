@@ -405,7 +405,7 @@ export default function Home() {
 
 				{/* Mods */}
 				<div className="py-2 my-2">
-					{addonsData && (
+					{(addonsData && addonsData.totalMods > 0) && (
 						<p className="p-1 mb-2 rounded-2xl">
 							{addonsData.totalMods} total addons served.
 						</p>
@@ -447,7 +447,7 @@ export default function Home() {
 			</div>
 
 			{/* Pagination */}
-			{(addonsData?.totalPages || 0) > 0 && (
+			{(addonsData?.totalPages || 1) > 1 && (
 				<nav className="flex items-center gap-x-2 justify-center mb-6">
 					<button
 						type="button"
