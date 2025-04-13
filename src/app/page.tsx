@@ -15,8 +15,7 @@ import Select from "react-select";
 
 const defaultCardAmount = 9;
 const defaultAddCardAmont = 9;
-const defaultScrollPercentageBottom = 80;
-const defaultScrollPercentageTop = 30;
+const defaultScrollPercentage = 60;
 
 const defaultDisplayCardAmount = process.env.NEXT_PUBLIC_DEFAULT_CARD_AMOUNT
 	? Math.abs(Number.parseInt(process.env.NEXT_PUBLIC_DEFAULT_CARD_AMOUNT)) ||
@@ -28,23 +27,14 @@ const addCardAmount = process.env.NEXT_PUBLIC_ADD_CARD_AMOUNT
 	defaultAddCardAmont
 	: defaultAddCardAmont;
 
-let addCardScrollPercentageBottom = process.env.NEXT_PUBLIC_ADD_CARD_SCROLL_PERCENTAGE_BOTTOM
-	? Number.parseInt(process.env.NEXT_PUBLIC_ADD_CARD_SCROLL_PERCENTAGE_BOTTOM) ||
-	defaultScrollPercentageBottom
-	: defaultScrollPercentageBottom;
+let addCardScrollPercentage = process.env.NEXT_PUBLIC_ADD_CARD_SCROLL_PERCENTAGE
+	? Number.parseInt(process.env.NEXT_PUBLIC_ADD_CARD_SCROLL_PERCENTAGE) ||
+	defaultScrollPercentage
+	: defaultScrollPercentage;
 
-if (addCardScrollPercentageBottom > 100) addCardScrollPercentageBottom = 100;
-else if (addCardScrollPercentageBottom < 0)
-	addCardScrollPercentageBottom = defaultScrollPercentageBottom;
-
-let addCardScrollPercentageTop = process.env.NEXT_PUBLIC_ADD_CARD_SCROLL_PERCENTAGE_TOP
-	? Number.parseInt(process.env.NEXT_PUBLIC_ADD_CARD_SCROLL_PERCENTAGE_TOP) ||
-	defaultScrollPercentageTop
-	: defaultScrollPercentageTop;
-
-if (addCardScrollPercentageTop > 100) addCardScrollPercentageTop = 100;
-else if (addCardScrollPercentageTop < 0)
-	addCardScrollPercentageTop = defaultScrollPercentageTop;
+if (addCardScrollPercentage > 100) addCardScrollPercentage = 100;
+else if (addCardScrollPercentage < 0)
+	addCardScrollPercentage = defaultScrollPercentage;
 
 const modloaderOptions = [
 	{ value: "all", label: "All" },
@@ -86,7 +76,7 @@ export default function Home() {
 	);
 
 	useEffect(() => {
-		console.log(`Currently displaying mods ${displayCardAmount <= 36 ? 0 : displayCardAmount - 36}-${displayCardAmount} (Total: ${mods.length})`)
+		console.log(`Currently displaying ${displayCardAmount} mods out of ${mods.length}`)
 	}, [displayCardAmount, mods])
 
 	useEffect(() => {
@@ -154,17 +144,11 @@ export default function Home() {
 	useEffect(() => {
 		const handleScroll = () => {
 			const scrollPosition = window.scrollY + window.innerHeight;
-			const scrollThresholdBottom =
-				(addCardScrollPercentageBottom / 100) * document.body.scrollHeight;
-			const scrollThresholdTop =
-				(addCardScrollPercentageTop / 100) * document.body.scrollHeight;
+			const scrollThreshold =
+				(addCardScrollPercentage / 100) * document.body.scrollHeight;
 
-			if (scrollPosition >= scrollThresholdBottom) {
+			if (scrollPosition >= scrollThreshold) {
 				setDisplayCardAmount((prev) => Math.min(mods.length, prev + addCardAmount));
-			}
-
-			if (scrollPosition <= scrollThresholdTop) {
-				setDisplayCardAmount((prev) => Math.max(defaultDisplayCardAmount, prev - addCardAmount));
 			}
 		};
 
@@ -174,19 +158,6 @@ export default function Home() {
 			window.removeEventListener("scroll", handleScroll);
 		};
 	}, [mods]);
-
-	useEffect(() => {
-		const interval = setInterval(() => {
-			if (!window) return;
-			const scrollPosition = window.scrollY + window.innerHeight;
-
-			if (scrollPosition <= 20) {
-				setDisplayCardAmount((prev) => Math.max(defaultDisplayCardAmount, prev - addCardAmount));
-			}
-		}, 500)
-
-		return () => clearInterval(interval)
-	}, [])
 
 	useEffect(() => {
 		router.replace(
@@ -442,10 +413,7 @@ export default function Home() {
 
 												return 0;
 											})
-											.slice(
-												displayCardAmount <= 36 ? 0 : displayCardAmount - 36,
-												displayCardAmount
-											)
+											.slice(0, displayCardAmount)
 											.map((mod) => (
 												<Fragment key={mod.slug}>
 													{compactMode ? <List mod={mod} /> : <Card mod={mod} />}
