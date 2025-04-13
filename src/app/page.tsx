@@ -355,7 +355,7 @@ export default function Home() {
 							/>
 						</div>
 					</div>
-					<div className="join rounded-full max-w-xs mx-auto">
+					<div className="join rounded-2xl max-w-xs mx-auto">
 						<div className="input-floating join-item flex-grow">
 							<input
 								placeholder="Search"
@@ -363,17 +363,17 @@ export default function Home() {
 								type="search"
 								value={search}
 								onChange={handleSearch}
-								className="input disabled:border-none rounded-l-full"
+								className="input disabled:border-none rounded-l-2xl rounded-r-none"
 								id="floatingInput"
 							/>
 							<label
-								className="input-floating-label flex items-center rounded-l-full"
+								className="input-floating-label flex items-center rounded-2xl"
 								htmlFor="floatingInput"
 							>
 								<p className="mr-1 py-1">Search addons</p>
 							</label>
 						</div>
-						<button className="btn btn-outline bg-accent-content hover:border-base-content/70 border-base-content/40 join-item h-auto rounded-r-full ">
+						<button className="btn btn-outline bg-accent-content hover:border-base-content/70 border-base-content/40 join-item h-auto rounded-r-2xl ">
 							<span className="icon-[tabler--search] size-5" />
 						</button>
 					</div>
