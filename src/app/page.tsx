@@ -458,9 +458,13 @@ export default function Home() {
 			<nav className="flex items-center gap-x-2 justify-center mb-6">
 				<button type="button" className="btn btn-soft"><span className="icon-[tabler--arrow-left] size-6" /></button>
 				<div className="flex items-center gap-x-2">
-					<button type="button" className="btn btn-soft btn-square aria-[current='page']:text-bg-soft-primary">1</button>
-					<button type="button" className="btn btn-soft btn-square aria-[current='page']:text-bg-soft-primary" aria-current="page">2</button>
-					<button type="button" className="btn btn-soft btn-square aria-[current='page']:text-bg-soft-primary">3</button>
+					<button type="button" className="btn btn-soft btn-square">1</button>
+					<p>—</p>
+					<button type="button" className="btn btn-soft btn-square">41</button>
+					<button type="button" className="btn btn-soft btn-square text-bg-soft-primary">42</button>
+					<button type="button" className="btn btn-soft btn-square">43</button>
+					<p>—</p>
+					<button type="button" className="btn btn-soft btn-square">520</button>
 				</div>
 				<button type="button" className="btn btn-soft"><span className="icon-[tabler--arrow-right] size-6" /></button>
 			</nav>
