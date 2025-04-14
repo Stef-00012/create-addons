@@ -1,10 +1,10 @@
 # create-addons
 `create-addons` is an online index of the [Create](https://modrinth.com/mod/create) [Minecraft](https://minecraft.net) mod addons. TailwindCSS, FlyonUI, and the Modrinth API are used in this project.
 
+### Configuration
 > [!IMPORTANT]
 > Requires [Node.JS](https://nodejs.org/en/download).
 
-### Configuration
 ```sh
 # Clone the repository
 git clone https://github.com/Stef-00012/create-addons
