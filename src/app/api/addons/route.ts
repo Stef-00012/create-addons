@@ -37,9 +37,17 @@ export type APIModsResponse = {
 	totalPages: number;
 };
 
+export type SortByType =
+	| "name"
+	| "downloads"
+	| "followers"
+	| "lastUpdated"
+	| "created";
+
 export async function GET(req: Request) {
 	const url = new URL(req.url);
-	const modsPerPage = Number.parseInt(process.env.MODS_PER_PAGE as string) || 50
+	const modsPerPage =
+		Number.parseInt(process.env.MODS_PER_PAGE as string) || 50;
 
 	const page = Number.parseInt(url.searchParams.get("page") || "0") || 0;
 
@@ -109,6 +117,10 @@ export async function GET(req: Request) {
 
 		if (sortOrder === "lastUpdated") {
 			return new Date(b.modified).getTime() - new Date(a.modified).getTime();
+		}
+
+		if (sortOrder === "created") {
+			return new Date(b.created).getTime() - new Date(a.created).getTime();
 		}
 
 		if (sortOrder === "name") {

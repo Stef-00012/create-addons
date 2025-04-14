@@ -8,7 +8,9 @@ export const startScheduler = () => {
 
 	handleFetching();
 
-	const job = schedule.scheduleJob("0 */3 * * *", () => {
+	const cronJobInterval = process.env.MODS_FETCH_CRON_INTERVAL || "0 */3 * * *";
+
+	schedule.scheduleJob(cronJobInterval, () => {
 		console.log("Started fetching the mods from Modrinth");
 
 		handleFetching();

@@ -82,13 +82,6 @@ interface ModrinthDependencyMod {
 	loaders: string[];
 }
 
-interface ModrinthDependency {
-	version_id: string | null;
-	project_id: string | null;
-	file_name: string | null;
-	dependency_type: "required" | "optional" | "incompatible" | "embedded";
-}
-
 interface ModrinthDependecyVersion {
 	name: string;
 	version_number: string;
