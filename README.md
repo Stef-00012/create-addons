@@ -3,7 +3,7 @@
 
 ### Configuration
 > [!IMPORTANT]
-> Requires [Node.JS](https://nodejs.org/en/download).
+> Requires [Node.JS](https://nodejs.org/en/download) or [Bun](https://bun.sh/).
 
 ```sh
 # Clone the repository
