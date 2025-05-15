@@ -4,7 +4,7 @@ import fabric from "#/assets/fabric.png";
 import forge from "#/assets/forge.ico";
 import quilt from "#/assets/quilt.svg";
 
-import { format, formatDistanceToNow } from "date-fns";
+import { format } from "date-fns";
 import millify from "millify";
 
 import type { APIModsResponse } from "@/app/api/addons/route";

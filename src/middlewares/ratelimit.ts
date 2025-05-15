@@ -1,52 +1,61 @@
 import { getClientIp } from "@/lib/getClientIp";
 import type { NextRequest } from "next/server";
-import { type Duration, Ratelimit } from '@upstash/ratelimit';
-import { Redis } from "@upstash/redis";
+import ms from "enhanced-ms";
+
+interface RateLimitEntry {
+    count: number;
+    resetTime: number;
+};
+
+const rateLimitStore: Map<string, RateLimitEntry> = new Map();
 
 export default async function ratelimitHandler(
 	req: NextRequest,
 	next: (headers: Headers) => Response | Promise<Response>,
 ) {
-
 	const requestAmount =
 		Number.parseInt(process.env.RATELIMIT_REQUEST_AMOUNT as string) || 100;
-	const requestInterval = process.env.RATELIMIT_REQUEST_INTERVAL as string || "1m";
+	const requestInterval = ms(process.env.RATELIMIT_REQUEST_INTERVAL as string || "1m") || 60000;
 
-	const clientIp = getClientIp(req);
+	let clientIp = getClientIp(req);
+    if (!clientIp) clientIp = "__UNKNOWN";
 
-    const ratelimit = new Ratelimit({
-        redis: Redis.fromEnv(),
-        limiter: Ratelimit.slidingWindow(requestAmount, requestInterval as Duration),
-        analytics: false
-    })
+	const now = Date.now();
 
-    
-	const key = `ratelimit:${clientIp}`;
-    
-	const { success, limit, remaining, reset } = await ratelimit.limit(key);
+	let rateLimitEntry = rateLimitStore.get(clientIp);
 
-	console.info(
-		`${success ? "" : "Ratelimited - "}Ratelimit increased for ${clientIp} (${remaining} remaining of ${limit}), reset at ${new Date(reset).toISOString()}`,
-	);
+	if (!rateLimitEntry || now >= rateLimitEntry.resetTime) {
+        rateLimitEntry = {
+            count: 1,
+            resetTime: now + requestInterval,
+        };
+
+        rateLimitStore.set(clientIp, rateLimitEntry);
+    } else {
+        rateLimitEntry.count += 1;
+
+		rateLimitStore.set(clientIp, rateLimitEntry);
+
+        if (rateLimitEntry.count > requestAmount) {
+            const retryAfter = Math.ceil((rateLimitEntry.resetTime - now) / 1000);
+
+            return Response.json({
+				error: "You are being rate limited",
+				code: 429
+			}, {
+                status: 429,
+                headers: {
+                    "Retry-After": retryAfter.toString(),
+                },
+            });
+        }
+    }
 
 	const headers = new Headers();
 
-	headers.append("X-RateLimit-Limit", limit.toString());
-	headers.append("X-RateLimit-Remaining", remaining.toString());
-	headers.append("X-Retry-After", Math.ceil(reset / 1000).toString());
-
-	if (!success) {
-		return Response.json(
-			{
-				error: "You are being ratelimited",
-			},
-			{
-				status: 429,
-				statusText: "Too Many Requests",
-				headers: headers,
-			},
-		);
-	}
+    headers.set("X-RateLimit-Limit", requestAmount.toString());
+    headers.set("X-RateLimit-Remaining", (requestAmount - rateLimitEntry.count).toString());
+    headers.set("X-RateLimit-Reset", Math.ceil(rateLimitEntry.resetTime / 1000).toString());
 
 	return await next(headers);
 }
