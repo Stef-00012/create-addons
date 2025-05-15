@@ -50,3 +50,7 @@ default.nix
 
 # vscode
 /.vscode
+
+# hosting
+/__start.sh
+/.bun
