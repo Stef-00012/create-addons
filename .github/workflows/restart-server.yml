@@ -1,0 +1,31 @@
+name: Restart Site Server
+
+on:
+    push:
+        branches: [main]
+        paths: 
+            - "src/**"
+            - "public/**"
+            - ".github/workflows/restart-server.yml"
+            - "drizzle.config.ts"
+            - "eslint.config.mjs"
+            - "next.config.ts"
+            - "package.json"
+            - "postcss.config.mjs"
+            - "tsconfig.json"
+    workflow_dispatch: 
+
+jobs:
+    restart-site-server:
+        name: Restart Site Server
+        runs-on: ubuntu-latest
+
+        steps: 
+            - uses: actions/checkout@v4
+
+            - name: Restart Server
+              uses: Stef-00012/restart-ptero-action@main
+              with:
+                PTERO_PANEL_URL: ${{ secrets.PTERO_PANEL_URL }}
+                PTERO_PANEL_TOKEN: ${{ secrets.PTERO_PANEL_TOKEN }}
+                PTERO_PANEL_SERVER_ID: ${{ secrets.PTERO_PANEL_SERVER_ID }}
