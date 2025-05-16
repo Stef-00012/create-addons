@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { Suspense } from "react";
 
 import "./globals.css";
 
@@ -28,7 +29,7 @@ export default function RootLayout({
 	return (
 		<html lang="en" className="bg-rbase">
 			<body className="antialiased justify-center mx-auto max-w-[100rem] p-3 text-lg bg-rbase text-rtext">
-				{children}
+				<Suspense>{children}</Suspense>
 			</body>
 		</html>
 	);

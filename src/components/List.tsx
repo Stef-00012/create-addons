@@ -4,6 +4,7 @@ import fabric from "#/assets/fabric.png";
 import forge from "#/assets/forge.ico";
 import quilt from "#/assets/quilt.svg";
 
+import { format } from "date-fns";
 import millify from "millify";
 
 import type { APIModsResponse } from "@/app/api/addons/route";
@@ -158,6 +159,14 @@ export default function List({ mod }: Props) {
 										category.charAt(0).toUpperCase() + category.slice(1),
 								)
 								.join(", ")}
+						</p>
+						<p className="flex items-center mr-2 sm:mr-4">
+							<span className="me-1 icon-[tabler--clock] pt-2" />{" "}
+							{format(new Date(mod.created), "dd/MM/yyyy")}
+						</p>
+						<p className="flex items-center mr-2 sm:mr-4">
+							<span className="me-1 icon-[tabler--clock-edit] pt-2" />{" "}
+							{format(new Date(mod.modified), "dd/MM/yyyy")}
 						</p>
 					</div>
 					<p className="flex-grow" />

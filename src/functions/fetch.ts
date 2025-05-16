@@ -9,10 +9,8 @@ const sleep = promisify(setTimeout);
 
 export async function ratelimitFetch(
 	url: string,
-	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-	config?: AxiosRequestConfig<any> | undefined,
-	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-): Promise<AxiosResponse<any, any>> {
+	config?: AxiosRequestConfig | undefined,
+): Promise<AxiosResponse> {
 	try {
 		const res = await axios.get(url, config);
 
@@ -47,6 +45,5 @@ export async function ratelimitFetch(
 		}
 	}
 
-	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-	return {} as AxiosResponse<any, any>;
+	return {} as AxiosResponse;
 }

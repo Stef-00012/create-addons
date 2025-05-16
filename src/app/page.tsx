@@ -1,9 +1,15 @@
 "use client";
 
-import { Fragment, type KeyboardEvent as ReactKeyboardEvent, useEffect, useRef, useState } from "react";
+import {
+	Fragment,
+	type KeyboardEvent as ReactKeyboardEvent,
+	useEffect,
+	useRef,
+	useState,
+} from "react";
 import axios from "axios";
 
-import type { APIModsResponse } from "@/app/api/addons/route";
+import type { APIModsResponse, SortByType } from "@/app/api/addons/route";
 
 import { useSearchParams, useRouter } from "next/navigation";
 import SkeletonCard from "@/components/SkeletonCard";
@@ -25,12 +31,11 @@ const sortByOptions = [
 	{ value: "downloads", label: "Downloads" },
 	{ value: "followers", label: "Followers" },
 	{ value: "lastUpdated", label: "Last Updated" },
+	{ value: "created", label: "Created" },
 ];
 
 const modloaders = modloaderOptions.map((modloader) => modloader.value);
 const sortByOrders = sortByOptions.map((sortOption) => sortOption.value);
-
-type SortByType = "name" | "downloads" | "followers" | "lastUpdated";
 
 export default function Home() {
 	const router = useRouter();
@@ -107,9 +112,9 @@ export default function Home() {
 			scrollTo({
 				top: 0,
 				behavior: "smooth",
-			})
+			});
 
-			setAddonsData(null)
+			setAddonsData(null);
 
 			const res = await axios.get(`/api/addons?${apiSearchParams}`);
 
@@ -125,7 +130,7 @@ export default function Home() {
 		if (page > (addonsData?.totalPages || 1)) {
 			setPage(addonsData?.totalPages || 1);
 		}
-	}, [addonsData, page])
+	}, [addonsData, page]);
 
 	useEffect(() => {
 		const setSearchParams = new URLSearchParams();
@@ -140,7 +145,7 @@ export default function Home() {
 		router.replace(`?${setSearchParams}`, {
 			scroll: false,
 		});
-	}, [sortBy, search, loader, version, compactMode, page, router.replace]);
+	}, [sortBy, search, loader, version, compactMode, page, router]);
 
 	useEffect(() => {
 		document.addEventListener("keydown", handleKeyboardShortcut);
@@ -148,7 +153,7 @@ export default function Home() {
 		return () => {
 			document.removeEventListener("keydown", handleKeyboardShortcut);
 		};
-	}, []) 
+	}, []);
 
 	function handleLoaderSelect(
 		newValue: { label: string; value: string } | null,
@@ -200,7 +205,7 @@ export default function Home() {
 
 	function handleInputKeydown(event: ReactKeyboardEvent<HTMLInputElement>) {
 		if (event.key === "Enter") {
-			event.preventDefault()
+			event.preventDefault();
 			handleSearch();
 		}
 
@@ -405,7 +410,7 @@ export default function Home() {
 
 				{/* Mods */}
 				<div className="py-2 my-2">
-					{(addonsData && addonsData.totalMods > 0) && (
+					{addonsData && addonsData.totalMods > 0 && (
 						<p className="p-1 mb-2 rounded-2xl">
 							{addonsData.totalMods} total addons served.
 						</p>
@@ -436,10 +441,14 @@ export default function Home() {
 								className={`py-2 my-2 ${compactMode ? "" : "sm:flex sm:flex-row sm:flex-wrap sm:gap-4"}`}
 							>
 								{[...Array(7).keys()].map((i) => (
-										<>
-											{compactMode ? <SkeletonList key={i} /> : <SkeletonCard key={i} />}
-										</>
-									))}
+									<Fragment key={i}>
+										{compactMode ? (
+											<SkeletonList key={i} />
+										) : (
+											<SkeletonCard key={i} />
+										)}
+									</Fragment>
+								))}
 							</div>
 						)}
 					</div>
@@ -481,10 +490,7 @@ export default function Home() {
 							</button>
 						)}
 
-						<button
-							type="button"
-							className="btn btn-soft text-bg-soft-primary"
-						>
+						<button type="button" className="btn btn-soft text-bg-soft-primary">
 							{page}
 						</button>
 
@@ -539,7 +545,7 @@ export default function Home() {
 							the Create mod.
 						</p>
 					</aside>
-					
+
 					<div className="flex gap-4 h-5">
 						<a
 							href="https://github.com/Stef-00012/create-addons"

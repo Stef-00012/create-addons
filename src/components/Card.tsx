@@ -4,6 +4,7 @@ import fabric from "#/assets/fabric.png";
 import forge from "#/assets/forge.ico";
 import quilt from "#/assets/quilt.svg";
 
+import { format, formatDistanceToNow } from "date-fns";
 import millify from "millify";
 
 import { modloaderNames } from "@/constants/loaders";
@@ -164,6 +165,26 @@ export default function Card({ mod }: Props) {
 						{mod.description.length > 300
 							? `${mod.description.substring(0, 300)}...`
 							: mod.description}
+					</li>
+					<li>
+						<span className="icon-[tabler--clock] pt-2" />{" "}
+						<strong>Created:</strong>{" "}
+						{format(new Date(mod.created), "MMMM do, yyyy")} (
+						{formatDistanceToNow(new Date(mod.created), {
+							addSuffix: true,
+							includeSeconds: true,
+						})}
+						)
+					</li>
+					<li>
+						<span className="icon-[tabler--clock-edit] pt-2" />{" "}
+						<strong>Last Updated:</strong>{" "}
+						{format(new Date(mod.modified), "MMMM do, yyyy")} (
+						{formatDistanceToNow(new Date(mod.modified), {
+							addSuffix: true,
+							includeSeconds: true,
+						})}
+						)
 					</li>
 				</ul>
 				<div className="card-actions mt-auto pt-2 -mb-3">
