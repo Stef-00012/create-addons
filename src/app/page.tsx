@@ -281,7 +281,7 @@ export default function Home() {
 									option: ({ isSelected }) =>
 										`rounded-2xl my-1 p-2 ${isSelected ? "bg-base-200" : "bg-base-100 hover:bg-base-200"}`,
 									menuList: () =>
-										"rounded-2xl bg-base-100 py-4 shadow-lg px-2 mt-1",
+										"rounded-2xl bg-base-100 py-4 shadow-lg px-2 mt-1 z-15",
 								}}
 								onChange={handleLoaderSelect}
 							/>
@@ -331,7 +331,7 @@ export default function Home() {
 									option: ({ isSelected }) =>
 										`rounded-2xl my-1 p-2 ${isSelected ? "bg-base-200" : "bg-base-100 hover:bg-base-200"}`,
 									menuList: () =>
-										"rounded-2xl bg-base-100 py-4 shadow-lg px-2 mt-1",
+										"rounded-2xl bg-base-100 py-4 shadow-lg px-2 mt-1 z-15",
 								}}
 								onChange={handleVersionSelect}
 							/>
@@ -369,7 +369,7 @@ export default function Home() {
 									option: ({ isSelected }) =>
 										`rounded-2xl my-1 p-2 ${isSelected ? "bg-base-200" : "bg-base-100 hover:bg-base-200"}`,
 									menuList: () =>
-										"rounded-2xl bg-base-100 py-4 shadow-lg px-2 mt-1",
+										"rounded-2xl bg-base-100 py-4 shadow-lg px-2 mt-1 z-15",
 								}}
 								onChange={handleSortSelect}
 							/>
