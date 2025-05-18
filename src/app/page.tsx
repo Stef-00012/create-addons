@@ -127,7 +127,7 @@ export default function Home() {
 	}, [page, loader, sortBy, version, search]);
 
 	useEffect(() => {
-		if (page > (addonsData?.totalPages || 1)) {
+		if (addonsData && page > (addonsData.totalPages || 1)) {
 			setPage(addonsData?.totalPages || 1);
 		}
 	}, [addonsData, page]);
