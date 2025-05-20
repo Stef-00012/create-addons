@@ -16,7 +16,6 @@
     "@tanstack/react-virtual": "^3.13.6",
     "@upstash/ratelimit": "^2.0.5",
     "axios": "^1.8.4",
-    "crypto": "^1.0.1",
     "date-fns": "^4.1.0",
     "drizzle-orm": "^0.41.0",
     "enhanced-ms": "^4.1.0",

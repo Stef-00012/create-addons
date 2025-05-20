@@ -3,9 +3,6 @@ import axios, {
 	type AxiosResponse,
 	type AxiosError,
 } from "axios";
-// import { promisify } from "node:util";
-
-// const sleep = promisify(setTimeout);
 
 export async function ratelimitFetch(
 	url: string,
