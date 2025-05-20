@@ -1,30 +1,27 @@
 import db from "@/db/db";
 import Fuse from "fuse.js";
 
-import type {
-    Modloaders,
-    SortOrders
-} from "@/types/modrinth"
+import type { Modloaders, SortOrders } from "@/types/modrinth";
 
 interface Props {
-    page?: number;
-    version?: string | "all";
-    modloader?: Modloaders | "all";
-    search?: string;
-    sortOrder?: SortOrders
+	page?: number;
+	version?: string | "all";
+	modloader?: Modloaders | "all";
+	search?: string;
+	sortOrder?: SortOrders;
 }
 
 export async function fetchSortedMods({
-    page = 0,
-    version = "all",
-    modloader = "all",
-    search = "",
-    sortOrder = "downloads",
+	page = 0,
+	version = "all",
+	modloader = "all",
+	search = "",
+	sortOrder = "downloads",
 }: Props) {
-    const modsPerPage =
+	const modsPerPage =
 		Number.parseInt(process.env.MODS_PER_PAGE as string) || 50;
-			
-    const modsRes = await db.query.mods.findMany();
+
+	const modsRes = await db.query.mods.findMany();
 
 	const mods = modsRes.map((mod) => ({
 		...mod,
@@ -91,11 +88,11 @@ export async function fetchSortedMods({
 
 		return 0;
 	});
-	
+
 	return {
 		page,
 		mods: sortedMods.slice(page * modsPerPage, (page + 1) * modsPerPage),
 		totalMods: sortedMods.length,
 		totalPages: Math.ceil(sortedMods.length / modsPerPage),
-	}
+	};
 }

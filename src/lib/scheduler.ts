@@ -32,8 +32,8 @@ export async function handleFetching(): Promise<FetchResult> {
 		"rift",
 	];
 
-	const created: CreateMessage["mods"] = [];
-	const updated: UpdateMessage["mods"] = [];
+	const created: CreateMessage["d"] = [];
+	const updated: UpdateMessage["d"] = [];
 
 	for (const mod of modrinthMods) {
 		console.log(`\x1b[36mProcessing mod "\x1b[0;1m${mod.slug}\x1b[0;36m"\x1b[0m`);

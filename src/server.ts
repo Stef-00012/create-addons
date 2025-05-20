@@ -1,4 +1,3 @@
-// import { fetchSortedMods } from "@/functions/fetchSortedMods";
 import { handleFetching } from "@/lib/scheduler";
 import { sendWSEvent } from "@/lib/websocket";
 import schedule from "node-schedule";
@@ -6,6 +5,13 @@ import { WebSocketServer } from "ws";
 import { createServer } from "node:http";
 import { parse } from "node:url";
 import next from "next";
+import {
+	type CommandErrorMessage,
+	type CommandMessage,
+	WSEvents,
+	type WSmessage,
+} from "@/types/websocket";
+import { wsCommandHandler } from "./lib/wsCommandHandler";
 
 const port = Number.parseInt(process.env.PORT || "3000", 10);
 const dev = process.env.NODE_ENV !== "production";
@@ -65,9 +71,38 @@ app.prepare().then(async () => {
 		ws.isAlive = true;
 
 		ws.on("error", console.error);
-		
+
 		ws.on("pong", function heartbeat() {
 			this.isAlive = true;
+		});
+
+		ws.on("message", (data) => {
+			try {
+				const message = JSON.parse(data.toString()) as WSmessage;
+
+				if (message.t === WSEvents.COMMAND) {
+					const commandData = message.d as CommandMessage["d"];
+
+					const command = commandData.command;
+					const args = commandData.args;
+
+					wsCommandHandler({
+						ws,
+						command,
+						args,
+					})
+				}
+			//eslint-disable-next-line @typescript-eslint/no-unused-vars
+			} catch (e) {
+				const error: CommandErrorMessage = {
+					t: WSEvents.COMMAND_ERROR,
+					d: {
+						message: "Invalid JSON",
+					},
+				}
+
+				ws.send(JSON.stringify(error));
+			}
 		});
 	});
 
@@ -76,8 +111,8 @@ app.prepare().then(async () => {
 			if (!ws.isAlive && ws.url === "/ws" && ws.readyState === ws.OPEN) {
 				try {
 					ws.terminate();
+				//eslint-disable-next-line @typescript-eslint/no-unused-vars
 				} catch (e) {
-				    console.error(e)
 					ws.close();
 				}
 
