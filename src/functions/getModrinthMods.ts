@@ -3,7 +3,7 @@ import type {
 	ModrinthSearchResponse,
 } from "@/types/modrinth";
 import type { AxiosError } from "axios";
-import { ratelimitFetch } from "./fetch";
+import { ratelimitFetch } from "@/functions/fetch";
 
 async function fetchMods(
 	offset = 0,
@@ -31,7 +31,7 @@ async function fetchMods(
 		mods.push(...data.hits);
 
 		console.log(
-			`Fetched ${mods.length} mods, total: ${data.total_hits}, offset: ${offset}`,
+			`\x1b[36mFetched \x1b[0;1m${mods.length}\x1b[0;36m mods, total: \x1b[0;1m${data.total_hits}\x1b[0;36m, offset: \x1b[0;1m${offset}\x1b[0m`,
 		);
 
 		const totalMods = data.total_hits;
@@ -57,7 +57,7 @@ async function fetchMods(
 	} catch (e) {
 		const error = e as AxiosError;
 
-		console.log(
+		console.error(
 			error.message,
 			error.code,
 			error.response,
@@ -81,7 +81,7 @@ export default async function getModrinthMods(): Promise<
 	let index = 0;
 
 	for (const mod of modsData.mods) {
-		console.log(index, "Fetching dependencies for", mod.slug);
+		console.log(`\x1b[34mFetching dependencies for "\x1b[0;1m${mod.slug}\x1b[0;34m" \x1b[33m[\x1b[1m${index}\x1b[0;33m]\x1b[0m`);
 
 		if (mod.slug === "create" || mod.slug === "create-fabric") {
 			mods.push(mod);
@@ -109,8 +109,7 @@ export default async function getModrinthMods(): Promise<
 			const error = e as AxiosError;
 
 			console.log(
-				index,
-				`Skipped mod ${mod.slug} for error ${error?.response?.status} (${error?.response?.statusText})`,
+				`\x1b[31mSkipped mod "\x1b[0;1m${mod.slug}\x1b[0;31m" for error "\x1b[0;1m${error?.response?.status}\x1b[0;31m" (\x1b[0;1m${error?.response?.statusText}\x1b[0;31m) \x1b[0;33m[\x1b[1m${index}\x1b[0;33m]\x1b[0m`,
 			);
 		}
 

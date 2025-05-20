@@ -111,3 +111,40 @@ export interface ModrinthDependenciesResponse {
 	projects: ModrinthDependencyMod[];
 	versions: ModrinthDependecyVersion;
 }
+export type Modloaders =
+	| "quilt"
+	| "fabric"
+	| "forge"
+	| "neoforge"
+	| "liteloader"
+	| "modloader"
+	| "rift";
+
+export type Platforms = "modrinth";
+
+export type SupportTypes = "unknown" | "required" | "optional" | "unsupported";
+
+export type ModrinthModDatabaseKeys = keyof ModrinthDatabaseMod;
+export type ModrinthModDatabaseValues =
+	ModrinthDatabaseMod[ModrinthModDatabaseKeys];
+
+export interface ModrinthDatabaseMod {
+	platform: Platforms;
+	slug: string;
+	author: string;
+	downloads: number;
+	description: string;
+	icon: string;
+	name: string;
+	version: string;
+	versions: string[];
+	categories: string[];
+	follows: number;
+	created: string;
+	modified: string;
+	color: number;
+	license: string;
+	clientSide: SupportTypes;
+	serverSide: SupportTypes;
+	modloaders: Modloaders[];
+}

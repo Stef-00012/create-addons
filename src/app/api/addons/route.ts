@@ -1,40 +1,12 @@
 import db from "@/db/db";
 import ratelimitHandler from "@/middlewares/ratelimit";
+import type { ModrinthDatabaseMod } from "@/types/modrinth";
 import Fuse from "fuse.js";
 import type { NextRequest } from "next/server";
 
-export type APIMod = {
-	platform: string;
-	slug: string;
-	author: string;
-	downloads: number;
-	description: string;
-	icon: string;
-	name: string;
-	version: string;
-	modloaders: (
-		| "quilt"
-		| "fabric"
-		| "forge"
-		| "neoforge"
-		| "liteloader"
-		| "modloader"
-		| "rift"
-	)[];
-	versions: string[];
-	categories: string[];
-	follows: number;
-	created: string;
-	modified: string;
-	color: number;
-	license: string;
-	clientSide: string;
-	serverSide: string;
-};
-
 export type APIModsResponse = {
 	page: number;
-	mods: APIMod[];
+	mods: ModrinthDatabaseMod[];
 	totalMods: number;
 	totalPages: number;
 };

@@ -54,3 +54,6 @@ default.nix
 # hosting
 /__start.sh
 /.bun
+
+#biome
+/biome.json
