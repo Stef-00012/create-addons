@@ -108,6 +108,8 @@ export default async function getModrinthMods(): Promise<
 		} catch (e) {
 			const error = e as AxiosError;
 
+			console.log(error)
+
 			console.log(
 				`\x1b[31mSkipped mod "\x1b[0;1m${mod.slug}\x1b[0;31m" for error "\x1b[0;1m${error?.response?.status}\x1b[0;31m" (\x1b[0;1m${error?.response?.statusText}\x1b[0;31m) \x1b[0;33m[\x1b[1m${index}\x1b[0;33m]\x1b[0m`,
 			);
