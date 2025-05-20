@@ -97,5 +97,5 @@ export async function fetchSortedMods({
 		mods: sortedMods.slice(page * modsPerPage, (page + 1) * modsPerPage),
 		totalMods: sortedMods.length,
 		totalPages: Math.ceil(sortedMods.length / modsPerPage),
-	},
+	}
 }
