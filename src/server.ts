@@ -1,3 +1,4 @@
+import { fetchSortedMods } from "@/functions/fetchSortedMods";
 import { handleFetching } from "@/lib/scheduler";
 import { sendWSEvent } from "@/lib/websocket";
 import schedule from "node-schedule";
@@ -64,6 +65,7 @@ app.prepare().then(async () => {
 		ws.isAlive = true;
 
 		ws.on("error", console.error);
+		
 		ws.on("pong", function heartbeat() {
 			this.isAlive = true;
 		});
@@ -86,7 +88,6 @@ app.prepare().then(async () => {
 			ws.ping();
 		}
 	}, 30000);
-	// }, 1000);
 
 	wss.on("close", function close() {
 		clearInterval(interval);

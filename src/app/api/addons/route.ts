@@ -2,6 +2,10 @@ import ratelimitHandler from "@/middlewares/ratelimit";
 import type { ModrinthDatabaseMod } from "@/types/modrinth";
 import type { NextRequest } from "next/server";
 import { fetchSortedMods } from "@/functions/fetchSortedMods";
+import type {
+    Modloaders,
+    SortOrders
+} from "@/types/modrinth"
 
 export type APIModsResponse = {
 	page: number;
@@ -22,10 +26,10 @@ export async function GET(req: NextRequest) {
 				{ status: 400 },
 			);
 
-		const version = url.searchParams.get("version") || "all";
-		const modloader = url.searchParams.get("modloader") || "all";
-		const search = url.searchParams.get("search") || "";
-		const sortOrder = url.searchParams.get("sort") || "downloads";
+		const version = (url.searchParams.get("version") || "all") as string;
+		const modloader = (url.searchParams.get("modloader") || "all") as Modloaders | "all";
+		const search = (url.searchParams.get("search") || "") as string;
+		const sortOrder = (url.searchParams.get("sort") || "downloads") as SortOrders;
 
 		const res = await fetchSortedMods({
 		    page,
