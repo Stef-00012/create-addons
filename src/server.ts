@@ -1,4 +1,4 @@
-import { fetchSortedMods } from "@/functions/fetchSortedMods";
+// import { fetchSortedMods } from "@/functions/fetchSortedMods";
 import { handleFetching } from "@/lib/scheduler";
 import { sendWSEvent } from "@/lib/websocket";
 import schedule from "node-schedule";
