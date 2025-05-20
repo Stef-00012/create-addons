@@ -5,8 +5,8 @@ import type { WebSocketServer } from "ws";
 export async function sendWSEvent(wss: WebSocketServer, data: FetchResult) {
 	if (data.created.length > 0) {
 		const message: CreateMessage = {
-			t: WSEvents.CREATE,
-			d: data.created,
+			type: WSEvents.CREATE,
+			data: data.created,
 		};
 
 		for (const client of wss.clients) {
@@ -18,8 +18,8 @@ export async function sendWSEvent(wss: WebSocketServer, data: FetchResult) {
 
 	if (data.updated.length > 0) {
 		const message: UpdateMessage = {
-			t: WSEvents.UPDATE,
-			d: data.updated,
+			type: WSEvents.UPDATE,
+			data: data.updated,
 		};
 
 		for (const client of wss.clients) {

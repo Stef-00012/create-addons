@@ -11,7 +11,7 @@ interface CommandArgs {
     sortOrder?: SortOrders;
 }
 
-export default async function getMods(ws: WebSocket, command: string, args?: CommandMessage["d"]["args"] & CommandArgs) {
+export default async function getMods(ws: WebSocket, command: string, args?: CommandMessage["data"]["args"] & CommandArgs) {
     const {
         page = 0,
         version = "all",
@@ -22,9 +22,9 @@ export default async function getMods(ws: WebSocket, command: string, args?: Com
 
     if (page < 0) {
         const error: CommandErrorMessage = {
-            t: WSEvents.COMMAND_ERROR,
-            c: command,
-            d: {
+            type: WSEvents.COMMAND_ERROR,
+            command: command,
+            data: {
                 message: "Page must be greater than 0",
             }
         }
@@ -41,9 +41,9 @@ export default async function getMods(ws: WebSocket, command: string, args?: Com
     })
 
     const response: CommandResponseMessage = {
-        t: WSEvents.COMMAND_RESPONSE,
-        c: command,
-        d: res
+        type: WSEvents.COMMAND_RESPONSE,
+        command: command,
+        data: res
     }
 
     return ws.send(JSON.stringify(response));

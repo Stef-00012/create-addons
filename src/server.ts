@@ -80,8 +80,8 @@ app.prepare().then(async () => {
 			try {
 				const message = JSON.parse(data.toString()) as WSmessage;
 
-				if (message.t === WSEvents.COMMAND) {
-					const commandData = message.d as CommandMessage["d"];
+				if (message.type === WSEvents.COMMAND) {
+					const commandData = message.data as CommandMessage["data"];
 
 					const command = commandData.command;
 					const args = commandData.args;
@@ -95,8 +95,8 @@ app.prepare().then(async () => {
 			//eslint-disable-next-line @typescript-eslint/no-unused-vars
 			} catch (e) {
 				const error: CommandErrorMessage = {
-					t: WSEvents.COMMAND_ERROR,
-					d: {
+					type: WSEvents.COMMAND_ERROR,
+					data: {
 						message: "Invalid JSON",
 					},
 				}

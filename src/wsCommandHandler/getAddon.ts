@@ -8,14 +8,14 @@ interface CommandArgs {
     slug?: string;
 }
 
-export default async function getMod(ws: WebSocket, command: string, args?: CommandMessage["d"]["args"] & CommandArgs) {
+export default async function getMod(ws: WebSocket, command: string, args?: CommandMessage["data"]["args"] & CommandArgs) {
     const { slug } = (args || {});
 
     if (!slug) {
         const error: CommandErrorMessage = {
-            t: WSEvents.COMMAND_ERROR,
-            c: command,
-            d: {
+            type: WSEvents.COMMAND_ERROR,
+            command: command,
+            data: {
                 message: "Slug is required",
             }
         }
@@ -30,9 +30,9 @@ export default async function getMod(ws: WebSocket, command: string, args?: Comm
 
     if (!mod) {
         const error: CommandErrorMessage = {
-            t: WSEvents.COMMAND_ERROR,
-            c: command,
-            d: {
+            type: WSEvents.COMMAND_ERROR,
+            command: command,
+            data: {
                 message: `Mod "${slug}" not found`,
             }
         }
@@ -41,9 +41,9 @@ export default async function getMod(ws: WebSocket, command: string, args?: Comm
     }
 
     const response: CommandResponseMessage = {
-        t: WSEvents.COMMAND_RESPONSE,
-        c: command,
-        d: mod
+        type: WSEvents.COMMAND_RESPONSE,
+        command: command,
+        data: mod
     }
 
     return ws.send(JSON.stringify(response))

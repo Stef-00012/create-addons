@@ -13,8 +13,8 @@ const handlers = {
 	getAddons,
 };
 
-type Props = Omit<CommandMessage["d"], "args"> & {
-	args?: CommandMessage["d"]["args"];
+type Props = Omit<CommandMessage["data"], "args"> & {
+	args?: CommandMessage["data"]["args"];
 	ws: WebSocket;
 };
 
@@ -36,9 +36,9 @@ export async function wsCommandHandler({
 			);
 
 			const error: CommandErrorMessage = {
-				t: WSEvents.COMMAND_ERROR,
-                c: command,
-				d: {
+				type: WSEvents.COMMAND_ERROR,
+                command: command,
+				data: {
 					message: "Something went wrong",
 				},
 			};
@@ -50,9 +50,9 @@ export async function wsCommandHandler({
 	}
 
 	const error: CommandErrorMessage = {
-		t: WSEvents.COMMAND_ERROR,
-        c: command,
-		d: {
+		type: WSEvents.COMMAND_ERROR,
+        command: command,
+		data: {
 			message: "Command not found",
 		},
 	};

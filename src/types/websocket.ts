@@ -15,13 +15,13 @@ export enum WSEvents {
 }
 
 export interface WSmessage {
-	d: unknown;
-	t: WSEvents;
+	data: unknown;
+	type: WSEvents;
 }
 
 export interface CreateMessage extends WSmessage {
-	d: ModrinthDatabaseMod[];
-	t: WSEvents.CREATE;
+	data: ModrinthDatabaseMod[];
+	type: WSEvents.CREATE;
 }
 
 export interface UpdateMessageValues {
@@ -30,8 +30,8 @@ export interface UpdateMessageValues {
 }
 
 export interface UpdateMessage extends WSmessage {
-	t: WSEvents.UPDATE;
-	d: {
+	type: WSEvents.UPDATE;
+	data: {
 		slug: ModrinthDatabaseMod["slug"];
 		platform: ModrinthDatabaseMod["platform"];
 		changes: Record<ModrinthModDatabaseKeys, UpdateMessageValues>;
@@ -39,23 +39,23 @@ export interface UpdateMessage extends WSmessage {
 }
 
 export interface CommandMessage extends WSmessage {
-	t: WSEvents.COMMAND;
-	d: {
+	type: WSEvents.COMMAND;
+	data: {
 		command: string;
 		args: Record<string, number | string>;
 	};
 }
 
 export interface CommandResponseMessage extends WSmessage {
-	t: WSEvents.COMMAND_RESPONSE;
-    c: string;
-	d: unknown;
+	type: WSEvents.COMMAND_RESPONSE;
+    command: string;
+	data: unknown;
 }
 
 export interface CommandErrorMessage extends WSmessage {
-	t: WSEvents.COMMAND_ERROR;
-    c?: string;
-	d: {
+	type: WSEvents.COMMAND_ERROR;
+    command?: string;
+	data: {
 		message: string;
 	};
 }
