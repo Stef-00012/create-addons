@@ -3,9 +3,9 @@ import axios, {
 	type AxiosResponse,
 	type AxiosError,
 } from "axios";
-import { promisify } from "node:util";
+// import { promisify } from "node:util";
 
-const sleep = promisify(setTimeout);
+// const sleep = promisify(setTimeout);
 
 export async function ratelimitFetch(
 	url: string,
@@ -24,7 +24,7 @@ export async function ratelimitFetch(
 			console.log(`\x1b[31mRate limit hit, retrying in \x1b[0;1m${retryAfter} \x1b[0;31mseconds...\x1b[0m`);
 
 			if (retryAfter) {
-				await sleep(Number.parseInt(retryAfter) * 1000);
+				await Bun.sleep(Number.parseInt(retryAfter) * 1000);
 				console.log("\x1b[33mRetrying...\x1b[0m");
 
 				return await ratelimitFetch(url, config);
@@ -32,13 +32,13 @@ export async function ratelimitFetch(
 		} else if (error?.response?.status === 408) {
 			console.log("\x1b[31mRequest timed out, retrying in \x1b[0;1m1 \x1b[0;31msecond...\x1b[0m");
 
-			await sleep(1000);
+			await Bun.sleep(1000);
 
 			return await ratelimitFetch(url, config);
 		} else if (error?.response?.status === 502) {
 			console.log("\x1b[31mBad gateway, retrying in \x1b[0;1m1 \x1b[0;31msecond...\x1b[0m");
 
-			await sleep(1000);
+			await Bun.sleep(1000);
 
 			return await ratelimitFetch(url, config);
 		} else {
