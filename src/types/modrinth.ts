@@ -124,6 +124,13 @@ export type Platforms = "modrinth";
 
 export type SupportTypes = "unknown" | "required" | "optional" | "unsupported";
 
+export type SortOrders =
+	| "name"
+	| "downloads"
+	| "followers"
+	| "lastUpdated"
+	| "created";
+
 export type ModrinthModDatabaseKeys = keyof ModrinthDatabaseMod;
 export type ModrinthModDatabaseValues =
 	ModrinthDatabaseMod[ModrinthModDatabaseKeys];
