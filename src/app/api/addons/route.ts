@@ -1,7 +1,5 @@
-import db from "@/db/db";
 import ratelimitHandler from "@/middlewares/ratelimit";
 import type { ModrinthDatabaseMod } from "@/types/modrinth";
-import Fuse from "fuse.js";
 import type { NextRequest } from "next/server";
 import { fetchSortedMods } from "@/functions/fetchSortedMods";
 
@@ -15,9 +13,7 @@ export type APIModsResponse = {
 export async function GET(req: NextRequest) {
 	return await ratelimitHandler(req, async (headers: Headers) => {
 		const url = new URL(req.url);
-		const modsPerPage =
-			Number.parseInt(process.env.MODS_PER_PAGE as string) || 50;
-
+		
 		const page = Number.parseInt(url.searchParams.get("page") || "0") || 0;
 
 		if (page < 0)
