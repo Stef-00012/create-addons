@@ -75,6 +75,7 @@ app.prepare().then(async () => {
 				try {
 					ws.terminate();
 				} catch (e) {
+				    console.error(e)
 					ws.close();
 				}
 
