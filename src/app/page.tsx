@@ -9,7 +9,10 @@ import {
 } from "react";
 import axios from "axios";
 
-import type { APIModsResponse, SortByType } from "@/app/api/addons/route";
+import type { APIModsResponse } from "@/app/api/addons/route";
+import type {
+    SortOrders
+} from "@/types/modrinth"
 
 import { useSearchParams, useRouter } from "next/navigation";
 import SkeletonCard from "@/components/SkeletonCard";
@@ -47,7 +50,7 @@ export default function Home() {
 	const [loader, setLoader] = useState<
 		APIModsResponse["mods"][0]["modloaders"][0] | "all"
 	>("all");
-	const [sortBy, setSortBy] = useState<SortByType>("downloads");
+	const [sortBy, setSortBy] = useState<SortOrders>("downloads");
 	const [compactMode, setCompactMode] = useState(
 		searchParams.get("compact") === "1",
 	);
@@ -78,7 +81,7 @@ export default function Home() {
 			| APIModsResponse["mods"][0]["modloaders"][0]
 			| "all";
 		const search = searchParams.get("search") as string;
-		const sortBy = searchParams.get("sort") as SortByType;
+		const sortBy = searchParams.get("sort") as SortOrders;
 		const page = searchParams.get("page") as string;
 
 		if (versions.includes(version)) {
@@ -174,7 +177,7 @@ export default function Home() {
 	}
 
 	function handleSortSelect(newValue: { label: string; value: string } | null) {
-		const sort = newValue?.value as SortByType;
+		const sort = newValue?.value as SortOrders;
 
 		setSortBy(sort || "name");
 	}
