@@ -44,6 +44,7 @@ export interface UpdateMessage extends WSmessage {
 	data: {
 		slug: ModrinthDatabaseMod["slug"];
 		platform: ModrinthDatabaseMod["platform"];
+		name: ModrinthDatabaseMod["name"];
 		changes: Record<ModrinthModDatabaseKeys, UpdateMessageValues>;
 	}[];
 }

@@ -5,18 +5,13 @@ import { and, eq } from "drizzle-orm";
 import type {
 	Modloaders,
 	ModrinthDatabaseMod,
-	ModrinthModDatabaseKeys,
 	ModrinthModDatabaseValues,
 } from "@/types/modrinth";
-import type { CreateMessage, UpdateMessage, UpdateMessageValues } from "@/types/websocket";
+import type { UpdateMessage } from "@/types/websocket";
 
 export type FetchResult = {
     created: ModrinthDatabaseMod[];
-    updated: {
-        slug: ModrinthDatabaseMod["slug"];
-        platform: ModrinthDatabaseMod["platform"];
-        changes: Record<ModrinthModDatabaseKeys, UpdateMessageValues>;
-    }[];
+    updated: UpdateMessage["data"];
 }
 
 export async function handleFetching(): Promise<FetchResult> {
@@ -32,8 +27,8 @@ export async function handleFetching(): Promise<FetchResult> {
 		"rift",
 	];
 
-	const created: CreateMessage["data"] = [];
-	const updated: UpdateMessage["data"] = [];
+	const created: FetchResult["created"] = [];
+	const updated: FetchResult["updated"] = [];
 
 	for (const mod of modrinthMods) {
 		console.log(`\x1b[36mProcessing mod "\x1b[0;1m${mod.slug}\x1b[0;36m"\x1b[0m`);
@@ -109,6 +104,7 @@ export async function handleFetching(): Promise<FetchResult> {
 		if (Object.keys(changes).length > 0) updated.push({
 			slug: newModData.slug,
 			platform: newModData.platform,
+			name: newModData.name,
 			changes,
 		});
 	}
