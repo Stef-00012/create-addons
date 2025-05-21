@@ -8,6 +8,7 @@ import next from "next";
 import {
 	type CommandErrorMessage,
 	type CommandMessage,
+	type PingMessage,
 	WSEvents,
 	type WSmessage,
 } from "@/types/websocket";
@@ -72,15 +73,19 @@ app.prepare().then(async () => {
 
 		ws.on("error", console.error);
 
-		ws.on("pong", function heartbeat() {
-			console.log("received pong");
-			this.isAlive = true;
-		});
+		// ws.on("pong", function heartbeat() {
+		// 	console.log("received pong");
+		// 	this.isAlive = true;
+		// });
 
 		ws.on("message", (data) => {
-			console.log("received message")
 			try {
 				const message = JSON.parse(data.toString()) as WSmessage;
+
+				if (message.type === WSEvents.PONG) {
+					console.log("received pong");
+					ws.isAlive = true;
+				}
 
 				if (message.type === WSEvents.COMMAND) {
 					const commandData = message.data as CommandMessage["data"];
@@ -111,7 +116,7 @@ app.prepare().then(async () => {
 	const interval = setInterval(function ping() {
 		console.log("checking clients");
 		for (const ws of wss.clients) {
-			if (!ws.isAlive && ws.url === "/ws" && ws.readyState === ws.OPEN) {
+			if (!ws.isAlive) {
 				console.log("terminating client");
 				try {
 					ws.terminate();
@@ -125,7 +130,12 @@ app.prepare().then(async () => {
 
 			console.log("sent ping");
 			ws.isAlive = false;
-			ws.ping();
+			
+			const message: PingMessage = {
+				type: WSEvents.PING,
+			}
+
+			ws.send(JSON.stringify(message));
 		}
 	}, 30000);
 
