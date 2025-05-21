@@ -53,7 +53,7 @@ export default function Home() {
 
 	const [versions, setVersions] = useState<string[]>([]);
 	const [page, setPage] = useState<number>(
-		Number.parseInt(initialPage || "0") || 0,
+		Number.parseInt(initialPage || "1") || 1,
 	);
 	const [addonsData, setAddonsData] = useState<APIModsResponse | null>(null);
 
