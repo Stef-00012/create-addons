@@ -8,6 +8,7 @@ import type {
 	ModrinthModDatabaseValues,
 } from "@/types/modrinth";
 import type { UpdateMessage } from "@/types/websocket";
+import { compareArrays } from "@/functions/util";
 
 export type FetchResult = {
     created: ModrinthDatabaseMod[];
@@ -83,7 +84,7 @@ export async function handleFetching(): Promise<FetchResult> {
 
 			if (Array.isArray(newModData[key]) && Array.isArray(existingMod[key])) {
 				if (
-					JSON.stringify(newModData[key]) !== JSON.stringify(existingMod[key])
+					!compareArrays(newModData[key], existingMod[key])
 				)
 					changes[key] = { old: existingMod[key], new: newModData[key] };
 			} else if (newModData[key] !== existingMod[key]) {
