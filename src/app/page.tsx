@@ -10,9 +10,7 @@ import {
 import axios from "axios";
 
 import type { APIModsResponse } from "@/app/api/addons/route";
-import type {
-    SortOrders
-} from "@/types/modrinth"
+import type { SortOrders } from "@/types/modrinth";
 
 import { useSearchParams, useRouter } from "next/navigation";
 import SkeletonCard from "@/components/SkeletonCard";
@@ -44,20 +42,38 @@ export default function Home() {
 	const router = useRouter();
 	const searchParams = useSearchParams();
 
+	const initialPage = searchParams.get("page");
+	const initialLoader = searchParams.get("modloader") as
+		| APIModsResponse["mods"][0]["modloaders"][0]
+		| "all";
+	const initialSortBy = searchParams.get("sort") as SortOrders;
+	const initialCompactMode = searchParams.get("compact") === "1";
+	const initialVersion = searchParams.get("version") as string;
+	const initialSearch = searchParams.get("search");
+
 	const [versions, setVersions] = useState<string[]>([]);
-	const [page, setPage] = useState<number>(1);
+	const [page, setPage] = useState<number>(
+		Number.parseInt(initialPage || "0") || 0,
+	);
 	const [addonsData, setAddonsData] = useState<APIModsResponse | null>(null);
+
 	const [loader, setLoader] = useState<
 		APIModsResponse["mods"][0]["modloaders"][0] | "all"
-	>("all");
-	const [sortBy, setSortBy] = useState<SortOrders>("downloads");
-	const [compactMode, setCompactMode] = useState(
-		searchParams.get("compact") === "1",
+	>(modloaders.includes(initialLoader) ? initialLoader : "all");
+	
+	const [sortBy, setSortBy] = useState<SortOrders>(
+		sortByOrders.includes(initialSortBy) ? initialSortBy : "downloads",
 	);
+	
+	const [compactMode, setCompactMode] = useState(initialCompactMode);
+	
 	const [version, setVersion] = useState<
 		APIModsResponse["mods"][0]["versions"][0] | "all"
-	>("all");
-	const [search, setSearch] = useState<string>("");
+	>(versions.includes(initialVersion) ? initialVersion : "all");
+	
+	const [search, setSearch] = useState<string>(
+		initialSearch ? decodeURIComponent(initialSearch) : "",
+	);
 
 	const searchInput = useRef<HTMLInputElement>(null);
 
