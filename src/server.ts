@@ -73,10 +73,12 @@ app.prepare().then(async () => {
 		ws.on("error", console.error);
 
 		ws.on("pong", function heartbeat() {
+			console.log("received pong");
 			this.isAlive = true;
 		});
 
 		ws.on("message", (data) => {
+			console.log("received message")
 			try {
 				const message = JSON.parse(data.toString()) as WSmessage;
 
@@ -107,8 +109,10 @@ app.prepare().then(async () => {
 	});
 
 	const interval = setInterval(function ping() {
+		console.log("checking clients");
 		for (const ws of wss.clients) {
 			if (!ws.isAlive && ws.url === "/ws" && ws.readyState === ws.OPEN) {
+				console.log("terminating client");
 				try {
 					ws.terminate();
 				//eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -119,12 +123,14 @@ app.prepare().then(async () => {
 				continue;
 			}
 
+			console.log("sent ping");
 			ws.isAlive = false;
 			ws.ping();
 		}
 	}, 30000);
 
 	wss.on("close", function close() {
+		console.log("WebSocket server closed");
 		clearInterval(interval);
 	});
 
