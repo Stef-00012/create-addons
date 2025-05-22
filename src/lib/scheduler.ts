@@ -110,7 +110,7 @@ export async function handleFetching(): Promise<FetchResult> {
 		});
 	}
 
-	console.log("\x1b[32mFinished processing mods\x1b[0m");
+	console.log(`\x1b[33m[\x1b[1m${new Date().toISOString()}\x1b[0;33m] \x1b[32mFinished processing mods\x1b[0m`);
 
 	return { created, updated };
 }
