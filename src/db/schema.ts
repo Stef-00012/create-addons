@@ -1,4 +1,4 @@
-import type { Modloaders, Platforms, SupportTypes } from "@/types/modrinth";
+import type { Modloaders, Platforms, SupportTypes } from "@/types/addons";
 import { integer, sqliteTable, text, unique } from "drizzle-orm/sqlite-core";
 
 export const mods = sqliteTable(

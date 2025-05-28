@@ -10,7 +10,7 @@ import {
 import axios from "axios";
 
 import type { APIModsResponse } from "@/app/api/addons/route";
-import type { SortOrders } from "@/types/modrinth";
+import type { Platforms, SortOrders } from "@/types/addons";
 
 import { useSearchParams, useRouter } from "next/navigation";
 import SkeletonCard from "@/components/SkeletonCard";
@@ -18,14 +18,19 @@ import SkeletonList from "@/components/SkeletonList";
 import Card from "@/components/Card";
 import List from "@/components/List";
 import Select from "react-select";
+import { platforms } from "@/constants/loaders";
+import { mergeAddons } from "@/functions/util";
 
 const modloaderOptions = [
-	{ value: "all", label: "All" },
-	{ value: "fabric", label: "Fabric" },
-	{ value: "forge", label: "Forge" },
 	{ value: "neoforge", label: "NeoForge" },
+	{ value: "forge", label: "Forge" },
+	{ value: "fabric", label: "Fabric" },
 	{ value: "quilt", label: "Quilt" },
-];
+	{ value: "rift", label: "Rift" },
+	{ value: "liteloader", label: "LiteLoader" },
+	{ value: "modloader", label: "Risugami's ModLoader" },
+	{ value: "cauldron", label: "Cauldron" }
+]
 
 const sortByOptions = [
 	{ value: "name", label: "Name" },
@@ -50,6 +55,7 @@ export default function Home() {
 	const initialCompactMode = searchParams.get("compact") === "1";
 	const initialVersion = searchParams.get("version") as string;
 	const initialSearch = searchParams.get("search");
+	const initialPlatform = searchParams.get("platform") as Platforms;
 
 	const [versions, setVersions] = useState<string[]>([]);
 	const [page, setPage] = useState<number>(
@@ -70,6 +76,10 @@ export default function Home() {
 	const [version, setVersion] = useState<
 		APIModsResponse["mods"][0]["versions"][0] | "all"
 	>(versions.includes(initialVersion) ? initialVersion : "all");
+
+	const [platform, setPlatform] = useState<Platforms | "all">(
+		platforms.includes(initialPlatform) ? initialPlatform : "all"
+	);
 	
 	const [search, setSearch] = useState<string>(
 		initialSearch ? decodeURIComponent(initialSearch) : "",
@@ -126,6 +136,7 @@ export default function Home() {
 				modloader: loader,
 				sort: sortBy,
 				search: encodeURIComponent(search),
+				platform
 			});
 
 			scrollTo({
@@ -139,11 +150,22 @@ export default function Home() {
 
 			const data = (await res.data) as APIModsResponse;
 
+			const newMods: typeof data.mods = []
+
+			for (const mod of data.mods) {
+				const index = newMods.findIndex((m) => m.slug === mod.slug);
+
+				if (index > 0) newMods[index] = mergeAddons(newMods[index], mod);
+				else newMods.push(mod);
+			}
+
+			data.mods = newMods;
+
 			setAddonsData(data);
 		};
 
 		fetchAddonsData().catch((err) => console.error(err));
-	}, [page, loader, sortBy, version, search]);
+	}, [page, loader, sortBy, version, platform, search]);
 
 	useEffect(() => {
 		if (addonsData && page > (addonsData.totalPages || 1)) {
@@ -159,12 +181,13 @@ export default function Home() {
 		if (loader !== "all") setSearchParams.append("modloader", loader);
 		if (search) setSearchParams.append("search", encodeURIComponent(search));
 		if (sortBy !== "downloads") setSearchParams.append("sort", sortBy);
+		if (platform !== "all") setSearchParams.append("platform", platform);
 		if (compactMode) setSearchParams.append("compact", "1");
 
 		router.replace(`?${setSearchParams}`, {
 			scroll: false,
 		});
-	}, [sortBy, search, loader, version, compactMode, page, router]);
+	}, [sortBy, search, loader, version, platform, compactMode, page, router]);
 
 	useEffect(() => {
 		document.addEventListener("keydown", handleKeyboardShortcut);

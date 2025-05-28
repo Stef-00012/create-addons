@@ -1,8 +1,8 @@
 import type {
-	ModrinthDatabaseMod,
-	ModrinthModDatabaseKeys,
-	ModrinthModDatabaseValues,
-} from "@/types/modrinth";
+	DatabaseMod,
+	ModDatabaseKeys,
+	ModDatabaseValues,
+} from "@/types/addons";
 
 export type Messages = CreateMessage | UpdateMessage;
 
@@ -30,22 +30,22 @@ export interface PongMessage extends Omit<WSmessage, "data"> {
 }
 
 export interface CreateMessage extends WSmessage {
-	data: ModrinthDatabaseMod[];
+	data: DatabaseMod[];
 	type: WSEvents.CREATE;
 }
 
 export interface UpdateMessageValues {
-	old: ModrinthModDatabaseValues;
-	new: ModrinthModDatabaseValues;
+	old: ModDatabaseValues;
+	new: ModDatabaseValues;
 }
 
 export interface UpdateMessage extends WSmessage {
 	type: WSEvents.UPDATE;
 	data: {
-		slug: ModrinthDatabaseMod["slug"];
-		platform: ModrinthDatabaseMod["platform"];
-		name: ModrinthDatabaseMod["name"];
-		changes: Record<ModrinthModDatabaseKeys, UpdateMessageValues>;
+		slug: DatabaseMod["slug"];
+		platform: DatabaseMod["platform"];
+		name: DatabaseMod["name"];
+		changes: Record<ModDatabaseKeys, UpdateMessageValues>;
 	}[];
 }
 

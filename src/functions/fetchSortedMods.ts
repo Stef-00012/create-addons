@@ -1,7 +1,13 @@
 import db from "@/db/db";
 import Fuse from "fuse.js";
 
-import type { Modloaders, SortOrders } from "@/types/modrinth";
+import type {
+	DatabaseMod,
+	Modloaders,
+	Platforms,
+	SortOrders,
+} from "@/types/addons";
+import { modLoaders, platforms } from "@/constants/loaders";
 
 interface Props {
 	page?: number;
@@ -9,6 +15,7 @@ interface Props {
 	modloader?: Modloaders | "all";
 	search?: string;
 	sortOrder?: SortOrders;
+	platform?: Platforms | "all";
 }
 
 export async function fetchSortedMods({
@@ -17,7 +24,21 @@ export async function fetchSortedMods({
 	modloader = "all",
 	search = "",
 	sortOrder = "downloads",
-}: Props) {
+	platform = "all",
+}: Props): Promise<
+	| {
+			error: false,
+			page: number;
+			mods: DatabaseMod[];
+			totalMods: number;
+			totalPages: number;
+	  }
+	| {
+			error: true;
+			message: string;
+			status: number;
+	  }
+> {
 	const modsPerPage =
 		Number.parseInt(process.env.MODS_PER_PAGE as string) || 50;
 
@@ -27,33 +48,38 @@ export async function fetchSortedMods({
 		...mod,
 		versions: mod.versions as string[],
 		categories: mod.categories as string[],
-		modloaders: mod.modloaders as string[],
+		modloaders: mod.modloaders as Modloaders[],
 	}));
 
 	const versions = mods.find((mod) => mod.slug === "create")?.versions || [];
 
 	if (version !== "all" && !versions.includes(version))
-		return Response.json({ error: "Invalid version" }, { status: 400 });
-
-	const modLoaders = [
-		"quilt",
-		"fabric",
-		"forge",
-		"neoforge",
-		"liteloader",
-		"modloader",
-		"rift",
-	];
+		return {
+			error: true,
+			message: "Invalid version",
+			status: 400,
+		};
 
 	if (modloader !== "all" && !modLoaders.includes(modloader))
-		return Response.json({ error: "Invalid modloader" }, { status: 400 });
+		return {
+			error: true,
+			message: "Invalid modloader",
+			status: 400,
+		};
+
+	if (platform !== "all" && !platforms.includes(platform))
+		return {
+			error: true,
+			message: "Invalid platform",
+			status: 400,
+		};
 
 	const fuse = new Fuse(mods, {
 		keys: ["name", "description", "slug", "categories"],
 		threshold: 0.4,
 	});
 
-	const searchFilteredMods =
+	const searchFilteredMods: DatabaseMod[] =
 		!search || search === ""
 			? mods
 			: fuse.search(search).map((result) => result.item);
@@ -61,7 +87,8 @@ export async function fetchSortedMods({
 	const filteredMods = searchFilteredMods.filter((mod) => {
 		return (
 			(modloader === "all" || mod.modloaders.includes(modloader)) &&
-			(version === "all" || mod.versions.includes(version))
+			(version === "all" || mod.versions.includes(version)) &&
+			(platform === "all" || mod.platform === platform)
 		);
 	});
 
@@ -90,6 +117,7 @@ export async function fetchSortedMods({
 	});
 
 	return {
+		error: false,
 		page,
 		mods: sortedMods.slice(page * modsPerPage, (page + 1) * modsPerPage),
 		totalMods: sortedMods.length,

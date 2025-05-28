@@ -31,7 +31,7 @@ async function fetchMods(
 		mods.push(...data.hits);
 
 		console.log(
-			`\x1b[36mFetched \x1b[0;1m${mods.length}\x1b[0;36m mods, total: \x1b[0;1m${data.total_hits}\x1b[0;36m, offset: \x1b[0;1m${offset}\x1b[0m`,
+			`\x1b[36mFetched \x1b[0;1m${mods.length}\x1b[0;36m mods from modrinth, total: \x1b[0;1m${data.total_hits}\x1b[0;36m, offset: \x1b[0;1m${offset}\x1b[0m`,
 		);
 
 		const totalMods = data.total_hits;

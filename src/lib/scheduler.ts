@@ -4,44 +4,37 @@ import db from "@/db/db";
 import { and, eq } from "drizzle-orm";
 import type {
 	Modloaders,
-	ModrinthDatabaseMod,
-	ModrinthModDatabaseValues,
-} from "@/types/modrinth";
+	DatabaseMod,
+	ModDatabaseValues,
+} from "@/types/addons";
 import type { UpdateMessage } from "@/types/websocket";
 import { compareArrays } from "@/functions/util";
+import getCurseforgeMods from "@/functions/getCurseforgeMods";
+import { curseforgeModloaders, modLoaders } from "@/constants/loaders";
 
 export type FetchResult = {
-    created: ModrinthDatabaseMod[];
+    created: DatabaseMod[];
     updated: UpdateMessage["data"];
 }
 
 export async function handleFetching(): Promise<FetchResult> {
+	const curseforgeMods = await getCurseforgeMods();
 	const modrinthMods = await getModrinthMods();
-
-	const modLoaders = [
-		"quilt",
-		"fabric",
-		"forge",
-		"neoforge",
-		"liteloader",
-		"modloader",
-		"rift",
-	];
 
 	const created: FetchResult["created"] = [];
 	const updated: FetchResult["updated"] = [];
 
 	for (const mod of modrinthMods) {
-		console.log(`\x1b[36mProcessing mod "\x1b[0;1m${mod.slug}\x1b[0;36m"\x1b[0m`);
+		console.log(`\x1b[36mProcessing modrinth mod "\x1b[0;1m${mod.slug}\x1b[0;36m"\x1b[0m`);
 
 		const existingMod = await db.query.mods.findFirst({
 			where: and(
 				eq(modsSchema.slug, mod.slug),
-				eq(modsSchema.platform, "modrinth"),
+				eq(modsSchema.platform, "modrinth")
 			),
 		});
 
-		const newModData: NonNullable<typeof existingMod> = {
+		const newModData: DatabaseMod = {
 			platform: "modrinth",
 			slug: mod.slug,
 			author: mod.author,
@@ -67,7 +60,9 @@ export async function handleFetching(): Promise<FetchResult> {
 		};
 
 		if (!existingMod) {
-			await db.insert(modsSchema).values(newModData);
+			await db
+				.insert(modsSchema)
+				.values(newModData);
 
 			created.push(newModData);
 
@@ -76,7 +71,7 @@ export async function handleFetching(): Promise<FetchResult> {
 
 		const changes: Record<
 			string,
-			{ old: ModrinthModDatabaseValues; new: ModrinthModDatabaseValues }
+			{ old: ModDatabaseValues; new: ModDatabaseValues }
 		> = {};
 
 		for (const _key in newModData) {
@@ -89,7 +84,7 @@ export async function handleFetching(): Promise<FetchResult> {
 					changes[key] = { old: existingMod[key], new: newModData[key] };
 			} else if (newModData[key] !== existingMod[key]) {
 				changes[key] = {
-					old: existingMod[key] as ModrinthModDatabaseValues,
+					old: existingMod[key] as ModDatabaseValues,
 					new: newModData[key],
 				};
 			}
@@ -99,7 +94,94 @@ export async function handleFetching(): Promise<FetchResult> {
 			.update(modsSchema)
 			.set(newModData)
 			.where(
-				and(eq(modsSchema.slug, mod.slug), eq(modsSchema.platform, "modrinth")),
+				and(
+					eq(modsSchema.slug, mod.slug),
+					eq(modsSchema.platform, "modrinth")
+				),
+			);
+
+		if (Object.keys(changes).length > 0) updated.push({
+			slug: newModData.slug,
+			platform: newModData.platform,
+			name: newModData.name,
+			changes,
+		});
+	}
+
+	for (const mod of curseforgeMods) {
+		console.log(`\x1b[36mProcessing curseforge mod "\x1b[0;1m${mod.slug}\x1b[0;36m"\x1b[0m`);
+
+		const existingMod = await db.query.mods.findFirst({
+			where: and(
+				eq(modsSchema.slug, mod.slug),
+				eq(modsSchema.platform, "curseforge")
+			),
+		});
+
+		const versions = mod.latestFilesIndexes.map((x) => x.gameVersion);
+
+		const newModData: DatabaseMod = {
+			platform: "curseforge",
+			slug: mod.slug,
+			author: mod.authors[0].name,
+			downloads: mod.downloadCount,
+			description: mod.summary,
+			icon: mod.logo.url,
+			name: mod.name,
+			version: versions[versions.length - 1],
+			versions,
+			categories: mod.categories.map((category) => category.name),
+			follows: mod.thumbsUpCount,
+			created: mod.dateCreated,
+			modified: mod.dateModified,
+			color: 15625524,
+			license: "Unknown",
+			clientSide: "unknown",
+			serverSide: "unknown",
+			modloaders: mod.latestFilesIndexes.map(
+				(x) => curseforgeModloaders[x.modLoader] as DatabaseMod["modloaders"][0],
+			).filter(loader => loader !== "any")
+		};
+
+		if (!existingMod) {
+			await db
+				.insert(modsSchema)
+				.values(newModData);
+
+			created.push(newModData);
+
+			continue;
+		}
+
+		const changes: Record<
+			string,
+			{ old: ModDatabaseValues; new: ModDatabaseValues }
+		> = {};
+
+		for (const _key in newModData) {
+			const key = _key as keyof typeof existingMod;
+
+			if (Array.isArray(newModData[key]) && Array.isArray(existingMod[key])) {
+				if (
+					!compareArrays(newModData[key], existingMod[key])
+				)
+					changes[key] = { old: existingMod[key], new: newModData[key] };
+			} else if (newModData[key] !== existingMod[key]) {
+				changes[key] = {
+					old: existingMod[key] as ModDatabaseValues,
+					new: newModData[key],
+				};
+			}
+		}
+
+		await db
+			.update(modsSchema)
+			.set(newModData)
+			.where(
+				and(
+					eq(modsSchema.slug, mod.slug),
+					eq(modsSchema.platform, "curseforge")
+				),
 			);
 
 		if (Object.keys(changes).length > 0) updated.push({
