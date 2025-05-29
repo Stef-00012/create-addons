@@ -1,9 +1,13 @@
 import type {
 	ModrinthDependenciesResponse,
+	ModrinthGetProjectsMod,
+	ModrinthGetVersionsVersion,
 	ModrinthSearchResponse,
+	ModrinthTeamUsers,
 } from "@/types/modrinth";
 import type { AxiosError } from "axios";
 import { ratelimitFetch } from "@/functions/fetch";
+import { splitArray } from "./util";
 
 async function fetchMods(
 	offset = 0,
@@ -71,50 +75,162 @@ async function fetchMods(
 	}
 }
 
+async function isCreateAddon(slug: string) {
+	const res = await ratelimitFetch(
+		`https://api.modrinth.com/v2/project/${slug}/dependencies`,
+	);
+
+	const dependencies = res.data as ModrinthDependenciesResponse;
+
+	if (
+		dependencies.projects.find(
+			(project) =>
+				project.slug === "create" || project.slug === "create-fabric",
+		)
+	)
+		return true;
+
+	return false;
+}
+
+async function getFullMods(IDs: string[]) {
+	const ids = IDs.map(id => `"${id}"`).join(",");
+
+	const searchParams = new URLSearchParams({
+		ids: `[${ids}]`,
+	});
+
+	const res = await ratelimitFetch(`https://api.modrinth.com/v2/projects?${searchParams}`);
+
+	const mods = res.data as ModrinthGetProjectsMod[];
+
+	return mods;
+}
+
+async function fetchVersions(IDs: string[]) {
+	const ids = IDs.map(id => `"${id}"`).join(",");
+
+	const searchParams = new URLSearchParams({
+		ids: `[${ids}]`,
+	});
+
+	const res = await ratelimitFetch(`https://api.modrinth.com/v2/versions?${searchParams}`)
+
+	const data = res.data as ModrinthGetVersionsVersion[]
+
+	return data;
+}
+
+async function getTeams(IDs: string[]) {
+	const ids = IDs.map(id => `"${id}"`).join(",");
+
+	const searchParams = new URLSearchParams({
+		ids: `[${ids}]`,
+	});
+
+	const res = await ratelimitFetch(`https://api.modrinth.com/v2/teams?${searchParams}`)
+
+	const data = res.data as ModrinthTeamUsers[][]
+
+	return data;
+}
+
 export default async function getModrinthMods(): Promise<
-	ModrinthSearchResponse["hits"]
+	({
+		mod: ModrinthGetProjectsMod;
+		authors: string[];
+		hashes: string[];
+	})[]
 > {
 	const modsData = await fetchMods();
 
-	const mods: ModrinthSearchResponse["hits"] = [];
+	const modsIds: string[] = []
 
 	let index = 0;
 
 	for (const mod of modsData.mods) {
-		console.log(`\x1b[34mFetching dependencies for "\x1b[0;1m${mod.slug}\x1b[0;34m" \x1b[33m[\x1b[1m${index}\x1b[0;33m]\x1b[0m`);
-
 		if (mod.slug === "create" || mod.slug === "create-fabric") {
-			mods.push(mod);
+			modsIds.push(mod.project_id);
 			index++;
 
 			continue;
 		}
 
+		console.log(
+			`\x1b[34mFetching dependencies for "\x1b[0;1m${mod.slug}\x1b[0;34m" \x1b[33m[\x1b[1m${index}\x1b[0;33m]\x1b[0m`,
+		);
+
 		try {
-			const res = await ratelimitFetch(
-				`https://api.modrinth.com/v2/project/${mod.slug}/dependencies`,
-			);
+			const check = await isCreateAddon(mod.slug);
 
-			const dependencies = res.data as ModrinthDependenciesResponse;
-
-			if (
-				dependencies.projects.find(
-					(project) =>
-						project.slug === "create" || project.slug === "create-fabric",
-				)
-			) {
-				mods.push(mod);
-			}
+			if (check) modsIds.push(mod.project_id);
 		} catch (e) {
 			const error = e as AxiosError;
 
 			console.log(
-				`\x1b[31mSkipped mod "\x1b[0;1m${mod.slug}\x1b[0;31m" for error "\x1b[0;1m${error?.response?.status}\x1b[0;31m" (\x1b[0;1m${error?.response?.statusText}\x1b[0;31m) \x1b[0;33m[\x1b[1m${index}\x1b[0;33m]\x1b[0m`,
+				`\x1b[31mSkipped mod "\x1b[0;1m${mod.slug} (${mod.project_id})\x1b[0;31m" for error "\x1b[0;1m${error?.response?.status}\x1b[0;31m" (\x1b[0;1m${error?.response?.statusText}\x1b[0;31m) \x1b[0;33m[\x1b[1m${index}\x1b[0;33m]\x1b[0m`,
 			);
 		}
 
 		index++;
 	}
 
-	return mods;
+	const modsIdsGroups = splitArray<string>(modsIds, 700);
+
+	const modData: ({
+		mod: ModrinthGetProjectsMod;
+		authors: string[];
+		hashes: string[];
+	})[] = [];
+
+	for (const modIdGroup of modsIdsGroups) {
+		const modsRes = await getFullMods(modIdGroup);
+
+		const formattedMods = modsRes.map(mod => ({
+			mod: mod,
+			authors: [],
+			hashes: []
+		}))
+
+		modData.push(...formattedMods)
+	}
+
+	const teamsIds = modData.map(data => data.mod.team)
+
+	const teamsIdsGroups = splitArray<string>(teamsIds, 700);
+
+	for (const teamIdGroup of teamsIdsGroups) {
+		const teamsRes = await getTeams(teamIdGroup);
+
+		for (const team of teamsRes) {
+			const teamId = team[0].team_id
+			const authors = team.map(teamData => teamData.user.username);
+
+			const index = modData.findIndex(data => data.mod.team === teamId)
+
+			modData[index].authors = authors;
+		}
+	}
+
+	const modsVersions = modData.flatMap(data => data.mod.versions)
+
+	const modsVersionsGroups = splitArray<string>(modsVersions, 700);
+
+	const versions: ModrinthGetVersionsVersion[] = [];
+
+	for (const modVersionGroup of modsVersionsGroups) {
+		const modVersionRes = await fetchVersions(modVersionGroup);
+
+		versions.push(...modVersionRes);
+	}
+
+	for (const version of versions) {
+		const hashes = version.files.map(file => file.hashes.sha1);
+		const projectId = version.project_id
+
+		const index = modData.findIndex(data => data.mod.id === projectId)
+		modData[index].hashes.push(...hashes)
+	}
+
+	return modData;
 }

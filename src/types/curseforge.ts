@@ -158,7 +158,7 @@ interface CurseforgeFileHash {
 	algo: CurseforgeHashAlgo;
 }
 
-enum CurseforgeHashAlgo {
+export enum CurseforgeHashAlgo {
 	Sha1 = 1,
 	Md5 = 2,
 }

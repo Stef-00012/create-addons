@@ -20,10 +20,16 @@ export type SortOrders =
 	| "lastUpdated"
 	| "created";
 
+export type ModData = Record<Platforms, DatabaseModData>;
+
 export interface DatabaseMod {
-	platform: Platforms;
+	platforms: Platforms[];
+	modData: Partial<ModData>;
+}
+
+export interface DatabaseModData {
 	slug: string;
-	author: string;
+	authors: DatabaseModDataAuthor[];
 	downloads: number;
 	description: string;
 	icon: string;
@@ -39,8 +45,14 @@ export interface DatabaseMod {
 	clientSide: SupportTypes;
 	serverSide: SupportTypes;
 	modloaders: Modloaders[];
+	id: string;
 }
 
-export type ModDatabaseKeys = keyof DatabaseMod;
+interface DatabaseModDataAuthor {
+	name: string;
+	url: string;
+}
 
-export type ModDatabaseValues = DatabaseMod[ModDatabaseKeys];
+export type ModDataDatabaseKeys = keyof DatabaseModData;
+
+export type ModDataDatabaseValues = DatabaseModData[ModDataDatabaseKeys];

@@ -4,6 +4,7 @@ import type {
 } from "@/types/curseforge";
 import type { AxiosError } from "axios";
 import { ratelimitFetch, ratelimitPost } from "@/functions/fetch";
+import { CurseforgeHashAlgo } from "@/types/curseforge";
 
 const apiKey = process.env.CURSEFORGE_API_KEY;
 const createModids = [
@@ -97,7 +98,10 @@ async function getBaseCreateMod(): Promise<CurseforgeSearchResponse["data"]> {
 }
 
 export default async function getCurseforgeMods(): Promise<
-	CurseforgeSearchResponse["data"]
+	({
+		mod: CurseforgeSearchResponse["data"][0];
+		hashes: string[];
+	})[]
 > {
 	const modsData = await fetchMods();
 	const baseCreateMods = await getBaseCreateMod();
@@ -107,7 +111,12 @@ export default async function getCurseforgeMods(): Promise<
 		...modsData,
 	];
 
-	return mods;
+	return mods.map(mod => ({
+		mod,
+		hashes: mod.latestFiles
+			.flatMap(file => file.hashes
+				.filter(hash => hash.algo === CurseforgeHashAlgo.Sha1)
+				.map(hash => hash.value)
+			)
+	}));
 }
-
-getCurseforgeMods().then(console.log);
