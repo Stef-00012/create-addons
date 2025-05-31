@@ -9,7 +9,7 @@ import type {
 	DatabaseModData,
 } from "@/types/addons";
 import type { UpdateMessage } from "@/types/websocket";
-import { compareArrays } from "@/functions/util";
+import { compareAddons, compareArrays } from "@/functions/util";
 import getCurseforgeMods from "@/functions/getCurseforgeMods";
 import { curseforgeModloaders, modLoaders } from "@/constants/loaders";
 
@@ -115,6 +115,8 @@ export async function handleFetching(): Promise<FetchResult> {
 
 	for (const addon of addons) {
 		const mod = addon.dbData
+		
+		console.log(`\x1b[36mProcessing addon "\x1b[0;1m${mod.modData.modrinth?.slug ?? mod.modData.curseforge?.slug}\x1b[0;36m"\x1b[0m`);
 
 		const exists = await db.query.mods.findFirst({
 			where: or(
@@ -122,52 +124,48 @@ export async function handleFetching(): Promise<FetchResult> {
 				sql`json_extract(${modsSchema.modData}, '$.modData.curseforge.slug') = ${mod.modData.curseforge?.slug}`,
 			)
 		})
+
+		if (!exists) {
+			await db.insert(modsSchema).values(mod)
+
+			created.push(mod)
+
+			continue;
+		}
+
+		const curseforgeChanges = compareAddons(exists.modData.curseforge, mod.modData.curseforge)
+		const modrinthChanges = compareAddons(exists.modData.modrinth, mod.modData.modrinth);
+
+		const changes = {
+			curseforge: curseforgeChanges,
+			modrinth: modrinthChanges,
+		}
+
+		await db.update(modsSchema).set(mod).where(
+			or(
+				sql`json_extract(${modsSchema.modData}, '$.modData.modrinth.slug') = ${mod.modData.modrinth?.slug}`,
+				sql`json_extract(${modsSchema.modData}, '$.modData.curseforge.slug') = ${mod.modData.curseforge?.slug}`,
+			)
+		)
+
+		if (Object.keys(changes.curseforge ?? {}).length > 0 || Object.keys(changes.modrinth ?? {}).length > 0) {
+			const changeResult: FetchResult["updated"][0] = {
+				slugs: {
+					modrinth: mod.modData.modrinth?.slug ?? null,
+					curseforge: mod.modData.curseforge?.slug ?? null,
+				},
+				changes,
+				platforms: mod.platforms,
+				name: mod.modData.modrinth?.name ?? mod.modData.curseforge?.name ?? "Unknown Name",
+			}
+
+			updated.push(changeResult);
+		}
+
 	}
 
 	// for (const mod of modrinthMods) {
 	// 	console.log(`\x1b[36mProcessing modrinth mod "\x1b[0;1m${mod.slug}\x1b[0;36m"\x1b[0m`);
-
-	// 	const existingMod = await db.query.mods.findFirst({
-	// 		where: and(
-	// 			eq(modsSchema.slug, mod.slug),
-	// 			eq(modsSchema.platform, "modrinth")
-	// 		),
-	// 	});
-
-	// 	const newModData: DatabaseMod = {
-	// 		platform: "modrinth",
-	// 		slug: mod.slug,
-	// 		author: mod.author,
-	// 		downloads: mod.downloads,
-	// 		description: mod.description,
-	// 		icon: mod.icon_url,
-	// 		name: mod.title,
-	// 		version: mod.versions[mod.versions.length - 1],
-	// 		versions: mod.versions,
-	// 		categories: mod.categories.filter(
-	// 			(category: string) => !modLoaders.includes(category),
-	// 		),
-	// 		follows: mod.follows,
-	// 		created: mod.date_created,
-	// 		modified: mod.date_modified,
-	// 		color: typeof mod.color === "number" ? mod.color : 1825130,
-	// 		license: mod.license,
-	// 		clientSide: mod.client_side,
-	// 		serverSide: mod.server_side,
-	// 		modloaders: mod.categories.filter((category: string) =>
-	// 			modLoaders.includes(category),
-	// 		) as Modloaders[],
-	// 	};
-
-	// 	if (!existingMod) {
-	// 		await db
-	// 			.insert(modsSchema)
-	// 			.values(newModData);
-
-	// 		created.push(newModData);
-
-	// 		continue;
-	// 	}
 
 	// 	const changes: Record<
 	// 		string,

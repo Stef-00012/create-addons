@@ -44,5 +44,5 @@ export const mods = sqliteTable("mods", {
 		})
 		.notNull()
 		.default({})
-		.$type<ModData>(),
+		.$type<Partial<ModData>>(),
 });

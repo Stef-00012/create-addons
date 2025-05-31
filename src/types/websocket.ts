@@ -1,7 +1,9 @@
 import type {
 	DatabaseMod,
-	ModDatabaseKeys,
-	ModDatabaseValues,
+	DatabaseModData,
+	ModDataDatabaseKeys,
+	ModDataDatabaseValues,
+	Platforms,
 } from "@/types/addons";
 
 export type Messages = CreateMessage | UpdateMessage;
@@ -35,17 +37,19 @@ export interface CreateMessage extends WSmessage {
 }
 
 export interface UpdateMessageValues {
-	old: ModDatabaseValues;
-	new: ModDatabaseValues;
+	old: ModDataDatabaseValues;
+	new: ModDataDatabaseValues;
 }
+
+export type UpdateMessageDataChanges = Partial<Record<ModDataDatabaseKeys, { old: ModDataDatabaseValues | null; new: ModDataDatabaseValues | null }>> | null
 
 export interface UpdateMessage extends WSmessage {
 	type: WSEvents.UPDATE;
 	data: {
-		slug: DatabaseMod["slug"];
-		platform: DatabaseMod["platform"];
-		name: DatabaseMod["name"];
-		changes: Record<ModDatabaseKeys, UpdateMessageValues>;
+		slugs: Record<Platforms, DatabaseModData["slug"] | null>;
+		platforms: DatabaseMod["platforms"];
+		name: DatabaseModData["name"];
+		changes: Record<Platforms, UpdateMessageDataChanges>;
 	}[];
 }
 

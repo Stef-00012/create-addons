@@ -1,27 +1,27 @@
-import { curseforgeModloaders, modLoaders } from "@/constants/loaders";
-import type { DatabaseMod, Modloaders, Platforms } from "@/types/addons";
-import type { CurseforgeSearchResponse } from "@/types/curseforge";
-import type { ModrinthSearchResponse } from "@/types/modrinth";
+import type {
+	DatabaseModData,
+} from "@/types/addons";
+import type { UpdateMessageDataChanges } from "@/types/websocket";
 
 export function compareArrays<T>(a: T[], b: T[]): boolean {
 	return a.length === b.length && a.every((value) => b.includes(value));
 }
 
-function mergeColors(a: number, b: number) {
-	const aRed = (a >> 16) & 0xff;
-	const aGreen = (a >> 8) & 0xff;
-	const aBlue = a & 0xff;
+// function mergeColors(a: number, b: number) {
+// 	const aRed = (a >> 16) & 0xff;
+// 	const aGreen = (a >> 8) & 0xff;
+// 	const aBlue = a & 0xff;
 
-	const bRed = (b >> 16) & 0xff;
-	const bGreen = (b >> 8) & 0xff;
-	const bBlue = b & 0xff;
+// 	const bRed = (b >> 16) & 0xff;
+// 	const bGreen = (b >> 8) & 0xff;
+// 	const bBlue = b & 0xff;
 
-	return (
-		(Math.round((aRed + bRed) / 2) << 16) |
-		(Math.round((aGreen + bGreen) / 2) << 8) |
-		Math.round((aBlue + bBlue) / 2)
-	);
-}
+// 	return (
+// 		(Math.round((aRed + bRed) / 2) << 16) |
+// 		(Math.round((aGreen + bGreen) / 2) << 8) |
+// 		Math.round((aBlue + bBlue) / 2)
+// 	);
+// }
 
 // export function mergeAddons(modrinthAddon: DatabaseMod, curseforgeAddon: DatabaseMod): DatabaseMod {
 //     return {
@@ -75,4 +75,57 @@ export function splitArray<T = unknown>(array: Array<T>, count = 700) {
 	}
 
 	return groups;
+}
+
+export function compareAddons(
+	oldAddon: DatabaseModData | null | undefined,
+	newAddon: DatabaseModData | null | undefined,
+): UpdateMessageDataChanges {
+	const changes: NonNullable<ReturnType<typeof compareAddons>> = {};
+
+	if (!oldAddon && !newAddon) {
+		return null;
+	}
+
+	if (newAddon) {
+		for (const _key in newAddon) {
+			const key = _key as keyof typeof newAddon;
+
+			if (!oldAddon) {
+				changes[key] = { old: null, new: newAddon[key] };
+				continue;
+			}
+
+			if (Array.isArray(newAddon[key]) && Array.isArray(oldAddon[key])) {
+				if (!compareArrays(newAddon[key], oldAddon[key]))
+					changes[key] = { old: oldAddon[key], new: newAddon[key] };
+			} else if (newAddon[key] !== oldAddon[key]) {
+				changes[key] = {
+					old: oldAddon[key],
+					new: newAddon[key],
+				};
+			}
+		}
+	} else if (oldAddon) {
+		for (const _key in oldAddon) {
+			const key = _key as keyof typeof oldAddon;
+
+			if (!newAddon) {
+				changes[key] = { old: oldAddon[key], new: null };
+				continue;
+			}
+
+			if (Array.isArray(newAddon[key]) && Array.isArray(oldAddon[key])) {
+				if (!compareArrays(newAddon[key], oldAddon[key]))
+					changes[key] = { old: oldAddon[key], new: newAddon[key] };
+			} else if (newAddon[key] !== oldAddon[key]) {
+				changes[key] = {
+					old: oldAddon[key],
+					new: newAddon[key],
+				};
+			}
+		}
+	}
+
+	return changes;
 }
