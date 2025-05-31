@@ -8,17 +8,17 @@ import {
 	useState,
 } from "react";
 import axios from "axios";
+import { platforms } from "@/constants/loaders";
 
 import type { APIModsResponse } from "@/app/api/addons/route";
 import type { DatabaseModData, Platforms, SortOrders } from "@/types/addons";
 
 import { useSearchParams, useRouter } from "next/navigation";
+import FilterSelect from "@/components/FilterSelect";
 import SkeletonCard from "@/components/SkeletonCard";
 import SkeletonList from "@/components/SkeletonList";
 import Card from "@/components/Card";
 import List from "@/components/List";
-import Select from "react-select";
-import { platforms } from "@/constants/loaders";
 
 const modloaderOptions = [
 	{ value: "neoforge", label: "NeoForge" },
@@ -281,130 +281,58 @@ export default function Home() {
 						</div>
 
 						{/* Filter by modloader */}
-						<div className="select-floating w-96 my-4 md:my-0">
-							<label
-								className="select-floating-label rounded-2xl px-2 z-10 flex items-center"
-								htmlFor="selectFloating"
-							>
-								<span className="icon-[tabler--filter] me-2 size-5 shrink-0" />
-								Filter by modloader
-							</label>
-
-							<Select
-								id="selectFloating"
-								defaultValue={modloaderOptions[0]}
-								options={modloaderOptions}
-								value={
-									modloaderOptions.find((option) => option.value === loader) ||
-									null
-								}
-								unstyled
-								isSearchable={false}
-								isLoading={!addonsData}
-								isDisabled={!addonsData}
-								components={{
-									DropdownIndicator: () => null,
-									IndicatorSeparator: () => null,
-								}}
-								classNames={{
-									control: ({ isDisabled }) =>
-										`select ${isDisabled ? "bg-base-100/50 border-none text-base-content/50" : ""}`,
-									option: ({ isSelected }) =>
-										`rounded-2xl my-1 p-2 ${isSelected ? "bg-base-200" : "bg-base-100 hover:bg-base-200"}`,
-									menuList: () =>
-										"rounded-2xl bg-base-100 py-4 shadow-lg px-2 mt-1",
-								}}
-								onChange={handleLoaderSelect}
-							/>
-						</div>
+						<FilterSelect
+							defaultValue={modloaderOptions[0]}
+							options={modloaderOptions}
+							label="Filter by modloader"
+							value={
+								modloaderOptions.find((option) => option.value === loader) ||
+								null
+							}
+							isLoading={!addonsData}
+							isDisabled={!addonsData}
+							onChange={handleLoaderSelect}
+						/>
 
 						{/* Filter by version */}
-						<div className="select-floating w-96 my-4 md:my-0">
-							<label
-								className="select-floating-label rounded-2xl px-2 z-10 flex items-center"
-								htmlFor="selectFloating"
-							>
-								<span className="icon-[tabler--filter] me-2 size-5 shrink-0" />
-								Filter by version
-							</label>
-
-							<Select
-								id="selectFloating"
-								unstyled
-								isSearchable={false}
-								isLoading={!addonsData}
-								isDisabled={!addonsData}
-								defaultValue={{
+						<FilterSelect
+							label="Filter by version"
+							isLoading={!addonsData}
+							isDisabled={!addonsData}
+							defaultValue={{
+								value: "all",
+								label: "All",
+							}}
+							value={{
+								value: version,
+								label: version === "all" ? "All" : version,
+							}}
+							options={[
+								{
 									value: "all",
 									label: "All",
-								}}
-								value={{
+								},
+								...versions.map((version) => ({
 									value: version,
-									label: version === "all" ? "All" : version,
-								}}
-								options={[
-									{
-										value: "all",
-										label: "All",
-									},
-									...versions.map((version) => ({
-										value: version,
-										label: version,
-									})),
-								]}
-								components={{
-									DropdownIndicator: () => null,
-									IndicatorSeparator: () => null,
-								}}
-								classNames={{
-									control: ({ isDisabled }) =>
-										`select ${isDisabled ? "bg-base-100/50 border-none text-base-content/50" : ""}`,
-									option: ({ isSelected }) =>
-										`rounded-2xl my-1 p-2 ${isSelected ? "bg-base-200" : "bg-base-100 hover:bg-base-200"}`,
-									menuList: () =>
-										"rounded-2xl bg-base-100 py-4 shadow-lg px-2 mt-1",
-								}}
-								onChange={handleVersionSelect}
-							/>
-						</div>
+									label: version,
+								})),
+							]}
+							onChange={handleVersionSelect}
+						/>
 
 						{/* Sort by */}
-						<div className="select-floating w-96 my-4 md:my-0">
-							<label
-								className="select-floating-label rounded-2xl px-2 z-10 flex items-center"
-								htmlFor="selectFloating"
-							>
-								<span className="icon-[tabler--arrows-sort] me-2 size-5 shrink-0" />
-								Sort by
-							</label>
-
-							<Select
-								id="selectFloating"
-								defaultValue={sortByOptions[0]}
-								options={sortByOptions}
-								value={
-									sortByOptions.find((option) => option.value === sortBy) ||
-									null
-								}
-								unstyled
-								isSearchable={false}
-								isLoading={!addonsData}
-								isDisabled={!addonsData}
-								components={{
-									DropdownIndicator: () => null,
-									IndicatorSeparator: () => null,
-								}}
-								classNames={{
-									control: ({ isDisabled }) =>
-										`select ${isDisabled ? "bg-base-100/50 border-none text-base-content/50" : ""}`,
-									option: ({ isSelected }) =>
-										`rounded-2xl my-1 p-2 ${isSelected ? "bg-base-200" : "bg-base-100 hover:bg-base-200"}`,
-									menuList: () =>
-										"rounded-2xl bg-base-100 py-4 shadow-lg px-2 mt-1",
-								}}
-								onChange={handleSortSelect}
-							/>
-						</div>
+						<FilterSelect
+							label="Sort by"
+							defaultValue={sortByOptions[0]}
+							options={sortByOptions}
+							value={
+								sortByOptions.find((option) => option.value === sortBy) ||
+								null
+							}
+							isLoading={!addonsData}
+							isDisabled={!addonsData}
+							onChange={handleSortSelect}
+						/>
 					</div>
 
 					<div className="join rounded-2xl max-w-xs mx-auto">
