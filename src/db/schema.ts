@@ -1,5 +1,4 @@
 import type {
-	DatabaseMod,
 	ModData,
 	Platforms,
 } from "@/types/addons";

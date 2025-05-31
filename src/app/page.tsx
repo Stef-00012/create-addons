@@ -10,7 +10,7 @@ import {
 import axios from "axios";
 
 import type { APIModsResponse } from "@/app/api/addons/route";
-import type { Platforms, SortOrders } from "@/types/addons";
+import type { DatabaseModData, Platforms, SortOrders } from "@/types/addons";
 
 import { useSearchParams, useRouter } from "next/navigation";
 import SkeletonCard from "@/components/SkeletonCard";
@@ -19,7 +19,6 @@ import Card from "@/components/Card";
 import List from "@/components/List";
 import Select from "react-select";
 import { platforms } from "@/constants/loaders";
-import { mergeAddons } from "@/functions/util";
 
 const modloaderOptions = [
 	{ value: "neoforge", label: "NeoForge" },
@@ -49,7 +48,7 @@ export default function Home() {
 
 	const initialPage = searchParams.get("page");
 	const initialLoader = searchParams.get("modloader") as
-		| APIModsResponse["mods"][0]["modloaders"][0]
+		| DatabaseModData["modloaders"][0]
 		| "all";
 	const initialSortBy = searchParams.get("sort") as SortOrders;
 	const initialCompactMode = searchParams.get("compact") === "1";
@@ -64,7 +63,7 @@ export default function Home() {
 	const [addonsData, setAddonsData] = useState<APIModsResponse | null>(null);
 
 	const [loader, setLoader] = useState<
-		APIModsResponse["mods"][0]["modloaders"][0] | "all"
+		DatabaseModData["modloaders"][0] | "all"
 	>(modloaders.includes(initialLoader) ? initialLoader : "all");
 	
 	const [sortBy, setSortBy] = useState<SortOrders>(
@@ -74,9 +73,10 @@ export default function Home() {
 	const [compactMode, setCompactMode] = useState(initialCompactMode);
 	
 	const [version, setVersion] = useState<
-		APIModsResponse["mods"][0]["versions"][0] | "all"
+		DatabaseModData["version"] | "all"
 	>(versions.includes(initialVersion) ? initialVersion : "all");
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [platform, setPlatform] = useState<Platforms | "all">(
 		platforms.includes(initialPlatform) ? initialPlatform : "all"
 	);
@@ -101,10 +101,10 @@ export default function Home() {
 
 	useEffect(() => {
 		const version = searchParams.get("version") as
-			| APIModsResponse["mods"][0]["versions"][0]
+			| DatabaseModData["version"]
 			| "all";
 		const loader = searchParams.get("modloader") as
-			| APIModsResponse["mods"][0]["modloaders"][0]
+			| DatabaseModData["modloaders"][0]
 			| "all";
 		const search = searchParams.get("search") as string;
 		const sortBy = searchParams.get("sort") as SortOrders;
@@ -150,17 +150,6 @@ export default function Home() {
 
 			const data = (await res.data) as APIModsResponse;
 
-			const newMods: typeof data.mods = []
-
-			for (const mod of data.mods) {
-				const index = newMods.findIndex((m) => m.slug === mod.slug);
-
-				if (index > 0) newMods[index] = mergeAddons(newMods[index], mod);
-				else newMods.push(mod);
-			}
-
-			data.mods = newMods;
-
 			setAddonsData(data);
 		};
 
@@ -201,7 +190,7 @@ export default function Home() {
 		newValue: { label: string; value: string } | null,
 	) {
 		const loader = newValue?.value as
-			| APIModsResponse["mods"][0]["modloaders"][0]
+			| DatabaseModData["modloaders"][0]
 			| "all";
 
 		setLoader(loader || "all");
@@ -466,8 +455,8 @@ export default function Home() {
 								{addonsData.mods.length > 0 ? (
 									<>
 										{addonsData.mods.map((mod) => (
-											<Fragment key={mod.slug}>
-												{compactMode ? <List mod={mod} /> : <Card mod={mod} />}
+											<Fragment key={mod.modData.modrinth?.id ?? mod.modData.curseforge?.id}>
+												{compactMode ? <List mod={mod.modData} /> : <Card mod={mod.modData} />}
 											</Fragment>
 										))}
 									</>

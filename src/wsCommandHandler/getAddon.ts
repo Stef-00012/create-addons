@@ -2,7 +2,7 @@ import { type CommandResponseMessage, WSEvents, type CommandMessage, type Comman
 import type { WebSocket } from "ws";
 import db from "@/db/db";
 import { mods as modsSchema } from "@/db/schema";
-import { and, eq } from "drizzle-orm";
+import { or, sql } from "drizzle-orm";
 import type { Platforms } from "@/types/addons";
 import { platforms } from "@/constants/loaders";
 
@@ -40,13 +40,13 @@ export default async function getMod(ws: WebSocket, command: string, args?: Comm
 
     const mod = platform
         ? await db.query.mods.findFirst({
-            where: and(
-                eq(modsSchema.slug, slug),
-                eq(modsSchema.platform, platform)
-            )
+            where: sql`json_extract(${modsSchema.modData}, '$.modData.${platform}.slug') = ${slug}`,
         })
         : await db.query.mods.findFirst({
-            where: eq(modsSchema.slug, slug),
+            where: or(
+                sql`json_extract(${modsSchema.modData}, '$.modData.modrinth.slug') = ${slug}`,
+                sql`json_extract(${modsSchema.modData}, '$.modData.curseforge.slug') = ${slug}`,
+            )
         });
 
     if (!mod) {

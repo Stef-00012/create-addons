@@ -9,36 +9,41 @@ import millify from "millify";
 
 import { modloaderNames } from "@/constants/loaders";
 
-import type { APIModsResponse } from "@/app/api/addons/route";
-
 import { Tooltip } from "react-tooltip";
 import Image from "next/image";
+import type { DatabaseMod, DatabaseModData, Platforms } from "@/types/addons";
+import { useState } from "react";
 
 interface Props {
-	mod: APIModsResponse["mods"][0];
+	mod: DatabaseMod["modData"];
 }
 
 export default function Card({ mod }: Props) {
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	const [platform, setPlatform] = useState<Platforms>(Object.keys(mod).includes("modrinth") ? "modrinth" : "curseforge")
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	const [modData, setModData] = useState(mod[platform] as DatabaseModData)
+
 	return (
 		<div className="card sm:max-w-lg my-4 sm:my-0 sm:flex-auto">
 			<div className="card-body">
 				<h5 className="card-title mb-0">
 					<Image
-						src={mod.icon === "" ? defaultModIcon : mod.icon}
+						src={modData.icon === "" ? defaultModIcon : modData.icon}
 						className="size-10 inline-block rounded-2xl mr-2"
 						alt="mod logo"
 						width={20}
 						height={20}
 					/>
 					<a
-						href={`https://modrinth.com/mod/${mod.slug}`}
+						href={`https://modrinth.com/mod/${modData.slug}`}
 						className="link-primary"
 						target="_blank"
 						rel="noreferrer"
 					>
-						{mod.name}
+						{modData.name}
 					</a>
-					{mod.modloaders.includes("fabric") && (
+					{modData.modloaders.includes("fabric") && (
 						<>
 							<Image
 								src={fabric}
@@ -56,7 +61,7 @@ export default function Card({ mod }: Props) {
 							/>
 						</>
 					)}
-					{mod.modloaders.includes("forge") && (
+					{modData.modloaders.includes("forge") && (
 						<>
 							<Image
 								src={forge}
@@ -74,7 +79,7 @@ export default function Card({ mod }: Props) {
 							/>
 						</>
 					)}
-					{mod.modloaders.includes("neoforge") && (
+					{modData.modloaders.includes("neoforge") && (
 						<>
 							<Image
 								src={neoforge}
@@ -92,7 +97,7 @@ export default function Card({ mod }: Props) {
 							/>
 						</>
 					)}
-					{mod.modloaders.includes("quilt") && (
+					{modData.modloaders.includes("quilt") && (
 						<>
 							<Image
 								src={quilt}
@@ -115,44 +120,50 @@ export default function Card({ mod }: Props) {
 					<li>
 						<span className="icon-[tabler--brand-minecraft] pt-2" />{" "}
 						<strong>Modloaders:</strong>
-						{` ${mod.modloaders
+						{` ${modData.modloaders
+							.filter(modloader => modloader !== "any")
 							.map((modloader) => modloaderNames[modloader])
 							.join(", ")}`}
 					</li>
 					<li>
 						<span className="icon-[tabler--hash] pt-2" />{" "}
-						<strong>Versions:</strong> {mod.versions.join(", ")}
+						<strong>Versions:</strong> {modData.versions.join(", ")}
 					</li>
 					<li>
 						<span className="icon-[tabler--download] pt-2" />{" "}
 						<strong>Downloads:</strong>{" "}
-						{millify(mod.downloads, {
+						{millify(modData.downloads, {
 							precision: 2,
 						})}
 					</li>
 					<li>
 						<span className="icon-[tabler--user] pt-2" />{" "}
-						<strong>Creator:</strong>{" "}
-						<a
-							className="text-primary hover:underline"
-							href={`https://modrinth.com/user/${mod.author}`}
-							target="_blank"
-							rel="noreferrer"
-						>
-							{mod.author}
-						</a>
+						<strong>Creators:</strong>{" "}
+						{modData.authors.map((author, index) => (
+							<span key={author.name}>
+								<a
+									className="text-primary hover:underline"
+									href={author.url}
+									target="_blank"
+									rel="noreferrer"
+								>
+									{author.name}
+								</a>
+								{index < modData.authors.length - 1 && ", "}
+							</span>
+						))}
 					</li>
 					<li>
 						<span className="icon-[tabler--heart] pt-2" />{" "}
 						<strong>Followers:</strong>{" "}
-						{millify(mod.follows, {
+						{millify(modData.follows, {
 							precision: 2,
 						})}
 					</li>
 					<li>
 						<span className="icon-[tabler--category] pt-2" />{" "}
 						<strong>Categories:</strong>{" "}
-						{mod.categories
+						{modData.categories
 							.map(
 								(category) =>
 									category.charAt(0).toUpperCase() + category.slice(1),
@@ -162,15 +173,15 @@ export default function Card({ mod }: Props) {
 					<li>
 						<span className="icon-[tabler--text-caption] pt-2" />{" "}
 						<strong>Description:</strong>{" "}
-						{mod.description.length > 300
-							? `${mod.description.substring(0, 300)}...`
-							: mod.description}
+						{modData.description.length > 300
+							? `${modData.description.substring(0, 300)}...`
+							: modData.description}
 					</li>
 					<li>
 						<span className="icon-[tabler--clock] pt-2" />{" "}
 						<strong>Created:</strong>{" "}
-						{format(new Date(mod.created), "MMMM do, yyyy")} (
-						{formatDistanceToNow(new Date(mod.created), {
+						{format(new Date(modData.created), "MMMM do, yyyy")} (
+						{formatDistanceToNow(new Date(modData.created), {
 							addSuffix: true,
 							includeSeconds: true,
 						})}
@@ -179,8 +190,8 @@ export default function Card({ mod }: Props) {
 					<li>
 						<span className="icon-[tabler--clock-edit] pt-2" />{" "}
 						<strong>Last Updated:</strong>{" "}
-						{format(new Date(mod.modified), "MMMM do, yyyy")} (
-						{formatDistanceToNow(new Date(mod.modified), {
+						{format(new Date(modData.modified), "MMMM do, yyyy")} (
+						{formatDistanceToNow(new Date(modData.modified), {
 							addSuffix: true,
 							includeSeconds: true,
 						})}
@@ -189,7 +200,7 @@ export default function Card({ mod }: Props) {
 				</ul>
 				<div className="card-actions mt-auto pt-2 -mb-3">
 					<a
-						href={`https://modrinth.com/mod/${mod.slug}`}
+						href={`https://modrinth.com/mod/${modData.slug}`}
 						className="btn btn-outline btn-primary flex items-center"
 						target="_blank"
 						rel="noreferrer"

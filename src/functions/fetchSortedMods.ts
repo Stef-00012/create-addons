@@ -46,12 +46,22 @@ export async function fetchSortedMods({
 
 	const mods = modsRes.map((mod) => ({
 		...mod,
-		versions: mod.versions as string[],
-		categories: mod.categories as string[],
-		modloaders: mod.modloaders as Modloaders[],
+		versions: platform === "all" ? [
+			...(mod.modData.modrinth?.versions || []),
+			...(mod.modData.curseforge?.versions || []),
+		] : mod.modData[platform]?.versions || [],
+		categories: platform === "all" ? [
+			...(mod.modData.modrinth?.categories || []),
+			...(mod.modData.curseforge?.categories || []),
+		] : mod.modData[platform]?.categories || [],
+		modloaders: platform === "all" ? [
+			...(mod.modData.modrinth?.modloaders || []),
+			...(mod.modData.curseforge?.modloaders || []),
+		] : mod.modData[platform]?.modloaders || [] as Modloaders[],
+		platforms: mod.platforms
 	}));
 
-	const versions = mods.find((mod) => mod.slug === "create")?.versions || [];
+	const versions = mods.find((mod) => (mod.modData.modrinth?.slug || mod.modData.curseforge?.slug) === "create")?.versions || [];
 
 	if (version !== "all" && !versions.includes(version))
 		return {
@@ -79,7 +89,7 @@ export async function fetchSortedMods({
 		threshold: 0.4,
 	});
 
-	const searchFilteredMods: DatabaseMod[] =
+	const searchFilteredMods =
 		!search || search === ""
 			? mods
 			: fuse.search(search).map((result) => result.item);
@@ -88,11 +98,16 @@ export async function fetchSortedMods({
 		return (
 			(modloader === "all" || mod.modloaders.includes(modloader)) &&
 			(version === "all" || mod.versions.includes(version)) &&
-			(platform === "all" || mod.platform === platform)
+			(platform === "all" || mod.platforms.includes(platform))
 		);
 	});
 
-	const sortedMods = filteredMods.sort((a, b) => {
+	const sortedMods = filteredMods.sort((_a, _b) => {
+		// biome-ignore lint/style/noNonNullAssertion: atleast one of them is always present
+		const a = (_a.modData.modrinth || _a.modData.curseforge)!;
+		// biome-ignore lint/style/noNonNullAssertion: atleast one of them is always present
+		const b = (_b.modData.modrinth || _b.modData.curseforge)!;
+
 		if (sortOrder === "downloads") {
 			return b.downloads - a.downloads;
 		}

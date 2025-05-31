@@ -7,37 +7,42 @@ import quilt from "#/assets/quilt.svg";
 import { format } from "date-fns";
 import millify from "millify";
 
-import type { APIModsResponse } from "@/app/api/addons/route";
-
 import { Tooltip } from "react-tooltip";
 import Image from "next/image";
+import type { DatabaseMod, DatabaseModData, Platforms } from "@/types/addons";
+import { useState } from "react";
 
 interface Props {
-	mod: APIModsResponse["mods"][0];
+	mod: DatabaseMod["modData"];
 }
 
 export default function List({ mod }: Props) {
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	const [platform, setPlatform] = useState<Platforms>(Object.keys(mod).includes("modrinth") ? "modrinth" : "curseforge");
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	const [modData, setModData] = useState(mod[platform] as DatabaseModData)
+
 	return (
 		<div className="card my-4 w-full">
 			<div className="card-body">
 				<div className="flex justify-between items-baseline pb-2">
 					<h5 className="card-title mb-0">
 						<Image
-							src={mod.icon === "" ? defaultModIcon : mod.icon}
+							src={modData.icon === "" ? defaultModIcon : modData.icon}
 							className="size-10 inline-block rounded-2xl mr-2"
 							alt="mod logo"
 							width={20}
 							height={20}
 						/>
 						<a
-							href={`https://modrinth.com/mod/${mod.slug}`}
+							href={`https://modrinth.com/mod/${modData.slug}`}
 							className=""
 							target="_blank"
 							rel="noreferrer"
 						>
-							{mod.name}{" "}
+							{modData.name}{" "}
 						</a>
-						{mod.modloaders.includes("fabric") && (
+						{modData.modloaders.includes("fabric") && (
 							<>
 								<Image
 									src={fabric}
@@ -55,7 +60,7 @@ export default function List({ mod }: Props) {
 								/>
 							</>
 						)}
-						{mod.modloaders.includes("forge") && (
+						{modData.modloaders.includes("forge") && (
 							<>
 								<Image
 									src={forge}
@@ -73,7 +78,7 @@ export default function List({ mod }: Props) {
 								/>
 							</>
 						)}
-						{mod.modloaders.includes("neoforge") && (
+						{modData.modloaders.includes("neoforge") && (
 							<>
 								<Image
 									src={neoforge}
@@ -91,7 +96,7 @@ export default function List({ mod }: Props) {
 								/>
 							</>
 						)}
-						{mod.modloaders.includes("quilt") && (
+						{modData.modloaders.includes("quilt") && (
 							<>
 								<Image
 									src={quilt}
@@ -112,7 +117,7 @@ export default function List({ mod }: Props) {
 					</h5>
 					<div className="card-actions">
 						<a
-							href={`https://modrinth.com/mod/${mod.slug}`}
+							href={`https://modrinth.com/mod/${modData.slug}`}
 							className="btn btn-outline btn-primary flex items-center"
 							target="_blank"
 							rel="noreferrer"
@@ -126,34 +131,39 @@ export default function List({ mod }: Props) {
 					<div className="flex-wrap sm:flex">
 						<p className="flex items-center mr-2 sm:mr-4">
 							<span className="me-1 icon-[tabler--hash] pt-2" />{" "}
-							{mod.versions.join(", ")}
+							{modData.versions.join(", ")}
 						</p>
 						<p className="flex items-center mr-2 sm:mr-4">
 							<span className="me-1 icon-[tabler--download] pt-2" />{" "}
-							{millify(mod.downloads, {
+							{millify(modData.downloads, {
 								precision: 2,
 							})}
 						</p>
 						<p className="flex items-center mr-2 sm:mr-4">
 							<span className="me-1 icon-[tabler--user] pt-2" />{" "}
-							<a
-								className="text-primary hover:underline"
-								href={`https://modrinth.com/user/${mod.author}`}
-								target="_blank"
-								rel="noreferrer"
-							>
-								{mod.author}
-							</a>
+							{modData.authors.map((author, index) => (
+								<span key={author.name}>
+									<a
+										className="text-primary hover:underline"
+										href={author.url}
+										target="_blank"
+										rel="noreferrer"
+									>
+										{author.name}
+									</a>
+									{index < modData.authors.length - 1 && ", "}
+								</span>
+							))}
 						</p>
 						<p className="flex items-center mr-2 sm:mr-4">
 							<span className="me-1 icon-[tabler--heart] pt-2" />{" "}
-							{millify(mod.follows, {
+							{millify(modData.follows, {
 								precision: 2,
 							})}
 						</p>
 						<p className="flex items-center mr-2 sm:mr-4">
 							<span className="me-1 icon-[tabler--category] pt-2" />{" "}
-							{mod.categories
+							{modData.categories
 								.map(
 									(category) =>
 										category.charAt(0).toUpperCase() + category.slice(1),
@@ -162,11 +172,11 @@ export default function List({ mod }: Props) {
 						</p>
 						<p className="flex items-center mr-2 sm:mr-4">
 							<span className="me-1 icon-[tabler--clock] pt-2" />{" "}
-							{format(new Date(mod.created), "dd/MM/yyyy")}
+							{format(new Date(modData.created), "dd/MM/yyyy")}
 						</p>
 						<p className="flex items-center mr-2 sm:mr-4">
 							<span className="me-1 icon-[tabler--clock-edit] pt-2" />{" "}
-							{format(new Date(mod.modified), "dd/MM/yyyy")}
+							{format(new Date(modData.modified), "dd/MM/yyyy")}
 						</p>
 					</div>
 					<p className="flex-grow" />

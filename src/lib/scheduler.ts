@@ -1,17 +1,16 @@
 import getModrinthMods from "@/functions/getModrinthMods";
 import { mods as modsSchema } from "@/db/schema";
 import db from "@/db/db";
-import { and, eq, or, sql } from "drizzle-orm";
+import { or, sql } from "drizzle-orm";
 import type {
 	Modloaders,
 	DatabaseMod,
-	ModDataDatabaseValues,
 	DatabaseModData,
 } from "@/types/addons";
 import type { UpdateMessage } from "@/types/websocket";
-import { compareAddons, compareArrays } from "@/functions/util";
+import { compareAddons } from "@/functions/util";
 import getCurseforgeMods from "@/functions/getCurseforgeMods";
-import { curseforgeModloaders, modLoaders } from "@/constants/loaders";
+import { curseforgeModloaders } from "@/constants/loaders";
 
 export type FetchResult = {
     created: DatabaseMod[];
