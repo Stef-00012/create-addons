@@ -94,7 +94,7 @@ export async function handleFetching(): Promise<FetchResult> {
 			id: mod.id,
 			downloads: mod.downloads,
 			modified: mod.updated,
-			license: mod.license,
+			license: mod.license.name,
 			modloaders: mod.loaders as Modloaders[],
 		}
 

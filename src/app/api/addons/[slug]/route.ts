@@ -26,12 +26,18 @@ export async function GET(
 		const mod = platform
 			? await db.query.mods.findFirst({
 				where: sql`json_extract(${modsSchema.modData}, '$.${platform}.slug') = ${slug}`,
+				columns: {
+					id: false
+				}
 			})
 			: await db.query.mods.findFirst({
 				where: or(
 					sql`json_extract(${modsSchema.modData}, '$.modrinth.slug') = ${slug}`,
 					sql`json_extract(${modsSchema.modData}, '$.curseforge.slug') = ${slug}`,
-				)
+				),
+				columns: {
+					id: false
+				}
 			});
 
 		if (!mod)

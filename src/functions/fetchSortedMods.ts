@@ -42,7 +42,11 @@ export async function fetchSortedMods({
 	const modsPerPage =
 		Number.parseInt(process.env.MODS_PER_PAGE as string) || 50;
 
-	const modsRes = await db.query.mods.findMany();
+	const modsRes = await db.query.mods.findMany({
+		columns: {
+			id: false
+		}
+	});
 
 	const mods = modsRes.map((mod) => ({
 		...mod,

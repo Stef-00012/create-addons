@@ -71,11 +71,17 @@ export interface ModrinthGetProjectsMod {
 	approved: string | null;
 	queued: string | null;
 	followers: number;
-	license: string;
+	license: ModrinthModLicense;
 	versions: string[];
 	game_versions: string[];
 	loaders: string[];
 	gallery: ModrinthModGallery[]
+}
+
+interface ModrinthModLicense {
+	id: string;
+	name: string;
+	url: string | null;
 }
 
 interface ModrinthModModeratorMessage {
