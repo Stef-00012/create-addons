@@ -19,6 +19,9 @@ export type FetchResult = {
 
 export async function handleFetching(): Promise<FetchResult> {
 	const curseforgeMods = await getCurseforgeMods();
+
+	console.log("-".repeat(60))
+
 	const modrinthMods = await getModrinthMods();
 
 	const addons: ({
