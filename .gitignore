@@ -45,7 +45,7 @@ next-env.d.ts
 default.nix
 
 # db
-/data/data.db
+/data/*.db
 /drizzle
 
 # vscode
