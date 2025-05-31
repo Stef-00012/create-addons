@@ -14,6 +14,16 @@ import {
 } from "@/types/websocket";
 import { wsCommandHandler } from "./lib/wsCommandHandler";
 
+const curseforgeAPIkey = process.env.CURSEFORGE_API_KEY;
+
+if (!curseforgeAPIkey) {
+	console.error(
+		"\x1b[31;1mCURSEFORGE_API_KEY environment variable is required.\nObtain one here: \x1b[0mhttps://console.curseforge.com/?#/api-keys",
+	);
+
+	process.exit(1);
+}
+
 const port = Number.parseInt(process.env.PORT || "3000", 10);
 const dev = process.env.NODE_ENV !== "production";
 

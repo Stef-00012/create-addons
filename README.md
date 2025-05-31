@@ -37,18 +37,20 @@ npm run start # or bun start
 ```
 
 ### How to run
-Requires **Node.JS** or **Bun**
+Requires **[Bun](https://bun.sh)**
 ```sh
 # clone tge repository
 git clone https://github.com/Stef-00012/create-addons
 # install the dependencies
-npm i # or bun i
-# setup the db
-npm run db:setup # or bun db:setup
+bun i
+# setup the database
+bun db:setup
 #rename .env.example to .env and set it up
-mv .env.example .env # make sure to set ENVIRONMENT to production
-# start
-npm run dev # or bun dev
+mv .env.example .env
+# build the site
+bun run build
+# start the site
+bun start
 ```
 
 ### Maintainers
