@@ -8,5 +8,5 @@ export default drizzle(client, {
 	schema: {
 		mods,
 	},
-	logger: process.env.DB_LOGGING === "true"
+	logger: process.env.DB_LOGGING === "true",
 });

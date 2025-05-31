@@ -27,7 +27,7 @@ export async function fetchSortedMods({
 	platform = "all",
 }: Props): Promise<
 	| {
-			error: false,
+			error: false;
 			page: number;
 			mods: DatabaseMod[];
 			totalMods: number;
@@ -44,28 +44,42 @@ export async function fetchSortedMods({
 
 	const modsRes = await db.query.mods.findMany({
 		columns: {
-			id: false
-		}
+			id: false,
+		},
 	});
 
 	const mods = modsRes.map((mod) => ({
 		...mod,
-		versions: platform === "all" ? [
-			...(mod.modData.modrinth?.versions || []),
-			...(mod.modData.curseforge?.versions || []),
-		] : mod.modData[platform]?.versions || [],
-		categories: platform === "all" ? [
-			...(mod.modData.modrinth?.categories || []),
-			...(mod.modData.curseforge?.categories || []),
-		] : mod.modData[platform]?.categories || [],
-		modloaders: platform === "all" ? [
-			...(mod.modData.modrinth?.modloaders || []),
-			...(mod.modData.curseforge?.modloaders || []),
-		] : mod.modData[platform]?.modloaders || [] as Modloaders[],
-		platforms: mod.platforms
+		versions:
+			platform === "all"
+				? [
+						...(mod.modData.modrinth?.versions || []),
+						...(mod.modData.curseforge?.versions || []),
+					]
+				: mod.modData[platform]?.versions || [],
+		categories:
+			platform === "all"
+				? [
+						...(mod.modData.modrinth?.categories || []),
+						...(mod.modData.curseforge?.categories || []),
+					]
+				: mod.modData[platform]?.categories || [],
+		modloaders:
+			platform === "all"
+				? [
+						...(mod.modData.modrinth?.modloaders || []),
+						...(mod.modData.curseforge?.modloaders || []),
+					]
+				: mod.modData[platform]?.modloaders || ([] as Modloaders[]),
+		platforms: mod.platforms,
 	}));
 
-	const versions = mods.find((mod) => (mod.modData.modrinth?.slug || mod.modData.curseforge?.slug) === "create")?.versions || [];
+	const versions =
+		mods.find(
+			(mod) =>
+				(mod.modData.modrinth?.slug || mod.modData.curseforge?.slug) ===
+				"create",
+		)?.versions || [];
 
 	if (version !== "all" && !versions.includes(version))
 		return {

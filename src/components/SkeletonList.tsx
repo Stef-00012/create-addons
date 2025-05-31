@@ -9,16 +9,6 @@ export default function SkeletonList() {
 							Loading
 						</a>
 					</h5>
-					<div className="card-actions skeleton skeleton-animated">
-						<a
-							className="btn btn-outline btn-primary flex items-center"
-							// biome-ignore lint/a11y/useValidAnchor: <explanation>
-							href="#"
-						>
-							<span className="icon-[tabler--link] me-1" />
-							Modrinth
-						</a>
-					</div>
 				</div>
 				<div className="flex flex-wrap justify-start">
 					<div className="flex-wrap sm:flex">
@@ -42,6 +32,16 @@ export default function SkeletonList() {
 						</div>
 					</div>
 					<p className="flex-grow" />
+					<div className="card-actions skeleton skeleton-animated">
+						<a
+							className="btn btn-outline btn-primary flex items-center"
+							// biome-ignore lint/a11y/useValidAnchor: <explanation>
+							href="#"
+						>
+							<span className="icon-[tabler--link] me-1" />
+							Modrinth
+						</a>
+					</div>
 				</div>
 			</div>
 		</div>

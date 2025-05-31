@@ -75,7 +75,7 @@ export interface ModrinthGetProjectsMod {
 	versions: string[];
 	game_versions: string[];
 	loaders: string[];
-	gallery: ModrinthModGallery[]
+	gallery: ModrinthModGallery[];
 }
 
 interface ModrinthModLicense {
@@ -86,7 +86,7 @@ interface ModrinthModLicense {
 
 interface ModrinthModModeratorMessage {
 	message: string;
-	body: string | null
+	body: string | null;
 }
 
 interface ModrinthModGallery {
@@ -107,7 +107,13 @@ export interface ModrinthGetVersionsVersion {
 	version_type: "release" | "beta" | "alpha";
 	loaders: string[];
 	featured: boolean;
-	status: "listed" | "archived" | "draft" | "unlisted" | "scheduled" | "unknown";
+	status:
+		| "listed"
+		| "archived"
+		| "draft"
+		| "unlisted"
+		| "scheduled"
+		| "unknown";
 	requested_status: "listed" | "archived" | "draft" | "unlisted" | null;
 	id: string;
 	project_id: string;
@@ -131,7 +137,7 @@ interface ModrinthGetVersionsVersionFile {
 	filename: string;
 	primary: boolean;
 	size: number;
-	file_type: "required-resource-pack" | "optional-resource-pack" | null
+	file_type: "required-resource-pack" | "optional-resource-pack" | null;
 }
 
 interface ModrinthGetVersionsVersionFileHashes {
@@ -261,4 +267,11 @@ interface ModrinthTeamUserPayoutData {
 	payout_wallet: "paypal" | "venmo";
 	payout_wallet_type: "email" | "phone" | "user_handle";
 	payout_address: string;
+}
+
+export interface ModrinthGameVersion {
+	version: string;
+	version_type: "release" | "snapshot" | "alpha" | "beta";
+	date: string;
+	major: boolean;
 }

@@ -41,7 +41,12 @@ export interface UpdateMessageValues {
 	new: ModDataDatabaseValues;
 }
 
-export type UpdateMessageDataChanges = Partial<Record<ModDataDatabaseKeys, { old: ModDataDatabaseValues | null; new: ModDataDatabaseValues | null }>> | null
+export type UpdateMessageDataChanges = Partial<
+	Record<
+		ModDataDatabaseKeys,
+		{ old: ModDataDatabaseValues | null; new: ModDataDatabaseValues | null }
+	>
+> | null;
 
 export interface UpdateMessage extends WSmessage {
 	type: WSEvents.UPDATE;
@@ -63,13 +68,13 @@ export interface CommandMessage extends WSmessage {
 
 export interface CommandResponseMessage extends WSmessage {
 	type: WSEvents.COMMAND_RESPONSE;
-    command: string;
+	command: string;
 	data: unknown;
 }
 
 export interface CommandErrorMessage extends WSmessage {
 	type: WSEvents.COMMAND_ERROR;
-    command?: string;
+	command?: string;
 	data: {
 		message: string;
 	};

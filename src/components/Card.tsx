@@ -7,121 +7,139 @@ import quilt from "#/assets/quilt.svg";
 import { format, formatDistanceToNow } from "date-fns";
 import millify from "millify";
 
-import { modloaderNames } from "@/constants/loaders";
+import { modloaderNames, baseUrls } from "@/constants/loaders";
 
 import { Tooltip } from "react-tooltip";
 import Image from "next/image";
 import type { DatabaseMod, DatabaseModData, Platforms } from "@/types/addons";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import ModloaderSwap from "@/components/ModloaderSwap";
 
 interface Props {
 	mod: DatabaseMod["modData"];
 }
 
 export default function Card({ mod }: Props) {
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const [platform, setPlatform] = useState<Platforms>(Object.keys(mod).includes("modrinth") ? "modrinth" : "curseforge")
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const [modData, setModData] = useState(mod[platform] as DatabaseModData)
+	const modPlatforms = Object.entries(mod)
+		.filter((entry) => entry[1])
+		.map((entry) => entry[0]) as Platforms[];
+
+	const [platform, setPlatform] = useState<Platforms>(
+		modPlatforms.includes("modrinth") ? "modrinth" : "curseforge",
+	);
+	const [modData, setModData] = useState(mod[platform] as DatabaseModData);
+
+	useEffect(() => {
+		setModData(mod[platform] as DatabaseModData);
+	}, [platform, mod]);
 
 	return (
 		<div className="card sm:max-w-lg my-4 sm:my-0 sm:flex-auto">
 			<div className="card-body">
-				<h5 className="card-title mb-0">
-					<Image
-						src={modData.icon === "" ? defaultModIcon : modData.icon}
-						className="size-10 inline-block rounded-2xl mr-2"
-						alt="mod logo"
-						width={20}
-						height={20}
+				<h5 className="card-title mb-0 flex justify-between">
+					<div className="max-w-[80%]">
+						<Image
+							src={modData.icon === "" ? defaultModIcon : modData.icon}
+							className="size-10 inline-block rounded-2xl mr-2"
+							alt="mod logo"
+							width={20}
+							height={20}
+						/>
+						<a
+							href={`${baseUrls[platform]}/${modData.slug}`}
+							className="link-primary"
+							target="_blank"
+							rel="noreferrer"
+						>
+							{modData.name}
+						</a>
+						{modData.modloaders.includes("fabric") && (
+							<>
+								<Image
+									src={fabric}
+									alt="fabric logo"
+									className="mask mask-squircle size-6 inline-block mx-1"
+									width={32}
+									height={32}
+									data-tooltip-content="Fabric"
+									data-tooltip-id="fabric-tooltip"
+								/>
+								<Tooltip
+									id="fabric-tooltip"
+									disableStyleInjection={true}
+									className="rounded-2xl bg-base-200 px-2 p-1 text-lg shadow"
+								/>
+							</>
+						)}
+						{modData.modloaders.includes("forge") && (
+							<>
+								<Image
+									src={forge}
+									alt="forge logo"
+									className="mask mask-squircle size-6 inline-block mx-1"
+									width={32}
+									height={32}
+									data-tooltip-content="Forge"
+									data-tooltip-id="forge-tooltip"
+								/>
+								<Tooltip
+									id="forge-tooltip"
+									disableStyleInjection={true}
+									className="rounded-2xl bg-base-200 px-2 p-1 text-lg shadow"
+								/>
+							</>
+						)}
+						{modData.modloaders.includes("neoforge") && (
+							<>
+								<Image
+									src={neoforge}
+									alt="neoforge logo"
+									className="mask mask-squircle size-6 inline-block mx-1"
+									width={32}
+									height={32}
+									data-tooltip-content="NeoForge"
+									data-tooltip-id="neoforge-tooltip"
+								/>
+								<Tooltip
+									id="neoforge-tooltip"
+									disableStyleInjection={true}
+									className="rounded-2xl bg-base-200 px-2 p-1 text-lg shadow"
+								/>
+							</>
+						)}
+						{modData.modloaders.includes("quilt") && (
+							<>
+								<Image
+									src={quilt}
+									alt="quilt logo"
+									className="mask mask-squircle size-6 inline-block mx-1"
+									width={32}
+									height={32}
+									data-tooltip-content="Quilt"
+									data-tooltip-id="quilt-tooltip"
+								/>
+								<Tooltip
+									id="quilt-tooltip"
+									disableStyleInjection={true}
+									className="rounded-2xl bg-base-200 px-2 p-1 text-lg shadow"
+								/>
+							</>
+						)}
+					</div>
+					<ModloaderSwap
+						defaultPlatform={platform}
+						disabled={modPlatforms.length <= 1}
+						onChange={(newPlatform) => {
+							setPlatform(newPlatform);
+						}}
 					/>
-					<a
-						href={`https://modrinth.com/mod/${modData.slug}`}
-						className="link-primary"
-						target="_blank"
-						rel="noreferrer"
-					>
-						{modData.name}
-					</a>
-					{modData.modloaders.includes("fabric") && (
-						<>
-							<Image
-								src={fabric}
-								alt="fabric logo"
-								className="mask mask-squircle size-6 inline-block mx-1"
-								width={32}
-								height={32}
-								data-tooltip-content="Fabric"
-								data-tooltip-id="fabric-tooltip"
-							/>
-							<Tooltip
-								id="fabric-tooltip"
-								disableStyleInjection={true}
-								className="rounded-2xl bg-base-200 px-2 p-1 text-lg shadow"
-							/>
-						</>
-					)}
-					{modData.modloaders.includes("forge") && (
-						<>
-							<Image
-								src={forge}
-								alt="forge logo"
-								className="mask mask-squircle size-6 inline-block mx-1"
-								width={32}
-								height={32}
-								data-tooltip-content="Forge"
-								data-tooltip-id="forge-tooltip"
-							/>
-							<Tooltip
-								id="forge-tooltip"
-								disableStyleInjection={true}
-								className="rounded-2xl bg-base-200 px-2 p-1 text-lg shadow"
-							/>
-						</>
-					)}
-					{modData.modloaders.includes("neoforge") && (
-						<>
-							<Image
-								src={neoforge}
-								alt="neoforge logo"
-								className="mask mask-squircle size-6 inline-block mx-1"
-								width={32}
-								height={32}
-								data-tooltip-content="NeoForge"
-								data-tooltip-id="neoforge-tooltip"
-							/>
-							<Tooltip
-								id="neoforge-tooltip"
-								disableStyleInjection={true}
-								className="rounded-2xl bg-base-200 px-2 p-1 text-lg shadow"
-							/>
-						</>
-					)}
-					{modData.modloaders.includes("quilt") && (
-						<>
-							<Image
-								src={quilt}
-								alt="quilt logo"
-								className="mask mask-squircle size-6 inline-block mx-1"
-								width={32}
-								height={32}
-								data-tooltip-content="Quilt"
-								data-tooltip-id="quilt-tooltip"
-							/>
-							<Tooltip
-								id="quilt-tooltip"
-								disableStyleInjection={true}
-								className="rounded-2xl bg-base-200 px-2 p-1 text-lg shadow"
-							/>
-						</>
-					)}
 				</h5>
 				<ul>
 					<li>
 						<span className="icon-[tabler--brand-minecraft] pt-2" />{" "}
 						<strong>Modloaders:</strong>
 						{` ${modData.modloaders
-							.filter(modloader => modloader !== "any")
+							.filter((modloader) => modloader !== "any")
 							.map((modloader) => modloaderNames[modloader])
 							.join(", ")}`}
 					</li>
@@ -199,15 +217,29 @@ export default function Card({ mod }: Props) {
 					</li>
 				</ul>
 				<div className="card-actions mt-auto pt-2 -mb-3">
-					<a
-						href={`https://modrinth.com/mod/${modData.slug}`}
-						className="btn btn-outline btn-primary flex items-center"
-						target="_blank"
-						rel="noreferrer"
-					>
-						<span className="icon-[tabler--link] me-1" />
-						Modrinth
-					</a>
+					{mod.modrinth && (
+						<a
+							href={`${baseUrls.modrinth}/${mod.modrinth.slug}`}
+							className="btn btn-outline btn-primary flex items-center"
+							target="_blank"
+							rel="noreferrer"
+						>
+							<span className="icon-[tabler--link] me-1" />
+							Modrinth
+						</a>
+					)}
+
+					{mod.curseforge && (
+						<a
+							href={`${baseUrls.curseforge}/${mod.curseforge.slug}`}
+							className="btn btn-outline btn-primary flex items-center"
+							target="_blank"
+							rel="noreferrer"
+						>
+							<span className="icon-[tabler--link] me-1" />
+							Curseforge
+						</a>
+					)}
 				</div>
 			</div>
 		</div>

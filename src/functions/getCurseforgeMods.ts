@@ -44,7 +44,7 @@ async function fetchMods(
 
 		mods.push(...data.data);
 
-		console.log(
+		console.info(
 			`\x1b[36mFetched \x1b[0;1m${mods.length}\x1b[0;36m mods from curseforge, total: \x1b[0;1m${data.pagination.totalCount}\x1b[0;36m, offset: \x1b[0;1m${data.pagination.index}\x1b[0m`,
 		);
 
@@ -61,7 +61,13 @@ async function fetchMods(
 			currentOffset += 50;
 		}
 
-		return mods.filter(mod => mod.latestFiles.some(file => file.dependencies.some(dependency => createModids.includes(dependency.modId))));
+		return mods.filter((mod) =>
+			mod.latestFiles.some((file) =>
+				file.dependencies.some((dependency) =>
+					createModids.includes(dependency.modId),
+				),
+			),
+		);
 	} catch (e) {
 		const error = e as AxiosError;
 
@@ -98,10 +104,10 @@ async function getBaseCreateMod(): Promise<CurseforgeSearchResponse["data"]> {
 }
 
 export default async function getCurseforgeMods(): Promise<
-	({
+	{
 		mod: CurseforgeSearchResponse["data"][0];
 		hashes: string[];
-	})[]
+	}[]
 > {
 	const modsData = await fetchMods();
 	const baseCreateMods = await getBaseCreateMod();
@@ -111,12 +117,12 @@ export default async function getCurseforgeMods(): Promise<
 		...modsData,
 	];
 
-	return mods.map(mod => ({
+	return mods.map((mod) => ({
 		mod,
-		hashes: mod.latestFiles
-			.flatMap(file => file.hashes
-				.filter(hash => hash.algo === CurseforgeHashAlgo.Sha1)
-				.map(hash => hash.value)
-			)
+		hashes: mod.latestFiles.flatMap((file) =>
+			file.hashes
+				.filter((hash) => hash.algo === CurseforgeHashAlgo.Sha1)
+				.map((hash) => hash.value),
+		),
 	}));
 }

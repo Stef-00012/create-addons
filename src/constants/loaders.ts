@@ -34,3 +34,8 @@ export const curseforgeModloaders = {
 };
 
 export const platforms: Platforms[] = ["curseforge", "modrinth"];
+
+export const baseUrls = {
+	curseforge: "https://www.curseforge.com/minecraft/mc-mods",
+	modrinth: "https://modrinth.com/mod",
+};

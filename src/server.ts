@@ -91,16 +91,16 @@ app.prepare().then(async () => {
 						ws,
 						command,
 						args,
-					})
+					});
 				}
-			//eslint-disable-next-line @typescript-eslint/no-unused-vars
+				//eslint-disable-next-line @typescript-eslint/no-unused-vars
 			} catch (e) {
 				const error: CommandErrorMessage = {
 					type: WSEvents.COMMAND_ERROR,
 					data: {
 						message: "Invalid JSON",
 					},
-				}
+				};
 
 				ws.send(JSON.stringify(error));
 			}
@@ -112,7 +112,7 @@ app.prepare().then(async () => {
 			if (!ws.isAlive) {
 				try {
 					ws.terminate();
-				//eslint-disable-next-line @typescript-eslint/no-unused-vars
+					//eslint-disable-next-line @typescript-eslint/no-unused-vars
 				} catch (e) {
 					ws.close();
 				}
@@ -121,10 +121,10 @@ app.prepare().then(async () => {
 			}
 
 			ws.isAlive = false;
-			
+
 			const message: PingMessage = {
 				type: WSEvents.PING,
-			}
+			};
 
 			ws.send(JSON.stringify(message));
 		}
@@ -135,13 +135,13 @@ app.prepare().then(async () => {
 	});
 
 	server.listen(port, () => {
-		console.log(
+		console.info(
 			`> \x1b[32mServer listening at \x1b[0;1mhttp://localhost:${port}\n\x1b[0m> \x1b[32mWebSocket listening at \x1b[0;1mws://localhost:${port}/ws\n\x1b[0m> \x1b[33mMode: \x1b[0;1m${dev ? "development" : process.env.NODE_ENV}\x1b[0m`,
 		);
 	});
 
 	if (process.env.NODE_ENV === "production") {
-		console.log(
+		console.info(
 			`\x1b[33m[\x1b[1m${new Date().toISOString()}\x1b[0;33m] \x1b[34mStarted fetching the mods from Modrinth\x1b[0m`,
 		);
 
@@ -153,7 +153,7 @@ app.prepare().then(async () => {
 			process.env.MODS_FETCH_CRON_INTERVAL || "0 */3 * * *";
 
 		schedule.scheduleJob(cronJobInterval, async () => {
-			console.log(
+			console.info(
 				`\x1b[33m[\x1b[1m${new Date().toISOString()}\x1b[0;33m] \x1b[34mStarted fetching the mods from Modrinth\x1b[0m`,
 			);
 
@@ -162,6 +162,6 @@ app.prepare().then(async () => {
 			sendWSEvent(wss, changedData);
 		});
 	} else {
-		console.log("\x1b[31mFetching is not started in development mode\x1b[0m");
+		console.info("\x1b[31mFetching is not started in development mode\x1b[0m");
 	}
 });

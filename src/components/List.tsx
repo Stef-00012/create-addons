@@ -10,17 +10,27 @@ import millify from "millify";
 import { Tooltip } from "react-tooltip";
 import Image from "next/image";
 import type { DatabaseMod, DatabaseModData, Platforms } from "@/types/addons";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { baseUrls } from "@/constants/loaders";
+import ModloaderSwap from "./ModloaderSwap";
 
 interface Props {
 	mod: DatabaseMod["modData"];
 }
 
 export default function List({ mod }: Props) {
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const [platform, setPlatform] = useState<Platforms>(Object.keys(mod).includes("modrinth") ? "modrinth" : "curseforge");
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const [modData, setModData] = useState(mod[platform] as DatabaseModData)
+	const modPlatforms = Object.entries(mod)
+		.filter((entry) => entry[1])
+		.map((entry) => entry[0]) as Platforms[];
+
+	const [platform, setPlatform] = useState<Platforms>(
+		modPlatforms.includes("modrinth") ? "modrinth" : "curseforge",
+	);
+	const [modData, setModData] = useState(mod[platform] as DatabaseModData);
+
+	useEffect(() => {
+		setModData(mod[platform] as DatabaseModData);
+	}, [platform, mod]);
 
 	return (
 		<div className="card my-4 w-full">
@@ -35,8 +45,7 @@ export default function List({ mod }: Props) {
 							height={20}
 						/>
 						<a
-							href={`https://modrinth.com/mod/${modData.slug}`}
-							className=""
+							href={`${baseUrls[platform]}/${modData.slug}`}
 							target="_blank"
 							rel="noreferrer"
 						>
@@ -115,17 +124,13 @@ export default function List({ mod }: Props) {
 							</>
 						)}
 					</h5>
-					<div className="card-actions">
-						<a
-							href={`https://modrinth.com/mod/${modData.slug}`}
-							className="btn btn-outline btn-primary flex items-center"
-							target="_blank"
-							rel="noreferrer"
-						>
-							<span className="icon-[tabler--link] me-1" />
-							Modrinth
-						</a>
-					</div>
+					<ModloaderSwap
+						defaultPlatform={platform}
+						disabled={modPlatforms.length <= 1}
+						onChange={(newPlatform) => {
+							setPlatform(newPlatform);
+						}}
+					/>
 				</div>
 				<div className="flex flex-wrap justify-start">
 					<div className="flex-wrap sm:flex">
@@ -180,6 +185,33 @@ export default function List({ mod }: Props) {
 						</p>
 					</div>
 					<p className="flex-grow" />
+				</div>
+				<div className="flex justify-end">
+					<div className="card-actions">
+						{mod.modrinth && (
+							<a
+								href={`${baseUrls.modrinth}/${mod.modrinth.slug}`}
+								className="btn btn-outline btn-primary flex items-center"
+								target="_blank"
+								rel="noreferrer"
+							>
+								<span className="icon-[tabler--link] me-1" />
+								Modrinth
+							</a>
+						)}
+
+						{mod.curseforge && (
+							<a
+								href={`${baseUrls.curseforge}/${mod.curseforge.slug}`}
+								className="btn btn-outline btn-primary flex items-center"
+								target="_blank"
+								rel="noreferrer"
+							>
+								<span className="icon-[tabler--link] me-1" />
+								Curseforge
+							</a>
+						)}
+					</div>
 				</div>
 			</div>
 		</div>

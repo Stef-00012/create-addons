@@ -1,4 +1,8 @@
-import { WSEvents, type CreateMessage, type UpdateMessage } from "@/types/websocket";
+import {
+	WSEvents,
+	type CreateMessage,
+	type UpdateMessage,
+} from "@/types/websocket";
 import type { FetchResult } from "@/lib/scheduler";
 import type { WebSocketServer } from "ws";
 

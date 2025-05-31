@@ -8,8 +8,8 @@ export type Modloaders =
 	| "liteloader"
 	| "modloader"
 	| "rift"
-    | "cauldron"
-    | "any";
+	| "cauldron"
+	| "any";
 
 export type SupportTypes = "unknown" | "required" | "optional" | "unsupported";
 

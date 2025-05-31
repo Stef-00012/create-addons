@@ -1,6 +1,4 @@
-import type {
-	DatabaseModData,
-} from "@/types/addons";
+import type { DatabaseModData } from "@/types/addons";
 import type { UpdateMessageDataChanges } from "@/types/websocket";
 
 export function compareArrays<T>(a: T[], b: T[]): boolean {
@@ -68,4 +66,16 @@ export function compareAddons(
 	}
 
 	return changes;
+}
+
+export function sortVersions(
+	versions: string[],
+	mcVersions: Map<string, number>,
+): string[] {
+	return versions.sort((a, b) => {
+		const indexA = mcVersions.get(a) ?? Number.POSITIVE_INFINITY;
+		const indexB = mcVersions.get(b) ?? Number.POSITIVE_INFINITY;
+
+		return indexA - indexB;
+	});
 }

@@ -28,8 +28,8 @@ const modloaderOptions = [
 	{ value: "rift", label: "Rift" },
 	{ value: "liteloader", label: "LiteLoader" },
 	{ value: "modloader", label: "Risugami's ModLoader" },
-	{ value: "cauldron", label: "Cauldron" }
-]
+	{ value: "cauldron", label: "Cauldron" },
+];
 
 const sortByOptions = [
 	{ value: "name", label: "Name" },
@@ -65,22 +65,22 @@ export default function Home() {
 	const [loader, setLoader] = useState<
 		DatabaseModData["modloaders"][0] | "all"
 	>(modloaders.includes(initialLoader) ? initialLoader : "all");
-	
+
 	const [sortBy, setSortBy] = useState<SortOrders>(
 		sortByOrders.includes(initialSortBy) ? initialSortBy : "downloads",
 	);
-	
+
 	const [compactMode, setCompactMode] = useState(initialCompactMode);
-	
-	const [version, setVersion] = useState<
-		DatabaseModData["version"] | "all"
-	>(versions.includes(initialVersion) ? initialVersion : "all");
+
+	const [version, setVersion] = useState<DatabaseModData["version"] | "all">(
+		versions.includes(initialVersion) ? initialVersion : "all",
+	);
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [platform, setPlatform] = useState<Platforms | "all">(
-		platforms.includes(initialPlatform) ? initialPlatform : "all"
+		platforms.includes(initialPlatform) ? initialPlatform : "all",
 	);
-	
+
 	const [search, setSearch] = useState<string>(
 		initialSearch ? decodeURIComponent(initialSearch) : "",
 	);
@@ -136,7 +136,7 @@ export default function Home() {
 				modloader: loader,
 				sort: sortBy,
 				search: encodeURIComponent(search),
-				platform
+				platform,
 			});
 
 			scrollTo({
@@ -189,9 +189,7 @@ export default function Home() {
 	function handleLoaderSelect(
 		newValue: { label: string; value: string } | null,
 	) {
-		const loader = newValue?.value as
-			| DatabaseModData["modloaders"][0]
-			| "all";
+		const loader = newValue?.value as DatabaseModData["modloaders"][0] | "all";
 
 		setLoader(loader || "all");
 	}
@@ -268,7 +266,7 @@ export default function Home() {
 				<div className="md:flex md:justify-between md:flex-wrap gap-4">
 					<div className="md:flex md:justify-start gap-2 md:gap-6 xl:gap-2 md:flex-wrap">
 						{/* Grid/list view toggle */}
-						<div className="">
+						<div>
 							<button
 								type="button"
 								className="btn border-base-content/50 bg-accent-content"
@@ -326,8 +324,7 @@ export default function Home() {
 							defaultValue={sortByOptions[0]}
 							options={sortByOptions}
 							value={
-								sortByOptions.find((option) => option.value === sortBy) ||
-								null
+								sortByOptions.find((option) => option.value === sortBy) || null
 							}
 							isLoading={!addonsData}
 							isDisabled={!addonsData}
@@ -383,8 +380,16 @@ export default function Home() {
 								{addonsData.mods.length > 0 ? (
 									<>
 										{addonsData.mods.map((mod) => (
-											<Fragment key={mod.modData.modrinth?.id ?? mod.modData.curseforge?.id}>
-												{compactMode ? <List mod={mod.modData} /> : <Card mod={mod.modData} />}
+											<Fragment
+												key={
+													mod.modData.modrinth?.id ?? mod.modData.curseforge?.id
+												}
+											>
+												{compactMode ? (
+													<List mod={mod.modData} />
+												) : (
+													<Card mod={mod.modData} />
+												)}
 											</Fragment>
 										))}
 									</>
