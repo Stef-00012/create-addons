@@ -61,7 +61,7 @@ async function fetchMods(
 			currentOffset += 50;
 		}
 
-		return mods;
+		return mods.filter(mod => mod.latestFiles.some(file => file.dependencies.some(dependency => createModids.includes(dependency.modId))));
 	} catch (e) {
 		const error = e as AxiosError;
 

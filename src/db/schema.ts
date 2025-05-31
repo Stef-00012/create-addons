@@ -35,7 +35,9 @@ export const mods = sqliteTable("mods", {
 		.primaryKey({
 			autoIncrement: true
 		}),
-	platforms: text("platforms")
+	platforms: text("platforms", {
+		mode: "json"
+	})
 		.notNull()
 		.$type<Platforms[]>(),
 	modData: text("mod_data", {

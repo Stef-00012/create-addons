@@ -1,11 +1,11 @@
-import getModrinthMods from "@/functions/getModrinthMods";
+// import getModrinthMods from "@/functions/getModrinthMods";
 import { mods as modsSchema } from "@/db/schema";
 import db from "@/db/db";
-import { or, sql } from "drizzle-orm";
+import { /*or,*/ or, sql } from "drizzle-orm";
 import type {
 	Modloaders,
 	DatabaseMod,
-	DatabaseModData,
+	// DatabaseModData,
 } from "@/types/addons";
 import type { UpdateMessage } from "@/types/websocket";
 import { compareAddons } from "@/functions/util";
@@ -19,16 +19,20 @@ export type FetchResult = {
 
 export async function handleFetching(): Promise<FetchResult> {
 	const curseforgeMods = await getCurseforgeMods();
-	const modrinthMods = await getModrinthMods();
+	// const modrinthMods = await getModrinthMods();
 
 	const addons: ({
 		dbData: DatabaseMod,
 		hashes: string[]
 	})[] = [];
 
+	console.log(curseforgeMods.length)
+
 	for (const addon of curseforgeMods) {
 		const mod = addon.mod;
 		const hashes = addon.hashes
+
+		// console.log(mod.latestFilesIndexes, mod.name, mod.slug, mod.id)
 
 		addons.push({
 			dbData: {
@@ -48,14 +52,14 @@ export async function handleFetching(): Promise<FetchResult> {
 						icon: mod.logo.url,
 						name: mod.name,
 						slug: mod.slug,
-						version: mod.latestFilesIndexes[0].gameVersion,
-						versions: mod.latestFilesIndexes.map(version => version.gameVersion),
+						version: mod.latestFilesIndexes[mod.latestFilesIndexes.length - 1].gameVersion,
+						versions: Array.from(new Set(mod.latestFilesIndexes.map(version => version.gameVersion))),
 						follows: mod.thumbsUpCount,
 						created: mod.dateCreated,
 						id: mod.id.toString(),
 						modified: mod.dateModified,
 						license: "Unknown",
-						modloaders: mod.latestFilesIndexes.map(file => curseforgeModloaders[file.modLoader]) as Modloaders[],
+						modloaders: Array.from(new Set(mod.latestFilesIndexes.map(file => curseforgeModloaders[file.modLoader]))) as Modloaders[],
 					}
 				}
 			},
@@ -63,51 +67,51 @@ export async function handleFetching(): Promise<FetchResult> {
 		})
 	}
 
-	for (const addon of modrinthMods) {
-		const mod = addon.mod;
-		const hashes = addon.hashes;
+	// for (const addon of modrinthMods) {
+	// 	const mod = addon.mod;
+	// 	const hashes = addon.hashes;
 
-		const index = addons.findIndex(x => hashes.some(hash => x.hashes.includes(hash)));
+	// 	const index = addons.findIndex(x => hashes.some(hash => x.hashes.includes(hash)));
 
-		const addonData: DatabaseModData = {
-			authors: addon.authors.map(author => ({
-				name: author,
-				url: `https://modrinth.com/user/${author}`,
-			})),
-			categories: mod.categories,
-			clientSide: mod.client_side,
-			color: mod.color ?? 1825130,
-			serverSide: mod.server_side,
-			description: mod.description,
-			icon: mod.icon_url,
-			name: mod.title,
-			slug: mod.slug,
-			version: mod.game_versions[mod.game_versions.length - 1],
-			versions: mod.game_versions,
-			follows: mod.followers,
-			created: mod.published,
-			id: mod.id,
-			downloads: mod.downloads,
-			modified: mod.updated,
-			license: mod.license,
-			modloaders: mod.loaders as Modloaders[],
-		}
+	// 	const addonData: DatabaseModData = {
+	// 		authors: addon.authors.map(author => ({
+	// 			name: author,
+	// 			url: `https://modrinth.com/user/${author}`,
+	// 		})),
+	// 		categories: mod.categories,
+	// 		clientSide: mod.client_side,
+	// 		color: mod.color ?? 1825130,
+	// 		serverSide: mod.server_side,
+	// 		description: mod.description,
+	// 		icon: mod.icon_url,
+	// 		name: mod.title,
+	// 		slug: mod.slug,
+	// 		version: mod.game_versions[mod.game_versions.length - 1],
+	// 		versions: mod.game_versions,
+	// 		follows: mod.followers,
+	// 		created: mod.published,
+	// 		id: mod.id,
+	// 		downloads: mod.downloads,
+	// 		modified: mod.updated,
+	// 		license: mod.license,
+	// 		modloaders: mod.loaders as Modloaders[],
+	// 	}
 
-		if (index !== -1) {
-			addons[index].dbData.platforms.push("modrinth")
-			addons[index].dbData.modData.modrinth = addonData;
-		} else {
-			addons.push({
-				dbData: {
-					platforms: ["modrinth"],
-					modData: {
-						modrinth: addonData,
-					}
-				},
-				hashes: addon.hashes
-			})
-		}
-	}
+	// 	if (index !== -1) {
+	// 		addons[index].dbData.platforms.push("modrinth")
+	// 		addons[index].dbData.modData.modrinth = addonData;
+	// 	} else {
+	// 		addons.push({
+	// 			dbData: {
+	// 				platforms: ["modrinth"],
+	// 				modData: {
+	// 					modrinth: addonData,
+	// 				}
+	// 			},
+	// 			hashes: addon.hashes
+	// 		})
+	// 	}
+	// }
 
 	const created: FetchResult["created"] = [];
 	const updated: FetchResult["updated"] = [];
@@ -117,10 +121,12 @@ export async function handleFetching(): Promise<FetchResult> {
 		
 		console.log(`\x1b[36mProcessing addon "\x1b[0;1m${mod.modData.modrinth?.slug ?? mod.modData.curseforge?.slug}\x1b[0;36m"\x1b[0m`);
 
+		console.log("a", mod)
+
 		const exists = await db.query.mods.findFirst({
 			where: or(
-				sql`json_extract(${modsSchema.modData}, '$.modData.modrinth.slug') = ${mod.modData.modrinth?.slug}`,
-				sql`json_extract(${modsSchema.modData}, '$.modData.curseforge.slug') = ${mod.modData.curseforge?.slug}`,
+				sql`json_extract(${modsSchema.modData}, '$.modrinth.slug') = ${mod.modData.modrinth?.slug || "<missing slug>"}`,
+				sql`json_extract(${modsSchema.modData}, '$.curseforge.slug') = ${mod.modData.curseforge?.slug || "<missing slug>"}`
 			)
 		})
 
@@ -140,10 +146,12 @@ export async function handleFetching(): Promise<FetchResult> {
 			modrinth: modrinthChanges,
 		}
 
+		console.log("b", mod)
+
 		await db.update(modsSchema).set(mod).where(
 			or(
-				sql`json_extract(${modsSchema.modData}, '$.modData.modrinth.slug') = ${mod.modData.modrinth?.slug}`,
-				sql`json_extract(${modsSchema.modData}, '$.modData.curseforge.slug') = ${mod.modData.curseforge?.slug}`,
+				sql`json_extract(${modsSchema.modData}, '$.modrinth.slug') = ${mod.modData.modrinth?.slug || "<missing slug>"}`,
+				sql`json_extract(${modsSchema.modData}, '$.curseforge.slug') = ${mod.modData.curseforge?.slug || "<missing slug>"}`,
 			)
 		)
 

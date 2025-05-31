@@ -10,8 +10,8 @@ export async function GET(req: NextRequest) {
 	return await ratelimitHandler(req, async (headers: Headers) => {
 		const createMod = await db.query.mods.findFirst({
 			where:  or(
-				sql`json_extract(${modsSchema.modData}, '$.modData.modrinth.slug') = create`,
-				sql`json_extract(${modsSchema.modData}, '$.modData.curseforge.slug') = create`,
+				sql`json_extract(${modsSchema.modData}, '$.modrinth.slug') = 'create'`,
+				sql`json_extract(${modsSchema.modData}, '$.curseforge.slug') = 'create'`,
 			),
 		});
 
