@@ -1,7 +1,7 @@
 import defaultModIcon from "#/assets/defaultModIcon.svg";
-import neoforge from "#/assets/neoforge.png";
-import fabric from "#/assets/fabric.png";
-import forge from "#/assets/forge.ico";
+import neoforge from "#/assets/neoforge.svg";
+import fabric from "#/assets/fabric.svg";
+import forge from "#/assets/forge.svg";
 import quilt from "#/assets/quilt.svg";
 
 import { format } from "date-fns";
