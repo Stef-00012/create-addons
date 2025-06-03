@@ -33,7 +33,9 @@ export async function handleFetching(): Promise<FetchResult> {
 		const mod = addon.mod;
 		const hashes = addon.hashes;
 		const versions = sortVersions(
-			mod.latestFilesIndexes.map((version) => version.gameVersion),
+			Array.from(
+				new Set(mod.latestFilesIndexes.map((version) => version.gameVersion)),
+			),
 			minecraftVersions,
 		);
 
