@@ -16,16 +16,21 @@ import ModloaderSwap from "./ModloaderSwap";
 
 interface Props {
 	mod: DatabaseMod["modData"];
+	defaultPlatform?: Platforms;
 }
 
-export default function List({ mod }: Props) {
+export default function List({ mod, defaultPlatform }: Props) {
 	const modPlatforms = Object.entries(mod)
 		.filter((entry) => entry[1])
 		.map((entry) => entry[0]) as Platforms[];
 
-	const [platform, setPlatform] = useState<Platforms>(
-		modPlatforms.includes("modrinth") ? "modrinth" : "curseforge",
-	);
+	const basePlatform = defaultPlatform
+		? defaultPlatform
+		: modPlatforms.includes("modrinth")
+			? "modrinth"
+			: "curseforge";
+
+	const [platform, setPlatform] = useState<Platforms>(basePlatform);
 	const [modData, setModData] = useState(mod[platform] as DatabaseModData);
 
 	useEffect(() => {

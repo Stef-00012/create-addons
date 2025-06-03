@@ -218,8 +218,10 @@ export default function Home() {
 
 		setSortBy(sort || "name");
 	}
-	
-	function handlePlatformSelect(newValue: { label: string; value: string } | null) {
+
+	function handlePlatformSelect(
+		newValue: { label: string; value: string } | null,
+	) {
 		const platform = newValue?.value as Platforms | "all";
 
 		setPlatform(platform || "all");
@@ -417,9 +419,19 @@ export default function Home() {
 												}
 											>
 												{compactMode ? (
-													<List mod={mod.modData} />
+													<List
+														mod={mod.modData}
+														defaultPlatform={
+															platform === "all" ? undefined : platform
+														}
+													/>
 												) : (
-													<Card mod={mod.modData} />
+													<Card
+														mod={mod.modData}
+														defaultPlatform={
+															platform === "all" ? undefined : platform
+														}
+													/>
 												)}
 											</Fragment>
 										))}
