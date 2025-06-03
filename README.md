@@ -58,3 +58,7 @@ This project is maintained by [Stef](https://github.com/Stef-00012) and [orangc]
 
 ### License
 This project is licensed under the [GNU GPL v3](./LICENSE) license. This project is not affiliated with or endorsed by Create or Mojang.
+
+# TO-DO
+- [ ] fix README
+- [ ] default card/list items to the platform in the select when one is selected
