@@ -21,6 +21,7 @@ import Card from "@/components/Card";
 import List from "@/components/List";
 
 const modloaderOptions = [
+	{ value: "all", label: "All" },
 	{ value: "neoforge", label: "NeoForge" },
 	{ value: "forge", label: "Forge" },
 	{ value: "fabric", label: "Fabric" },
@@ -37,6 +38,12 @@ const sortByOptions = [
 	{ value: "followers", label: "Followers" },
 	{ value: "lastUpdated", label: "Last Updated" },
 	{ value: "created", label: "Created" },
+];
+
+const platformOptions = [
+	{ value: "all", label: "All" },
+	{ value: "modrinth", label: "Modrinth" },
+	{ value: "curseforge", label: "Curseforge" },
 ];
 
 const modloaders = modloaderOptions.map((modloader) => modloader.value);
@@ -76,7 +83,6 @@ export default function Home() {
 		versions.includes(initialVersion) ? initialVersion : "all",
 	);
 
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [platform, setPlatform] = useState<Platforms | "all">(
 		platforms.includes(initialPlatform) ? initialPlatform : "all",
 	);
@@ -109,6 +115,7 @@ export default function Home() {
 		const search = searchParams.get("search") as string;
 		const sortBy = searchParams.get("sort") as SortOrders;
 		const page = searchParams.get("page") as string;
+		const platform = searchParams.get("platform") as Platforms;
 
 		if (versions.includes(version)) {
 			setVersion(version);
@@ -120,6 +127,10 @@ export default function Home() {
 
 		if (sortByOrders.includes(sortBy)) {
 			setSortBy(sortBy);
+		}
+
+		if (platforms.includes(platform)) {
+			setPlatform(platform);
 		}
 
 		if (Number.parseInt(page) > 1) {
@@ -207,6 +218,12 @@ export default function Home() {
 
 		setSortBy(sort || "name");
 	}
+	
+	function handlePlatformSelect(newValue: { label: string; value: string } | null) {
+		const platform = newValue?.value as Platforms | "all";
+
+		setPlatform(platform || "all");
+	}
 
 	function handleSearch() {
 		setSearch(searchInput.current?.value || "");
@@ -290,6 +307,20 @@ export default function Home() {
 							isLoading={!addonsData}
 							isDisabled={!addonsData}
 							onChange={handleLoaderSelect}
+						/>
+
+						{/* Filter by platform */}
+						<FilterSelect
+							defaultValue={platformOptions[0]}
+							options={platformOptions}
+							label="Filter by platform"
+							value={
+								platformOptions.find((option) => option.value === platform) ||
+								null
+							}
+							isLoading={!addonsData}
+							isDisabled={!addonsData}
+							onChange={handlePlatformSelect}
 						/>
 
 						{/* Filter by version */}

@@ -64,9 +64,9 @@ export async function handleFetching(): Promise<FetchResult> {
 						license: "Unknown",
 						modloaders: Array.from(
 							new Set(
-								mod.latestFilesIndexes.map(
-									(file) => curseforgeModloaders[file.modLoader],
-								),
+								mod.latestFilesIndexes
+									.filter((file) => typeof file.modLoader === "number")
+									.map((file) => curseforgeModloaders[file.modLoader]),
 							),
 						).sort() as Modloaders[],
 					},

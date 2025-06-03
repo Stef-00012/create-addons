@@ -25,7 +25,7 @@ export default function FilterSelect({
 	onChange,
 }: Props) {
 	return (
-		<div className="select-floating w-96 my-4 md:my-0">
+		<div className="select-floating w-74 my-4 md:my-0">
 			{label && (
 				<label
 					className="select-floating-label rounded-2xl px-2 z-10 flex items-center"
