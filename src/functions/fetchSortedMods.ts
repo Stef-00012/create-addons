@@ -50,36 +50,19 @@ export async function fetchSortedMods({
 
 	const mods = modsRes.map((mod) => ({
 		...mod,
-		versions:
-			platform === "all"
-				? [
-						...(mod.modData.modrinth?.versions || []),
-						...(mod.modData.curseforge?.versions || []),
-					]
-				: mod.modData[platform]?.versions || [],
-		categories:
-			platform === "all"
-				? [
-						...(mod.modData.modrinth?.categories || []),
-						...(mod.modData.curseforge?.categories || []),
-					]
-				: mod.modData[platform]?.categories || [],
-		modloaders:
-			platform === "all"
-				? [
-						...(mod.modData.modrinth?.modloaders || []),
-						...(mod.modData.curseforge?.modloaders || []),
-					]
-				: mod.modData[platform]?.modloaders || ([] as Modloaders[]),
 		platforms: mod.platforms,
 	}));
 
-	const versions =
-		mods.find(
-			(mod) =>
-				(mod.modData.modrinth?.slug || mod.modData.curseforge?.slug) ===
-				"create",
-		)?.versions || [];
+	const createMod = mods.find(
+		(mod) =>
+			(mod.modData.modrinth?.slug || mod.modData.curseforge?.slug) ===
+			"create",
+	)
+
+	const versions = [
+		...createMod?.modData.modrinth?.versions || [],
+		...createMod?.modData.curseforge?.versions || [],
+	]
 
 	if (version !== "all" && !versions.includes(version))
 		return {
@@ -102,9 +85,14 @@ export async function fetchSortedMods({
 			status: 400,
 		};
 
+	const searchKeys = ["name", "description", "slug", "categories"];
+
 	const fuse = new Fuse(mods, {
-		keys: ["name", "description", "slug", "categories"],
+		keys: searchKeys.flatMap((key) =>
+			platforms.map((platform) => `modData.${platform}.${key}`),
+		),
 		threshold: 0.4,
+		ignoreLocation: true,
 	});
 
 	const searchFilteredMods =
@@ -113,9 +101,23 @@ export async function fetchSortedMods({
 			: fuse.search(search).map((result) => result.item);
 
 	const filteredMods = searchFilteredMods.filter((mod) => {
+		const modloaders = platform === "all"
+			? [
+					...(mod.modData.modrinth?.modloaders || []),
+					...(mod.modData.curseforge?.modloaders || []),
+				]
+			: mod.modData[platform]?.modloaders || ([] as Modloaders[]);
+
+		const versions = platform === "all"
+			? [
+					...(mod.modData.modrinth?.versions || []),
+					...(mod.modData.curseforge?.versions || []),
+				]
+			: mod.modData[platform]?.versions || []
+
 		return (
-			(modloader === "all" || mod.modloaders.includes(modloader)) &&
-			(version === "all" || mod.versions.includes(version)) &&
+			(modloader === "all" || modloaders.includes(modloader)) &&
+			(version === "all" || versions.includes(version)) &&
 			(platform === "all" || mod.platforms.includes(platform))
 		);
 	});
