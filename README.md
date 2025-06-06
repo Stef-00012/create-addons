@@ -23,7 +23,7 @@ mv .env.example .env # make sure to set ENVIRONMENT to "production"
 ```sh
 # Start the app
 bun dev
-# Then wait for it to finish fetching the mods
+# This won't fetch the mods, you first have to run in production mode in order to fetch the mods
 ```
 
 #### Production Mode
