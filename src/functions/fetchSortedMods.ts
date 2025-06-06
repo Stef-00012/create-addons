@@ -1,13 +1,13 @@
 import db from "@/db/db";
 import Fuse from "fuse.js";
 
+import { modLoaders, platforms } from "@/constants/loaders";
 import type {
 	DatabaseMod,
 	Modloaders,
 	Platforms,
 	SortOrders,
 } from "@/types/addons";
-import { modLoaders, platforms } from "@/constants/loaders";
 
 interface Props {
 	page?: number;
@@ -55,14 +55,13 @@ export async function fetchSortedMods({
 
 	const createMod = mods.find(
 		(mod) =>
-			(mod.modData.modrinth?.slug || mod.modData.curseforge?.slug) ===
-			"create",
-	)
+			(mod.modData.modrinth?.slug || mod.modData.curseforge?.slug) === "create",
+	);
 
 	const versions = [
-		...createMod?.modData.modrinth?.versions || [],
-		...createMod?.modData.curseforge?.versions || [],
-	]
+		...(createMod?.modData.modrinth?.versions || []),
+		...(createMod?.modData.curseforge?.versions || []),
+	];
 
 	if (version !== "all" && !versions.includes(version))
 		return {
@@ -101,19 +100,21 @@ export async function fetchSortedMods({
 			: fuse.search(search).map((result) => result.item);
 
 	const filteredMods = searchFilteredMods.filter((mod) => {
-		const modloaders = platform === "all"
-			? [
-					...(mod.modData.modrinth?.modloaders || []),
-					...(mod.modData.curseforge?.modloaders || []),
-				]
-			: mod.modData[platform]?.modloaders || ([] as Modloaders[]);
+		const modloaders =
+			platform === "all"
+				? [
+						...(mod.modData.modrinth?.modloaders || []),
+						...(mod.modData.curseforge?.modloaders || []),
+					]
+				: mod.modData[platform]?.modloaders || ([] as Modloaders[]);
 
-		const versions = platform === "all"
-			? [
-					...(mod.modData.modrinth?.versions || []),
-					...(mod.modData.curseforge?.versions || []),
-				]
-			: mod.modData[platform]?.versions || []
+		const versions =
+			platform === "all"
+				? [
+						...(mod.modData.modrinth?.versions || []),
+						...(mod.modData.curseforge?.versions || []),
+					]
+				: mod.modData[platform]?.versions || [];
 
 		return (
 			(modloader === "all" || modloaders.includes(modloader)) &&
@@ -123,29 +124,67 @@ export async function fetchSortedMods({
 	});
 
 	const sortedMods = filteredMods.sort((_a, _b) => {
-		// biome-ignore lint/style/noNonNullAssertion: atleast one of them is always present
-		const a = (_a.modData.modrinth || _a.modData.curseforge)!;
-		// biome-ignore lint/style/noNonNullAssertion: atleast one of them is always present
-		const b = (_b.modData.modrinth || _b.modData.curseforge)!;
-
 		if (sortOrder === "downloads") {
-			return b.downloads - a.downloads;
+			const a =
+				(_a.modData.modrinth?.downloads || 0) +
+				(_a.modData.curseforge?.downloads || 0);
+			const b =
+				(_b.modData.modrinth?.downloads || 0) +
+				(_b.modData.curseforge?.downloads || 0);
+
+			return b - a;
 		}
 
 		if (sortOrder === "followers") {
-			return b.follows - a.follows;
+			const a =
+				(_a.modData.modrinth?.follows || 0) +
+				(_a.modData.curseforge?.follows || 0);
+			const b =
+				(_b.modData.modrinth?.follows || 0) +
+				(_b.modData.curseforge?.follows || 0);
+
+			return b - a;
 		}
 
 		if (sortOrder === "lastUpdated") {
-			return new Date(b.modified).getTime() - new Date(a.modified).getTime();
+			const a =
+				new Date(_a.modData.modrinth?.modified || 0) >
+				new Date(_a.modData.curseforge?.modified || 0)
+					? _a.modData.modrinth?.modified
+					: _a.modData.curseforge?.modified;
+
+			const b =
+				new Date(_b.modData.modrinth?.modified || 0) >
+				new Date(_b.modData.curseforge?.modified || 0)
+					? _b.modData.modrinth?.modified
+					: _b.modData.curseforge?.modified;
+
+			return new Date(b || 0).getTime() - new Date(a || 0).getTime();
 		}
 
 		if (sortOrder === "created") {
-			return new Date(b.created).getTime() - new Date(a.created).getTime();
+			const a =
+				new Date(_a.modData.modrinth?.created || 0) >
+				new Date(_a.modData.curseforge?.created || 0)
+					? _a.modData.modrinth?.created
+					: _a.modData.curseforge?.created;
+
+			const b =
+				new Date(_b.modData.modrinth?.created || 0) >
+				new Date(_b.modData.curseforge?.created || 0)
+					? _b.modData.modrinth?.created
+					: _b.modData.curseforge?.created;
+
+			return new Date(b || 0).getTime() - new Date(a || 0).getTime();
 		}
 
 		if (sortOrder === "name") {
-			return a.name.localeCompare(b.name);
+			// biome-ignore lint/style/noNonNullAssertion: atleast one of them is always present
+			const a = (_a.modData.modrinth?.name || _a.modData.curseforge?.name)!;
+			// biome-ignore lint/style/noNonNullAssertion: atleast one of them is always present
+			const b = (_b.modData.modrinth?.name || _b.modData.curseforge?.name)!;
+
+			return a.localeCompare(b);
 		}
 
 		return 0;
