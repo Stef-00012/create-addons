@@ -1,8 +1,10 @@
 import type {
-	ModrinthDatabaseMod,
-	ModrinthModDatabaseKeys,
-	ModrinthModDatabaseValues,
-} from "@/types/modrinth";
+	DatabaseMod,
+	DatabaseModData,
+	ModDataDatabaseKeys,
+	ModDataDatabaseValues,
+	Platforms,
+} from "@/types/addons";
 
 export type Messages = CreateMessage | UpdateMessage;
 
@@ -30,22 +32,29 @@ export interface PongMessage extends Omit<WSmessage, "data"> {
 }
 
 export interface CreateMessage extends WSmessage {
-	data: ModrinthDatabaseMod[];
+	data: DatabaseMod[];
 	type: WSEvents.CREATE;
 }
 
 export interface UpdateMessageValues {
-	old: ModrinthModDatabaseValues;
-	new: ModrinthModDatabaseValues;
+	old: ModDataDatabaseValues;
+	new: ModDataDatabaseValues;
 }
+
+export type UpdateMessageDataChanges = Partial<
+	Record<
+		ModDataDatabaseKeys,
+		{ old: ModDataDatabaseValues | null; new: ModDataDatabaseValues | null }
+	>
+> | null;
 
 export interface UpdateMessage extends WSmessage {
 	type: WSEvents.UPDATE;
 	data: {
-		slug: ModrinthDatabaseMod["slug"];
-		platform: ModrinthDatabaseMod["platform"];
-		name: ModrinthDatabaseMod["name"];
-		changes: Record<ModrinthModDatabaseKeys, UpdateMessageValues>;
+		slugs: Record<Platforms, DatabaseModData["slug"] | null>;
+		platforms: DatabaseMod["platforms"];
+		name: DatabaseModData["name"];
+		changes: Record<Platforms, UpdateMessageDataChanges>;
 	}[];
 }
 
@@ -59,13 +68,13 @@ export interface CommandMessage extends WSmessage {
 
 export interface CommandResponseMessage extends WSmessage {
 	type: WSEvents.COMMAND_RESPONSE;
-    command: string;
+	command: string;
 	data: unknown;
 }
 
 export interface CommandErrorMessage extends WSmessage {
 	type: WSEvents.COMMAND_ERROR;
-    command?: string;
+	command?: string;
 	data: {
 		message: string;
 	};

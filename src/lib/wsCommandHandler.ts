@@ -1,5 +1,5 @@
 import {
-    type CommandErrorMessage,
+	type CommandErrorMessage,
 	WSEvents,
 	type CommandMessage,
 } from "@/types/websocket";
@@ -37,7 +37,7 @@ export async function wsCommandHandler({
 
 			const error: CommandErrorMessage = {
 				type: WSEvents.COMMAND_ERROR,
-                command: command,
+				command: command,
 				data: {
 					message: "Something went wrong",
 				},
@@ -51,7 +51,7 @@ export async function wsCommandHandler({
 
 	const error: CommandErrorMessage = {
 		type: WSEvents.COMMAND_ERROR,
-        command: command,
+		command: command,
 		data: {
 			message: "Command not found",
 		},

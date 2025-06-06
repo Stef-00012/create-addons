@@ -1,7 +1,13 @@
 import db from "@/db/db";
 import Fuse from "fuse.js";
 
-import type { Modloaders, SortOrders } from "@/types/modrinth";
+import type {
+	DatabaseMod,
+	Modloaders,
+	Platforms,
+	SortOrders,
+} from "@/types/addons";
+import { modLoaders, platforms } from "@/constants/loaders";
 
 interface Props {
 	page?: number;
@@ -9,6 +15,7 @@ interface Props {
 	modloader?: Modloaders | "all";
 	search?: string;
 	sortOrder?: SortOrders;
+	platform?: Platforms | "all";
 }
 
 export async function fetchSortedMods({
@@ -17,40 +24,75 @@ export async function fetchSortedMods({
 	modloader = "all",
 	search = "",
 	sortOrder = "downloads",
-}: Props) {
+	platform = "all",
+}: Props): Promise<
+	| {
+			error: false;
+			page: number;
+			mods: DatabaseMod[];
+			totalMods: number;
+			totalPages: number;
+	  }
+	| {
+			error: true;
+			message: string;
+			status: number;
+	  }
+> {
 	const modsPerPage =
 		Number.parseInt(process.env.MODS_PER_PAGE as string) || 50;
 
-	const modsRes = await db.query.mods.findMany();
+	const modsRes = await db.query.mods.findMany({
+		columns: {
+			id: false,
+		},
+	});
 
 	const mods = modsRes.map((mod) => ({
 		...mod,
-		versions: mod.versions as string[],
-		categories: mod.categories as string[],
-		modloaders: mod.modloaders as string[],
+		platforms: mod.platforms,
 	}));
 
-	const versions = mods.find((mod) => mod.slug === "create")?.versions || [];
+	const createMod = mods.find(
+		(mod) =>
+			(mod.modData.modrinth?.slug || mod.modData.curseforge?.slug) ===
+			"create",
+	)
+
+	const versions = [
+		...createMod?.modData.modrinth?.versions || [],
+		...createMod?.modData.curseforge?.versions || [],
+	]
 
 	if (version !== "all" && !versions.includes(version))
-		return Response.json({ error: "Invalid version" }, { status: 400 });
-
-	const modLoaders = [
-		"quilt",
-		"fabric",
-		"forge",
-		"neoforge",
-		"liteloader",
-		"modloader",
-		"rift",
-	];
+		return {
+			error: true,
+			message: "Invalid version",
+			status: 400,
+		};
 
 	if (modloader !== "all" && !modLoaders.includes(modloader))
-		return Response.json({ error: "Invalid modloader" }, { status: 400 });
+		return {
+			error: true,
+			message: "Invalid modloader",
+			status: 400,
+		};
+
+	if (platform !== "all" && !platforms.includes(platform))
+		return {
+			error: true,
+			message: "Invalid platform",
+			status: 400,
+		};
+
+	const searchKeys = ["name", "description", "slug", "categories"];
 
 	const fuse = new Fuse(mods, {
-		keys: ["name", "description", "slug", "categories"],
+		keys: searchKeys.flatMap((key) =>
+			platforms.map((platform) => `modData.${platform}.${key}`),
+		),
 		threshold: 0.4,
+		ignoreLocation: true,
 	});
 
 	const searchFilteredMods =
@@ -59,13 +101,33 @@ export async function fetchSortedMods({
 			: fuse.search(search).map((result) => result.item);
 
 	const filteredMods = searchFilteredMods.filter((mod) => {
+		const modloaders = platform === "all"
+			? [
+					...(mod.modData.modrinth?.modloaders || []),
+					...(mod.modData.curseforge?.modloaders || []),
+				]
+			: mod.modData[platform]?.modloaders || ([] as Modloaders[]);
+
+		const versions = platform === "all"
+			? [
+					...(mod.modData.modrinth?.versions || []),
+					...(mod.modData.curseforge?.versions || []),
+				]
+			: mod.modData[platform]?.versions || []
+
 		return (
-			(modloader === "all" || mod.modloaders.includes(modloader)) &&
-			(version === "all" || mod.versions.includes(version))
+			(modloader === "all" || modloaders.includes(modloader)) &&
+			(version === "all" || versions.includes(version)) &&
+			(platform === "all" || mod.platforms.includes(platform))
 		);
 	});
 
-	const sortedMods = filteredMods.sort((a, b) => {
+	const sortedMods = filteredMods.sort((_a, _b) => {
+		// biome-ignore lint/style/noNonNullAssertion: atleast one of them is always present
+		const a = (_a.modData.modrinth || _a.modData.curseforge)!;
+		// biome-ignore lint/style/noNonNullAssertion: atleast one of them is always present
+		const b = (_b.modData.modrinth || _b.modData.curseforge)!;
+
 		if (sortOrder === "downloads") {
 			return b.downloads - a.downloads;
 		}
@@ -90,6 +152,7 @@ export async function fetchSortedMods({
 	});
 
 	return {
+		error: false,
 		page,
 		mods: sortedMods.slice(page * modsPerPage, (page + 1) * modsPerPage),
 		totalMods: sortedMods.length,

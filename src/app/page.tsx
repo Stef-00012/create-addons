@@ -8,23 +8,28 @@ import {
 	useState,
 } from "react";
 import axios from "axios";
+import { platforms } from "@/constants/loaders";
 
 import type { APIModsResponse } from "@/app/api/addons/route";
-import type { SortOrders } from "@/types/modrinth";
+import type { DatabaseModData, Platforms, SortOrders } from "@/types/addons";
 
 import { useSearchParams, useRouter } from "next/navigation";
+import FilterSelect from "@/components/FilterSelect";
 import SkeletonCard from "@/components/SkeletonCard";
 import SkeletonList from "@/components/SkeletonList";
 import Card from "@/components/Card";
 import List from "@/components/List";
-import Select from "react-select";
 
 const modloaderOptions = [
 	{ value: "all", label: "All" },
-	{ value: "fabric", label: "Fabric" },
-	{ value: "forge", label: "Forge" },
 	{ value: "neoforge", label: "NeoForge" },
+	{ value: "forge", label: "Forge" },
+	{ value: "fabric", label: "Fabric" },
 	{ value: "quilt", label: "Quilt" },
+	{ value: "rift", label: "Rift" },
+	{ value: "liteloader", label: "LiteLoader" },
+	{ value: "modloader", label: "Risugami's ModLoader" },
+	{ value: "cauldron", label: "Cauldron" },
 ];
 
 const sortByOptions = [
@@ -33,6 +38,12 @@ const sortByOptions = [
 	{ value: "followers", label: "Followers" },
 	{ value: "lastUpdated", label: "Last Updated" },
 	{ value: "created", label: "Created" },
+];
+
+const platformOptions = [
+	{ value: "all", label: "All" },
+	{ value: "modrinth", label: "Modrinth" },
+	{ value: "curseforge", label: "Curseforge" },
 ];
 
 const modloaders = modloaderOptions.map((modloader) => modloader.value);
@@ -44,12 +55,13 @@ export default function Home() {
 
 	const initialPage = searchParams.get("page");
 	const initialLoader = searchParams.get("modloader") as
-		| APIModsResponse["mods"][0]["modloaders"][0]
+		| DatabaseModData["modloaders"][0]
 		| "all";
 	const initialSortBy = searchParams.get("sort") as SortOrders;
 	const initialCompactMode = searchParams.get("compact") === "1";
 	const initialVersion = searchParams.get("version") as string;
 	const initialSearch = searchParams.get("search");
+	const initialPlatform = searchParams.get("platform") as Platforms;
 
 	const [versions, setVersions] = useState<string[]>([]);
 	const [page, setPage] = useState<number>(
@@ -58,19 +70,23 @@ export default function Home() {
 	const [addonsData, setAddonsData] = useState<APIModsResponse | null>(null);
 
 	const [loader, setLoader] = useState<
-		APIModsResponse["mods"][0]["modloaders"][0] | "all"
+		DatabaseModData["modloaders"][0] | "all"
 	>(modloaders.includes(initialLoader) ? initialLoader : "all");
-	
+
 	const [sortBy, setSortBy] = useState<SortOrders>(
 		sortByOrders.includes(initialSortBy) ? initialSortBy : "downloads",
 	);
-	
+
 	const [compactMode, setCompactMode] = useState(initialCompactMode);
-	
-	const [version, setVersion] = useState<
-		APIModsResponse["mods"][0]["versions"][0] | "all"
-	>(versions.includes(initialVersion) ? initialVersion : "all");
-	
+
+	const [version, setVersion] = useState<DatabaseModData["version"] | "all">(
+		versions.includes(initialVersion) ? initialVersion : "all",
+	);
+
+	const [platform, setPlatform] = useState<Platforms | "all">(
+		platforms.includes(initialPlatform) ? initialPlatform : "all",
+	);
+
 	const [search, setSearch] = useState<string>(
 		initialSearch ? decodeURIComponent(initialSearch) : "",
 	);
@@ -91,14 +107,15 @@ export default function Home() {
 
 	useEffect(() => {
 		const version = searchParams.get("version") as
-			| APIModsResponse["mods"][0]["versions"][0]
+			| DatabaseModData["version"]
 			| "all";
 		const loader = searchParams.get("modloader") as
-			| APIModsResponse["mods"][0]["modloaders"][0]
+			| DatabaseModData["modloaders"][0]
 			| "all";
 		const search = searchParams.get("search") as string;
 		const sortBy = searchParams.get("sort") as SortOrders;
 		const page = searchParams.get("page") as string;
+		const platform = searchParams.get("platform") as Platforms;
 
 		if (versions.includes(version)) {
 			setVersion(version);
@@ -110,6 +127,10 @@ export default function Home() {
 
 		if (sortByOrders.includes(sortBy)) {
 			setSortBy(sortBy);
+		}
+
+		if (platforms.includes(platform)) {
+			setPlatform(platform);
 		}
 
 		if (Number.parseInt(page) > 1) {
@@ -126,6 +147,7 @@ export default function Home() {
 				modloader: loader,
 				sort: sortBy,
 				search: encodeURIComponent(search),
+				platform,
 			});
 
 			scrollTo({
@@ -143,7 +165,7 @@ export default function Home() {
 		};
 
 		fetchAddonsData().catch((err) => console.error(err));
-	}, [page, loader, sortBy, version, search]);
+	}, [page, loader, sortBy, version, platform, search]);
 
 	useEffect(() => {
 		if (addonsData && page > (addonsData.totalPages || 1)) {
@@ -159,12 +181,13 @@ export default function Home() {
 		if (loader !== "all") setSearchParams.append("modloader", loader);
 		if (search) setSearchParams.append("search", encodeURIComponent(search));
 		if (sortBy !== "downloads") setSearchParams.append("sort", sortBy);
+		if (platform !== "all") setSearchParams.append("platform", platform);
 		if (compactMode) setSearchParams.append("compact", "1");
 
 		router.replace(`?${setSearchParams}`, {
 			scroll: false,
 		});
-	}, [sortBy, search, loader, version, compactMode, page, router]);
+	}, [sortBy, search, loader, version, platform, compactMode, page, router]);
 
 	useEffect(() => {
 		document.addEventListener("keydown", handleKeyboardShortcut);
@@ -177,9 +200,7 @@ export default function Home() {
 	function handleLoaderSelect(
 		newValue: { label: string; value: string } | null,
 	) {
-		const loader = newValue?.value as
-			| APIModsResponse["mods"][0]["modloaders"][0]
-			| "all";
+		const loader = newValue?.value as DatabaseModData["modloaders"][0] | "all";
 
 		setLoader(loader || "all");
 	}
@@ -196,6 +217,14 @@ export default function Home() {
 		const sort = newValue?.value as SortOrders;
 
 		setSortBy(sort || "name");
+	}
+
+	function handlePlatformSelect(
+		newValue: { label: string; value: string } | null,
+	) {
+		const platform = newValue?.value as Platforms | "all";
+
+		setPlatform(platform || "all");
 	}
 
 	function handleSearch() {
@@ -256,7 +285,7 @@ export default function Home() {
 				<div className="md:flex md:justify-between md:flex-wrap gap-4">
 					<div className="md:flex md:justify-start gap-2 md:gap-6 xl:gap-2 md:flex-wrap">
 						{/* Grid/list view toggle */}
-						<div className="">
+						<div>
 							<button
 								type="button"
 								className="btn border-base-content/50 bg-accent-content"
@@ -269,130 +298,71 @@ export default function Home() {
 						</div>
 
 						{/* Filter by modloader */}
-						<div className="select-floating w-96 my-4 md:my-0">
-							<label
-								className="select-floating-label rounded-2xl px-2 z-10 flex items-center"
-								htmlFor="selectFloating"
-							>
-								<span className="icon-[tabler--filter] me-2 size-5 shrink-0" />
-								Filter by modloader
-							</label>
+						<FilterSelect
+							defaultValue={modloaderOptions[0]}
+							options={modloaderOptions}
+							label="Filter by modloader"
+							value={
+								modloaderOptions.find((option) => option.value === loader) ||
+								null
+							}
+							isLoading={!addonsData}
+							isDisabled={!addonsData}
+							onChange={handleLoaderSelect}
+						/>
 
-							<Select
-								id="selectFloating"
-								defaultValue={modloaderOptions[0]}
-								options={modloaderOptions}
-								value={
-									modloaderOptions.find((option) => option.value === loader) ||
-									null
-								}
-								unstyled
-								isSearchable={false}
-								isLoading={!addonsData}
-								isDisabled={!addonsData}
-								components={{
-									DropdownIndicator: () => null,
-									IndicatorSeparator: () => null,
-								}}
-								classNames={{
-									control: ({ isDisabled }) =>
-										`select ${isDisabled ? "bg-base-100/50 border-none text-base-content/50" : ""}`,
-									option: ({ isSelected }) =>
-										`rounded-2xl my-1 p-2 ${isSelected ? "bg-base-200" : "bg-base-100 hover:bg-base-200"}`,
-									menuList: () =>
-										"rounded-2xl bg-base-100 py-4 shadow-lg px-2 mt-1",
-								}}
-								onChange={handleLoaderSelect}
-							/>
-						</div>
+						{/* Filter by platform */}
+						<FilterSelect
+							defaultValue={platformOptions[0]}
+							options={platformOptions}
+							label="Filter by platform"
+							value={
+								platformOptions.find((option) => option.value === platform) ||
+								null
+							}
+							isLoading={!addonsData}
+							isDisabled={!addonsData}
+							onChange={handlePlatformSelect}
+						/>
 
 						{/* Filter by version */}
-						<div className="select-floating w-96 my-4 md:my-0">
-							<label
-								className="select-floating-label rounded-2xl px-2 z-10 flex items-center"
-								htmlFor="selectFloating"
-							>
-								<span className="icon-[tabler--filter] me-2 size-5 shrink-0" />
-								Filter by version
-							</label>
-
-							<Select
-								id="selectFloating"
-								unstyled
-								isSearchable={false}
-								isLoading={!addonsData}
-								isDisabled={!addonsData}
-								defaultValue={{
+						<FilterSelect
+							label="Filter by version"
+							isLoading={!addonsData}
+							isDisabled={!addonsData}
+							defaultValue={{
+								value: "all",
+								label: "All",
+							}}
+							value={{
+								value: version,
+								label: version === "all" ? "All" : version,
+							}}
+							options={[
+								{
 									value: "all",
 									label: "All",
-								}}
-								value={{
+								},
+								...versions.map((version) => ({
 									value: version,
-									label: version === "all" ? "All" : version,
-								}}
-								options={[
-									{
-										value: "all",
-										label: "All",
-									},
-									...versions.map((version) => ({
-										value: version,
-										label: version,
-									})),
-								]}
-								components={{
-									DropdownIndicator: () => null,
-									IndicatorSeparator: () => null,
-								}}
-								classNames={{
-									control: ({ isDisabled }) =>
-										`select ${isDisabled ? "bg-base-100/50 border-none text-base-content/50" : ""}`,
-									option: ({ isSelected }) =>
-										`rounded-2xl my-1 p-2 ${isSelected ? "bg-base-200" : "bg-base-100 hover:bg-base-200"}`,
-									menuList: () =>
-										"rounded-2xl bg-base-100 py-4 shadow-lg px-2 mt-1",
-								}}
-								onChange={handleVersionSelect}
-							/>
-						</div>
+									label: version,
+								})),
+							]}
+							onChange={handleVersionSelect}
+						/>
 
 						{/* Sort by */}
-						<div className="select-floating w-96 my-4 md:my-0">
-							<label
-								className="select-floating-label rounded-2xl px-2 z-10 flex items-center"
-								htmlFor="selectFloating"
-							>
-								<span className="icon-[tabler--arrows-sort] me-2 size-5 shrink-0" />
-								Sort by
-							</label>
-
-							<Select
-								id="selectFloating"
-								defaultValue={sortByOptions[0]}
-								options={sortByOptions}
-								value={
-									sortByOptions.find((option) => option.value === sortBy) ||
-									null
-								}
-								unstyled
-								isSearchable={false}
-								isLoading={!addonsData}
-								isDisabled={!addonsData}
-								components={{
-									DropdownIndicator: () => null,
-									IndicatorSeparator: () => null,
-								}}
-								classNames={{
-									control: ({ isDisabled }) =>
-										`select ${isDisabled ? "bg-base-100/50 border-none text-base-content/50" : ""}`,
-									option: ({ isSelected }) =>
-										`rounded-2xl my-1 p-2 ${isSelected ? "bg-base-200" : "bg-base-100 hover:bg-base-200"}`,
-									menuList: () =>
-										"rounded-2xl bg-base-100 py-4 shadow-lg px-2 mt-1",
-								}}
-								onChange={handleSortSelect}
-							/>
-						</div>
+						<FilterSelect
+							label="Sort by"
+							defaultValue={sortByOptions[0]}
+							options={sortByOptions}
+							value={
+								sortByOptions.find((option) => option.value === sortBy) || null
+							}
+							isLoading={!addonsData}
+							isDisabled={!addonsData}
+							onChange={handleSortSelect}
+						/>
 					</div>
 
 					<div className="join rounded-2xl max-w-xs mx-auto">
@@ -443,8 +413,26 @@ export default function Home() {
 								{addonsData.mods.length > 0 ? (
 									<>
 										{addonsData.mods.map((mod) => (
-											<Fragment key={mod.slug}>
-												{compactMode ? <List mod={mod} /> : <Card mod={mod} />}
+											<Fragment
+												key={
+													mod.modData.modrinth?.id ?? mod.modData.curseforge?.id
+												}
+											>
+												{compactMode ? (
+													<List
+														mod={mod.modData}
+														defaultPlatform={
+															platform === "all" ? undefined : platform
+														}
+													/>
+												) : (
+													<Card
+														mod={mod.modData}
+														defaultPlatform={
+															platform === "all" ? undefined : platform
+														}
+													/>
+												)}
 											</Fragment>
 										))}
 									</>

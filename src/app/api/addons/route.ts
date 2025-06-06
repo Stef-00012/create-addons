@@ -1,12 +1,16 @@
 import ratelimitHandler from "@/middlewares/ratelimit";
-import type { ModrinthDatabaseMod } from "@/types/modrinth";
+import type {
+	DatabaseMod,
+	Modloaders,
+	Platforms,
+	SortOrders,
+} from "@/types/addons";
 import type { NextRequest } from "next/server";
 import { fetchSortedMods } from "@/functions/fetchSortedMods";
-import type { Modloaders, SortOrders } from "@/types/modrinth";
 
 export type APIModsResponse = {
 	page: number;
-	mods: ModrinthDatabaseMod[];
+	mods: DatabaseMod[];
 	totalMods: number;
 	totalPages: number;
 };
@@ -30,6 +34,9 @@ export async function GET(req: NextRequest) {
 		const search = (url.searchParams.get("search") || "") as string;
 		const sortOrder = (url.searchParams.get("sort") ||
 			"downloads") as SortOrders;
+		const platform = (url.searchParams.get("platform") || "all") as
+			| Platforms
+			| "all";
 
 		const res = await fetchSortedMods({
 			page,
@@ -37,7 +44,11 @@ export async function GET(req: NextRequest) {
 			modloader,
 			search,
 			sortOrder,
+			platform,
 		});
+
+		if (res.error)
+			return Response.json({ error: res.message }, { status: res.status });
 
 		return Response.json(res, {
 			headers,
