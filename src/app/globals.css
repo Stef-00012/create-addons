@@ -3,9 +3,6 @@
 @plugin "@iconify/tailwind4";
 @plugin "flyonui";
 
-
-@import url(https://fonts.bunny.net/css?family=lexend:500);
-
 @theme {
   /* colours */
   --color-rbase: #191724;
@@ -25,11 +22,11 @@
   --color-rhighlighth: #524f67;
 
   /* fonts */
-  --font-sans: "Lexend", "sans-serif";
+  --font-sans: "sans-serif";
   --font-serif: "serif";
   --font-mono: "monospace";
+  --font-minecraft: "minecraftFont", "minecraftFont Fallback";
 }
-
 
 @plugin "flyonui/theme" {
   name: "rose-pine";

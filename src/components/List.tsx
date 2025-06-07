@@ -1,8 +1,8 @@
-import defaultModIcon from "#/assets/defaultModIcon.svg";
-import neoforge from "#/assets/neoforge.svg";
-import fabric from "#/assets/fabric.svg";
-import forge from "#/assets/forge.svg";
-import quilt from "#/assets/quilt.svg";
+import defaultModIcon from "#/assets/images/defaultModIcon.svg";
+import neoforge from "#/assets/images/neoforge.svg";
+import fabric from "#/assets/images/fabric.svg";
+import forge from "#/assets/images/forge.svg";
+import quilt from "#/assets/images/quilt.svg";
 
 import { format } from "date-fns";
 import millify from "millify";

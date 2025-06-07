@@ -1,5 +1,5 @@
-import curseforgeLogo from "#/assets/curseforge.svg";
-import modrinthLogo from "#/assets/modrinth.svg";
+import curseforgeLogo from "#/assets/images/curseforge.svg";
+import modrinthLogo from "#/assets/images/modrinth.svg";
 import type { Platforms } from "@/types/addons";
 import Image from "next/image";
 

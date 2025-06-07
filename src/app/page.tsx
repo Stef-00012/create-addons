@@ -365,7 +365,7 @@ export default function Home() {
 						/>
 					</div>
 
-					<div className="join rounded-2xl max-w-xs mx-auto">
+					<div className="join rounded-2xl max-w-xs">
 						<div className="input-floating join-item flex-grow">
 							<input
 								placeholder="Search"
@@ -376,6 +376,7 @@ export default function Home() {
 								id="floatingInput"
 								ref={searchInput}
 								onKeyDown={handleInputKeydown}
+								onEmptied={handleSearch}
 							/>
 
 							<label
@@ -383,6 +384,11 @@ export default function Home() {
 								htmlFor="floatingInput"
 							>
 								<p className="mr-1 py-1">Search addons</p>
+
+								<span className="my-auto flex gap-2">
+									<kbd className="kbd kbd-sm font-minecraft pl-2 pt-0.5">Ctrl</kbd>
+									<kbd className="kbd kbd-sm font-minecraft pl-2 pt-0.5">K</kbd>
+								</span>
 							</label>
 						</div>
 
