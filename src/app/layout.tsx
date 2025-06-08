@@ -9,13 +9,13 @@ const minecraftFont = localFont({
 import "./globals.css";
 
 export const metadata: Metadata = {
-	title: "Create Addons Index",
+	title: "Create Addons",
 	description:
-		"An open source index of all the Create Minecraft mod related addons.",
+		"An open source list of all the Create Minecraft mod related addons.",
 	openGraph: {
-		title: "Create Addons Index",
+		title: "Create Addons",
 		description:
-			"An open source index of all the Create Minecraft mod related addons.",
+			"An open source list of all the Create Minecraft mod related addons.",
 		type: "website",
 	},
 };
