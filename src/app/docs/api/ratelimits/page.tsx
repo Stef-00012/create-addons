@@ -14,7 +14,7 @@ export default function APIRatelimitsDocs() {
             </p>
 
             <p>
-                If you exceed these limits, you will receive a <code>429</code> "Too Many Requests" error. Please wait until the rate limit resets before making additional requests.
+                If you exceed these limits, you will receive a <code>429</code> &quot;Too Many Requests&quot; error. Please wait until the rate limit resets before making additional requests.
             </p>
         </>
     )

@@ -24,7 +24,7 @@ export default function WebSocketModel() {
 				UpdateMessageDataSlugs
 			</Link>
 
-			<p className="py-2">Represents the addons' slugs in an update message.</p>
+			<p className="py-2">Represents the addons&apos; slugs in an update message.</p>
 
 			<h3 className="text-3xl py-2">Fields</h3>
 
@@ -37,7 +37,7 @@ export default function WebSocketModel() {
 				UpdateMessageDataChanges
 			</Link>
 
-			<p className="py-2">Represents the addons' changes in an update message.</p>
+			<p className="py-2">Represents the addons&apos; changes in an update message.</p>
 
 			<h3 className="text-3xl py-2">Fields</h3>
 
@@ -50,7 +50,7 @@ export default function WebSocketModel() {
 				UpdateMessageDataChangesData
 			</Link>
 
-			<p className="py-2">Represents the addons' changes in an update message.</p>
+			<p className="py-2">Represents the addons&apos; changes in an update message.</p>
 
 			<h3 className="text-3xl py-2">Fields</h3>
 
@@ -63,7 +63,7 @@ export default function WebSocketModel() {
 				UpdateMessageDataChangesDataString
 			</Link>
 
-			<p className="py-2">Represents the addons' changes in an update message for <code>string</code> values.</p>
+			<p className="py-2">Represents the addons&apos; changes in an update message for <code>string</code> values.</p>
 
 			<h3 className="text-3xl py-2">Fields</h3>
 
@@ -76,7 +76,7 @@ export default function WebSocketModel() {
 				UpdateMessageDataChangesDataAuthors
 			</Link>
 
-			<p className="py-2">Represents the addons' changes in an update message for the <code>authors</code> value.</p>
+			<p className="py-2">Represents the addons&apos; changes in an update message for the <code>authors</code> value.</p>
 
 			<h3 className="text-3xl py-2">Fields</h3>
 
@@ -89,7 +89,7 @@ export default function WebSocketModel() {
 				UpdateMessageDataChangesDataNumber
 			</Link>
 
-			<p className="py-2">Represents the addons' changes in an update message for <code>number</code> values.</p>
+			<p className="py-2">Represents the addons&apos; changes in an update message for <code>number</code> values.</p>
 
 			<h3 className="text-3xl py-2">Fields</h3>
 
@@ -102,7 +102,7 @@ export default function WebSocketModel() {
 				UpdateMessageDataChangesDataStringArray
 			</Link>
 
-			<p className="py-2">Represents the addons' changes in an update message for <code>string[]</code> values.</p>
+			<p className="py-2">Represents the addons&apos; changes in an update message for <code>string[]</code> values.</p>
 
 			<h3 className="text-3xl py-2">Fields</h3>
 
@@ -115,7 +115,7 @@ export default function WebSocketModel() {
 				UpdateMessageDataChangesDataSide
 			</Link>
 
-			<p className="py-2">Represents the addons' changes in an update message for the <code>clientSide</code> and <code>serverSide</code> values.</p>
+			<p className="py-2">Represents the addons&apos; changes in an update message for the <code>clientSide</code> and <code>serverSide</code> values.</p>
 
 			<h3 className="text-3xl py-2">Fields</h3>
 
@@ -128,7 +128,7 @@ export default function WebSocketModel() {
 				UpdateMessageDataChangesDataModloadersArray
 			</Link>
 
-			<p className="py-2">Represents the addons' changes in an update message for the <code>modloaders</code> value.</p>
+			<p className="py-2">Represents the addons&apos; changes in an update message for the <code>modloaders</code> value.</p>
 
 			<h3 className="text-3xl py-2">Fields</h3>
 

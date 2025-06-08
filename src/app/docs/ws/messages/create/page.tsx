@@ -1,6 +1,5 @@
 import ModelTable from "@/components/docs/ModelTable";
 import { tableHeader, websocketCreateMessageRows } from "@/constants/models";
-import Link from "next/link";
 
 export default function WebSocketCreateMessageDocs() {
     return (

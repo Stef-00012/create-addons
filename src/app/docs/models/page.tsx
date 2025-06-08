@@ -36,20 +36,20 @@ export default function ModelsReferenceDocs() {
 				</li>
 				<li>
 					<code>names: string[];</code> means that <code>names</code> is an
-					array of strings (<code>["name1", "name2"]</code>).
+					array of strings (<code>[&quot;name1&quot;, &quot;name2&quot;]</code>).
 				</li>
 				<li>
-					<code>names: ("name1" | "name2")[];</code> means that{" "}
+					<code>names: (&quot;name1&quot; | &quot;name2&quot;)[];</code> means that{" "}
 					<code>names</code> is an array that can contain either{" "}
 					<code>name1</code>, <code>name2</code> or both.
 				</li>
 				<li>
-					<code>name: "hello" | "world" | "123";</code> means that{" "}
+					<code>name: &quot;hello&quot; | &quot;world&quot; | &quot;123&quot;;</code> means that{" "}
 					<code>name</code> can either be <code>hello</code>, <code>world</code>{" "}
 					or <code>123</code>.
 				</li>
 				<li>
-					<code>name: "example" | "types" | string;</code> means that{" "}
+					<code>name: &quot;example&quot; | &quot;types&quot; | string;</code> means that{" "}
 					<code>name</code> can either be <code>example</code>,{" "}
 					<code>types</code> or any other string.
 				</li>

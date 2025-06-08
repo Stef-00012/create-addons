@@ -26,7 +26,7 @@ export default function WebSocketDocs() {
                     <Link href="/docs/ws/messages/ping" className="link2">Ping (<code>0</code>)</Link> - The server sends a ping to client.
                 </li>
                 <li>
-                    <Link href="/docs/ws/messages/pong" className="link2">Pong (<code>1</code>)</Link> - The client response the the server's ping.
+                    <Link href="/docs/ws/messages/pong" className="link2">Pong (<code>1</code>)</Link> - The client response the the server&apos;s ping.
                 </li>
                 <li>
                     <Link href="/docs/ws/messages/create" className="link2">Create (<code>2</code>)</Link> - The server sends a message to all the clients with all the newly added addons.
@@ -38,10 +38,10 @@ export default function WebSocketDocs() {
                     <Link href="/docs/ws/messages/command" className="link2">Command (<code>4</code>)</Link> - The client sends a command to the server to retrieve a specific addons or the list of addons.
                 </li>
                 <li>
-                    <Link href="/docs/ws/messages/command-response" className="link2">Command Response (<code>5</code>)</Link> - The server replies successfully to the client's command.
+                    <Link href="/docs/ws/messages/command-response" className="link2">Command Response (<code>5</code>)</Link> - The server replies successfully to the client&apos;s command.
                 </li>
                 <li>
-                    <Link href="/docs/ws/messages/command-error" className="link2">Command Error (<code>6</code>)</Link> - The server replies with an error to the client's command.
+                    <Link href="/docs/ws/messages/command-error" className="link2">Command Error (<code>6</code>)</Link> - The server replies with an error to the client&apos;s command.
                 </li>
             </ul>
 
