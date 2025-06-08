@@ -67,7 +67,7 @@
 -------------------------------------------------- */
 b, strong { @apply font-bold; }
 i, em { @apply italic; }
-code { @apply p-1 m-1 font-mono rounded-lg bg-rhighlightl; }
+code { @apply p-1 m-1 font-minecraft text-primary rounded-lg bg-rhighlightl; }
 img { @apply select-none; }
 hr { @apply border-rtext; }
 fieldset { @apply p-3 rounded-lg border-2 border-rrose; }

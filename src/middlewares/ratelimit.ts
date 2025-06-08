@@ -14,8 +14,8 @@ export default async function ratelimitHandler(
 	next: (headers: Headers) => Response | Promise<Response>,
 ) {
 	const requestAmount =
-		Number.parseInt(process.env.RATELIMIT_REQUEST_AMOUNT as string) || 100;
-	const requestInterval = ms(process.env.RATELIMIT_REQUEST_INTERVAL as string || "1m") || 60000;
+		Number.parseInt(process.env.NEXT_PUBLIC_RATELIMIT_REQUEST_AMOUNT as string) || 100;
+	const requestInterval = ms(process.env.NEXT_PUBLIC_RATELIMIT_REQUEST_INTERVAL as string || "1m") || 60000;
 
 	let clientIp = getClientIp(req);
     if (!clientIp) clientIp = "__UNKNOWN";
