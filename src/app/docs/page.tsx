@@ -11,11 +11,11 @@ export default function DocsHome() {
 
             <h2 className="text-2xl pt-6">API Documentation</h2>
 
-            <p>The API is avaible on the <Link href="/docs/api" className="link2"><code>/api</code></Link> endpoint and it allows you to retrieve informations about a specific addon or a list of addons avaible on the website.</p>
+            <p>The API is available on the <Link href="/docs/api" className="link2"><code>/api</code></Link> endpoint and it allows you to retrieve informations about a specific addon or a list of addons available on the website.</p>
 
             <h2 className="text-2xl pt-6">WebSocket Documentation</h2>
 
-            <p>The WebSocket is avaible on the <Link href="/docs/ws" className="link2"><code>/ws</code></Link> endpoint and it allows you to retrieve informations about a specific addon or a list of addons avaible on the website, and also to get notified as soon as an addon gets added or removed on the website.</p>
+            <p>The WebSocket is available on the <Link href="/docs/ws" className="link2"><code>/ws</code></Link> endpoint and it allows you to retrieve informations about a specific addon or a list of addons available on the website, and also to get notified as soon as an addon gets added or removed on the website.</p>
         </>
     )
 }

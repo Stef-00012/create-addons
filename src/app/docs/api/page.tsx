@@ -14,7 +14,7 @@ export default function APIDocs() {
         <>
             <h1 className="text-3xl">API Documentation</h1>
 
-            <p>The Create Addons API is used to retrieve informations about a specific addon or a list of addons avaible on the website.</p>
+            <p>The Create Addons API is used to retrieve informations about a specific addon or a list of addons available on the website.</p>
             <p>The API base URL is <code>{currentOrigin}/api</code>.</p>
 
             <h2 className="text-2xl pt-6">Endpoints</h2>

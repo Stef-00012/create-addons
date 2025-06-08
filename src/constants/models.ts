@@ -324,7 +324,7 @@ export const websocketUpdateDataRows: ModelTableProps["rows"] = [
 	{
 		name: "platforms",
 		type: '("modrinth" | "curseforge")[]',
-		description: "An array of platforms where the addons is avaible.",
+		description: "An array of platforms where the addons is available.",
 	},
 	{
 		name: "name",

@@ -16,7 +16,7 @@ export default function WebSocketDocs() {
         <>
             <h1 className="text-3xl">API Documentation</h1>
 
-            <p>The Create Addons WebSocket is used to retrieve informations about a specific addon or a list of addons avaible on the website, and also to get notified as soon as an addon gets added or removed on the website.</p>
+            <p>The Create Addons WebSocket is used to retrieve informations about a specific addon or a list of addons available on the website, and also to get notified as soon as an addon gets added or removed on the website.</p>
             <p>The Websocket URL is <code>{currentOrigin.replace("http", "ws")}/ws</code>.</p>
 
             <h2 className="text-2xl pt-6">Messages</h2>
