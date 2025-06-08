@@ -1,13 +1,14 @@
+import Link from "next/link";
+
 export default function SkeletonList() {
 	return (
 		<div className="card my-4 w-full skeleton skeleton-animated">
 			<div className="card-body">
 				<div className="flex justify-between items-baseline pb-2">
 					<h5 className="card-title mb-0">
-						{/* biome-ignore lint/a11y/useValidAnchor: <explanation> */}
-						<a className="skeleton skeleton-animated" href="#">
+						<Link className="skeleton skeleton-animated" href="#">
 							Loading
-						</a>
+						</Link>
 					</h5>
 				</div>
 				<div className="flex flex-wrap justify-start">

@@ -19,6 +19,7 @@ import SkeletonCard from "@/components/SkeletonCard";
 import SkeletonList from "@/components/SkeletonList";
 import Card from "@/components/Card";
 import List from "@/components/List";
+import Link from "next/link";
 
 const modloaderOptions = [
 	{ value: "all", label: "All" },
@@ -547,26 +548,36 @@ export default function Home() {
 					<aside className="grid-flow-col items-center">
 						<p>
 							©2025{" "}
-							<a href="https://stefdp.com" className="link2 text-riris">
+							<Link href="https://stefdp.com" className="link2 text-riris">
 								Stef
-							</a>{" "}
+							</Link>{" "}
 							&{" "}
-							<a href="https://orangc.net" className="link2 text-[#fab387]">
+							<Link href="https://orangc.net" className="link2 text-[#fab387]">
 								orangc
-							</a>
+							</Link>
 							. This project is not affiliated with or endorsed by Mojang® or
 							the Create mod.
 						</p>
 					</aside>
 
 					<div className="flex gap-4 h-5">
-						<a
+						<Link
+							href="/docs"
+							className="link"
+							aria-label="Documentation Link"
+							title="Documentation"
+						>
+							<span className="icon-[tabler--book-2] size-5" />
+						</Link>
+
+						<Link
 							href="https://github.com/Stef-00012/create-addons"
 							className="link"
 							aria-label="Github Link"
+							title="Source Code"
 						>
 							<span className="icon-[tabler--brand-github] size-5" />
-						</a>
+						</Link>
 					</div>
 				</div>
 			</footer>
