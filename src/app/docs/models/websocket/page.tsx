@@ -1,6 +1,6 @@
 import Divider from "@/components/docs/Divider";
 import ModelTable from "@/components/docs/ModelTable";
-import { tableHeader, websocketCommandDataArgsRows, websocketCommandDataRows, websocketCommandErrorRows, websocketUpdateDataChangesDataAuthorsRows, websocketUpdateDataChangesDataModloadersArrayRows, websocketUpdateDataChangesDataNumberRows, websocketUpdateDataChangesDataRows, websocketUpdateDataChangesDataSideRows, websocketUpdateDataChangesDataStringArrayRows, websocketUpdateDataChangesDataStringRows, websocketUpdateDataChangesRows, websocketUpdateDataRows, websocketUpdateDataSlugsRows } from "@/constants/models";
+import { tableHeader, websocketCommandDataArgsRows, websocketCommandDataRows, websocketCommandErrorRows, websocketUpdateDataChangesDataAuthorsRows, websocketUpdateDataChangesDataModloadersArrayRows, websocketUpdateDataChangesDataNumberRows, websocketUpdateDataChangesDataRows, websocketUpdateDataChangesDataSideRows, websocketUpdateDataChangesDataStringArrayRows, websocketUpdateDataChangesDataStringRows, websocketUpdateDataChangesRows, websocketUpdateDataNamesRows, websocketUpdateDataRows, websocketUpdateDataSlugsRows } from "@/constants/models";
 import Link from "next/link";
 
 export default function WebSocketModel() {
@@ -29,6 +29,19 @@ export default function WebSocketModel() {
 			<h3 className="text-3xl py-2">Fields</h3>
 
 			<ModelTable header={tableHeader} rows={websocketUpdateDataSlugsRows} />
+
+			<Divider />
+
+			{/* UpdateMessageDataNames */}
+            <Link className="text-5xl link2" href="#UpdateMessageDataNames" id="UpdateMessageDataNames">
+				UpdateMessageDataNames
+			</Link>
+
+			<p className="py-2">Represents the addons&apos; names in an update message.</p>
+
+			<h3 className="text-3xl py-2">Fields</h3>
+
+			<ModelTable header={tableHeader} rows={websocketUpdateDataNamesRows} />
 
 			<Divider />
 

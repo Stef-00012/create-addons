@@ -53,7 +53,7 @@ export interface UpdateMessage extends WSmessage {
 	data: {
 		slugs: Record<Platforms, DatabaseModData["slug"] | null>;
 		platforms: DatabaseMod["platforms"];
-		name: DatabaseModData["name"];
+		names: Record<Platforms, DatabaseModData["name"] | null>;
 		changes: Record<Platforms, UpdateMessageDataChanges>;
 	}[];
 }

@@ -187,10 +187,10 @@ export async function handleFetching(): Promise<FetchResult> {
 				},
 				changes,
 				platforms: mod.platforms,
-				name:
-					mod.modData.modrinth?.name ??
-					mod.modData.curseforge?.name ??
-					"Unknown Name",
+				names: {
+					modrinth: mod.modData.modrinth?.name ?? null,
+					curseforge: mod.modData.curseforge?.name ?? null,
+				}
 			};
 
 			updated.push(changeResult);

@@ -318,7 +318,7 @@ export const websocketUpdateDataRows: ModelTableProps["rows"] = [
 		name: "slugs",
 		type: "UpdateMessageDataSlugs",
 		description:
-			"An object containing the slugs of the updated addons for each supported platform.",
+			"An object containing the slugs of the updated addon for each supported platform.",
 		url: "#UpdateMessageDataSlugs",
 	},
 	{
@@ -327,9 +327,10 @@ export const websocketUpdateDataRows: ModelTableProps["rows"] = [
 		description: "An array of platforms where the addons is available.",
 	},
 	{
-		name: "name",
-		type: "string",
-		description: "The name of the addon.",
+		name: "names",
+		type: "UpdateMessageDataNames",
+		description: "An object containing the names of the updated addon for each supported platform.",
+		url: "#UpdateMessageDataNames"
 	},
 	{
 		name: "changes",
@@ -343,13 +344,26 @@ export const websocketUpdateDataRows: ModelTableProps["rows"] = [
 export const websocketUpdateDataSlugsRows: ModelTableProps["rows"] = [
 	{
 		name: "modrinth?",
-		type: "string",
+		type: "string | null",
 		description: "The slug of the addon on the Modrinth platform.",
 	},
 	{
 		name: "curseforge?",
-		type: "string",
+		type: "string | null",
 		description: "The slug of the addon on the Curseforge platform.",
+	},
+];
+
+export const websocketUpdateDataNamesRows: ModelTableProps["rows"] = [
+	{
+		name: "modrinth?",
+		type: "string | null",
+		description: "The name of the addon on the Modrinth platform.",
+	},
+	{
+		name: "curseforge?",
+		type: "string | null",
+		description: "The name of the addon on the Curseforge platform.",
 	},
 ];
 
