@@ -185,6 +185,10 @@ export async function handleFetching(): Promise<FetchResult> {
 					modrinth: mod.modData.modrinth?.slug ?? null,
 					curseforge: mod.modData.curseforge?.slug ?? null,
 				},
+				icons: {
+					curseforge: mod.modData.curseforge?.icon ?? null,
+					modrinth: mod.modData.modrinth?.icon ?? null
+				},
 				changes,
 				platforms: mod.platforms,
 				names: {

@@ -52,8 +52,9 @@ export interface UpdateMessage extends WSmessage {
 	type: WSEvents.UPDATE;
 	data: {
 		slugs: Record<Platforms, DatabaseModData["slug"] | null>;
-		platforms: DatabaseMod["platforms"];
+		icons: Record<Platforms, DatabaseModData["icon"] | null>;
 		names: Record<Platforms, DatabaseModData["name"] | null>;
+		platforms: DatabaseMod["platforms"];
 		changes: Record<Platforms, UpdateMessageDataChanges>;
 	}[];
 }

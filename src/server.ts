@@ -104,7 +104,7 @@ app.prepare().then(async () => {
 					});
 				}
 				//eslint-disable-next-line @typescript-eslint/no-unused-vars
-			} catch (e) {
+			} catch (_e) {
 				const error: CommandErrorMessage = {
 					type: WSEvents.COMMAND_ERROR,
 					data: {
@@ -123,7 +123,7 @@ app.prepare().then(async () => {
 				try {
 					ws.terminate();
 					//eslint-disable-next-line @typescript-eslint/no-unused-vars
-				} catch (e) {
+				} catch (_e) {
 					ws.close();
 				}
 
