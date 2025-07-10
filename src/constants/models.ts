@@ -210,6 +210,19 @@ export const apiAddonsError400ModelRows: ModelTableProps["rows"] = [
 	},
 ];
 
+export const apiAddonsAutocompleteResponseModelRows: ModelTableProps["rows"] = [
+	{
+		name: "slug",
+		type: "string",
+		description: "The slug of the addon.",
+	},
+	{
+		name: "name",
+		type: "string",
+		description: "The name of the addon.",
+	},
+]
+
 export const apiAddonsAutocompleteQueryModelRows: ModelTableProps["rows"] = [
 	{
 		name: "platform",

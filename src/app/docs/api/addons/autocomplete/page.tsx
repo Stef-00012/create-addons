@@ -5,6 +5,7 @@ import ResponsesBadge from "@/components/docs/ResponsesBadge";
 import {
     apiAddonsAutocompleteError400ModelRows,
     apiAddonsAutocompleteQueryModelRows,
+	apiAddonsAutocompleteResponseModelRows,
 	tableHeader,
 } from "@/constants/models";
 
@@ -23,9 +24,9 @@ export default function AddonsAPIDocs() {
 
 			<ResponsesBadge type={200} contentType="application/json" />
 
-			<h3 className="py-4 text-2xl">
-				Model: string[]
-			</h3>
+			<h3 className="py-4 text-2xl">Model</h3>
+			
+			<ModelTable header={tableHeader} rows={apiAddonsAutocompleteResponseModelRows} />
 
 			<Divider />
 

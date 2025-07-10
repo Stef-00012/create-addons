@@ -3,11 +3,11 @@ import ratelimitHandler from "@/middlewares/ratelimit";
 import { sql } from "drizzle-orm";
 import type { NextRequest } from "next/server";
 import { mods as modsSchema } from "@/db/schema";
-import type { DatabaseMod, Platforms } from "@/types/addons";
+import type { Platforms } from "@/types/addons";
 import { platforms } from "@/constants/loaders";
 import Fuse from "fuse.js";
 
-export type APIModResponse = DatabaseMod;
+export type APIModResponse = ModsResult[];
 
 type ModsResult = {
 	name: string;
@@ -40,7 +40,7 @@ export async function GET(
 
 		if (mods.length <= 0) return Response.json([]);
 
-		if (!query) return Response.json(mods.map(mod => mod.name))
+		if (!query) return Response.json(mods)
 
 		const fuse = new Fuse(mods, {
 			keys: ["name", "slug"],
@@ -50,7 +50,7 @@ export async function GET(
 
 		const filteredMods = fuse.search(query).map(result => result.item);
 
-		return Response.json(filteredMods.map(mod => mod.name), {
+		return Response.json(filteredMods, {
 			headers,
 		});
 	}, "/api/addons/autocomplete");
