@@ -3,20 +3,19 @@ import Divider from "@/components/docs/Divider";
 import ModelTable from "@/components/docs/ModelTable";
 import ResponsesBadge from "@/components/docs/ResponsesBadge";
 import {
-	apiAddonsError400ModelRows,
-	apiAddonsQueryModelRows,
-	apiAddonsResponseModelRows,
+    apiAddonsAutocompleteError400ModelRows,
+    apiAddonsAutocompleteQueryModelRows,
 	tableHeader,
 } from "@/constants/models";
 
 export default function AddonsAPIDocs() {
 	return (
 		<>
-			<ApiBadge path="/addons" type="GET" />
+			<ApiBadge path="/addons/autocomplete" type="GET" />
 
 			<h3 className="py-4 text-3xl">Query</h3>
 
-			<ModelTable header={tableHeader} rows={apiAddonsQueryModelRows} />
+			<ModelTable header={tableHeader} rows={apiAddonsAutocompleteQueryModelRows} />
 
 			<Divider />
 
@@ -24,9 +23,9 @@ export default function AddonsAPIDocs() {
 
 			<ResponsesBadge type={200} contentType="application/json" />
 
-			<h3 className="py-4 text-2xl">Model</h3>
-
-			<ModelTable header={tableHeader} rows={apiAddonsResponseModelRows} />
+			<h3 className="py-4 text-2xl">
+				Model: string[]
+			</h3>
 
 			<Divider />
 
@@ -34,7 +33,7 @@ export default function AddonsAPIDocs() {
 
 			<h3 className="py-4 text-2xl">Model</h3>
 
-			<ModelTable header={tableHeader} rows={apiAddonsError400ModelRows} />
+			<ModelTable header={tableHeader} rows={apiAddonsAutocompleteError400ModelRows} />
 		</>
 	);
 }

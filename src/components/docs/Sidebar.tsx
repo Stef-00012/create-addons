@@ -28,6 +28,7 @@ export default function Sidebar({ sidebarWidth }: SidebarProps) {
 				<span className="icon-[tabler--menu-2] size-5" />
 			</button>
 
+			{/** biome-ignore lint/nursery/useUniqueElementIds: id is required for the sidebar to work */}
 			<aside
 				id="multilevel-with-separator"
 				style={{ width: `${sidebarWidth}px` }}
@@ -90,6 +91,7 @@ export default function Sidebar({ sidebarWidth }: SidebarProps) {
 								iconClass="icon-[mdi--gauge]"
 							/>
 							<SidebarButton path="/api/addons" name="/addons">
+								<SidebarButton path="/api/addons/autocomplete" name="/autocomplete" />
 								<SidebarButton path="/api/addons/:slug" name="/:slug" />
 							</SidebarButton>
 						</SidebarButton>

@@ -1,6 +1,7 @@
 import type { ModelTableProps } from "@/components/docs/ModelTable";
 
 export const tableHeader = ["Property", "Type", "Description"];
+
 export const addonModelRows: ModelTableProps["rows"] = [
 	{
 		name: "platforms",
@@ -208,6 +209,28 @@ export const apiAddonsError400ModelRows: ModelTableProps["rows"] = [
 		description: "An invalid query was provided.",
 	},
 ];
+
+export const apiAddonsAutocompleteQueryModelRows: ModelTableProps["rows"] = [
+	{
+		name: "platform",
+		type: '"modrinth" | "curseforge"',
+		description: "The platform to filter the addons by.",
+	},
+	{
+		name: "query?",
+		type: "string",
+		description: "The slug or name to filter for.",
+	}
+]
+
+export const apiAddonsAutocompleteError400ModelRows: ModelTableProps["rows"] = [
+	{
+		name: "error",
+		type: "string",
+		description: "An invalid platform was provided.",
+	},
+];
+
 
 export const apiAddonsSlugParamsModelRows: ModelTableProps["rows"] = [
 	{

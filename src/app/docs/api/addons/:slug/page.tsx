@@ -14,7 +14,7 @@ import Link from "next/link";
 export default function AddonSlugAPIDocs() {
 	return (
 		<>
-			<ApiBadge path="/api/addons/:slug" type="GET" />
+			<ApiBadge path="/addons/:slug" type="GET" />
 
 			<h3 className="py-4 text-3xl">Params</h3>
 
