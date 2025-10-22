@@ -42,7 +42,7 @@ export async function ratelimitFetch(
 	config?: AxiosRequestConfig | undefined,
 ): Promise<AxiosResponse> {
 	try {
-		const res = withHardTimeout(
+		const res = await withHardTimeout(
 			axios.get(url, {
 				timeout: REQUEST_TIMEOUT,
 				transitional: {
