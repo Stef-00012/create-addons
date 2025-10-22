@@ -4,12 +4,59 @@ import axios, {
 	type AxiosError,
 } from "axios";
 
+const REQUEST_TIMEOUT = 15000;
+
+async function withHardTimeout<T = AxiosResponse>(
+	promise: Promise<T>,
+	timeoutMs: number,
+	errorMessage: string
+): Promise<T> {
+	let timeoutHandle: NodeJS.Timeout | null = null;;
+	
+	const timeoutPromise = new Promise<T>((_, reject) => {
+		timeoutHandle = setTimeout(() => {
+			reject({
+				response: {
+					status: 408,
+					statusText: errorMessage,
+				}
+			});
+		}, timeoutMs);
+	});
+	
+	try {
+		const result = await Promise.race([promise, timeoutPromise]);
+		
+		if (timeoutHandle) clearTimeout(timeoutHandle);
+		
+		return result;
+	} catch (error) {
+		if (timeoutHandle) clearTimeout(timeoutHandle);
+
+		throw error;
+	}
+}
+
 export async function ratelimitFetch(
 	url: string,
 	config?: AxiosRequestConfig | undefined,
 ): Promise<AxiosResponse> {
 	try {
-		const res = await axios.get(url, config);
+		const res = withHardTimeout(
+			axios.get(url, {
+				timeout: REQUEST_TIMEOUT,
+				transitional: {
+					clarifyTimeoutError: true,
+				},
+				headers: {
+					"User-Agent": `CreateAddons/1.0 (https://github.com/Stef-00012/create-addons)`,
+					...(config?.headers || {}),
+				},
+				...config,
+			}),
+			REQUEST_TIMEOUT,
+			`GET request timed out after ${REQUEST_TIMEOUT}ms for ${url}`
+		)
 
 		return res;
 	} catch (e) {
@@ -23,7 +70,7 @@ export async function ratelimitFetch(
 			);
 
 			if (retryAfter) {
-				await Bun.sleep(Number.parseInt(retryAfter) * 1000);
+				await Bun.sleep(Number.parseInt(retryAfter, 10) * 1000);
 				console.info("\x1b[33mRetrying...\x1b[0m");
 
 				return await ratelimitFetch(url, config);
@@ -58,7 +105,21 @@ export async function ratelimitPost(
 	config?: AxiosRequestConfig | undefined,
 ): Promise<AxiosResponse> {
 	try {
-		const res = await axios.post(url, data, config);
+		const res = await withHardTimeout(
+			axios.post(url, data, {
+				timeout: REQUEST_TIMEOUT,
+				transitional: {
+					clarifyTimeoutError: true,
+				},
+				headers: {
+					"User-Agent": `CreateAddons/1.0 (https://github.com/Stef-00012/create-addons)`,
+					...(config?.headers || {}),
+				},
+				...config,
+			}),
+			REQUEST_TIMEOUT,
+			`POST request timed out after ${REQUEST_TIMEOUT}ms for ${url}`
+		)
 
 		return res;
 	} catch (e) {
