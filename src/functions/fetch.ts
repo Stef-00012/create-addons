@@ -49,7 +49,7 @@ export async function ratelimitFetch(
 					clarifyTimeoutError: true,
 				},
 				headers: {
-					"User-Agent": `CreateAddons/1.0 (https://github.com/Stef-00012/create-addons)`,
+					"User-Agent": `CreateAddons/1.0 (https://git.stefdp.com/Stef/create-addons)`,
 					...(config?.headers || {}),
 				},
 				...config,
@@ -112,7 +112,7 @@ export async function ratelimitPost(
 					clarifyTimeoutError: true,
 				},
 				headers: {
-					"User-Agent": `CreateAddons/1.0 (https://github.com/Stef-00012/create-addons)`,
+					"User-Agent": `CreateAddons/1.0 (https://git.stefdp.com/Stef/create-addons)`,
 					...(config?.headers || {}),
 				},
 				...config,

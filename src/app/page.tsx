@@ -571,7 +571,7 @@ export default function Home() {
 						</Link>
 
 						<Link
-							href="https://github.com/Stef-00012/create-addons"
+							href="https://git.stefdp.com/Stef/create-addons"
 							className="link"
 							aria-label="Github Link"
 							title="Source Code"
