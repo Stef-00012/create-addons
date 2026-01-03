@@ -27,7 +27,8 @@
     "react": "19.2.1",
     "react-dom": "19.2.1",
     "react-select": "^5.10.1",
-    "react-tooltip": "^5.28.1"
+    "react-tooltip": "^5.28.1",
+    "semver": "^7.7.3"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
@@ -39,6 +40,7 @@
     "@types/node-schedule": "^2.1.7",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/semver": "^7.7.1",
     "drizzle-kit": "^0.31.5",
     "eslint": "^9",
     "eslint-config-next": "15.3.0",

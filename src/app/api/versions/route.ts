@@ -3,6 +3,7 @@ import ratelimitHandler from "@/middlewares/ratelimit";
 import { or, sql } from "drizzle-orm";
 import type { NextRequest } from "next/server";
 import { mods as modsSchema } from "@/db/schema";
+import { sortVersions } from "@/functions/sortVersions";
 
 export type APIVersionsResponse = string[];
 
@@ -18,10 +19,14 @@ export async function GET(req: NextRequest) {
 		if (!createMod)
 			return Response.json({ error: "Mod not found" }, { status: 500 });
 
-		const versions = [
-			...(createMod.modData.modrinth?.versions || []),
-			...(createMod.modData.curseforge?.versions || []),
-		]
+		const versions = sortVersions(
+			Array.from(
+				new Set([
+					...(createMod.modData.modrinth?.versions || []),
+					...(createMod.modData.curseforge?.versions || []),
+				])
+			)
+		)
 
 		return Response.json(versions, {
 			headers,
