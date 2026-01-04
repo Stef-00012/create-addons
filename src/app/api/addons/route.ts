@@ -19,7 +19,7 @@ export async function GET(req: NextRequest) {
 	return await ratelimitHandler(req, async (headers: Headers) => {
 		const url = new URL(req.url);
 
-		const page = Number.parseInt(url.searchParams.get("page") || "0") || 0;
+		const page = Number.parseInt(url.searchParams.get("page") || "0", 10) || 0;
 
 		if (page < 0)
 			return Response.json(
@@ -37,6 +37,9 @@ export async function GET(req: NextRequest) {
 		const platform = (url.searchParams.get("platform") || "all") as
 			| Platforms
 			| "all";
+		const createVersion =
+			url.searchParams.get("createVersion") === "1" ||
+			url.searchParams.get("createVersion") === "true";
 
 		const res = await fetchSortedMods({
 			page,
@@ -45,6 +48,7 @@ export async function GET(req: NextRequest) {
 			search,
 			sortOrder,
 			platform,
+			createVersion,
 		});
 
 		if (res.error)

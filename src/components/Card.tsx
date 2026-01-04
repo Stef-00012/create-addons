@@ -45,6 +45,7 @@ export default function Card({ mod, defaultPlatform }: Props) {
 					<div className="max-w-[80%]">
 						<Image
 							src={modData.icon === "" ? defaultModIcon : modData.icon}
+							unoptimized={modData.icon.endsWith(".gif")}
 							className="size-10 inline-block rounded-2xl mr-2"
 							alt="mod logo"
 							width={20}
@@ -152,6 +153,12 @@ export default function Card({ mod, defaultPlatform }: Props) {
 						<span className="icon-[tabler--hash] pt-2" />{" "}
 						<strong>Versions:</strong> {modData.versions.join(", ")}
 					</li>
+					{modData.createVersion && (
+						<li>
+							<span className="icon-[tabler--settings] pt-2" />{" "}
+							<strong>Latest Create Version:</strong> {modData.createVersion}
+						</li>
+					)}
 					<li>
 						<span className="icon-[tabler--download] pt-2" />{" "}
 						<strong>Downloads:</strong>{" "}

@@ -16,6 +16,7 @@ interface Props {
 	search?: string;
 	sortOrder?: SortOrders;
 	platform?: Platforms | "all";
+	createVersion?: boolean;
 }
 
 export async function fetchSortedMods({
@@ -25,6 +26,7 @@ export async function fetchSortedMods({
 	search = "",
 	sortOrder = "downloads",
 	platform = "all",
+	createVersion = false,
 }: Props): Promise<
 	| {
 			error: false;
@@ -40,7 +42,7 @@ export async function fetchSortedMods({
 	  }
 > {
 	const modsPerPage =
-		Number.parseInt(process.env.MODS_PER_PAGE as string) || 50;
+		Number.parseInt(process.env.MODS_PER_PAGE as string, 10) || 50;
 
 	const modsRes = await db.query.mods.findMany({
 		columns: {
@@ -190,11 +192,19 @@ export async function fetchSortedMods({
 		return 0;
 	});
 
+	const resultMods = createVersion
+		? sortedMods.filter(
+				(mod) =>
+					mod.modData.curseforge?.createVersion ||
+					mod.modData.modrinth?.createVersion,
+			)
+		: sortedMods;
+
 	return {
 		error: false,
 		page,
-		mods: sortedMods.slice(page * modsPerPage, (page + 1) * modsPerPage),
-		totalMods: sortedMods.length,
-		totalPages: Math.ceil(sortedMods.length / modsPerPage),
+		mods: resultMods.slice(page * modsPerPage, (page + 1) * modsPerPage),
+		totalMods: resultMods.length,
+		totalPages: Math.ceil(resultMods.length / modsPerPage),
 	};
 }

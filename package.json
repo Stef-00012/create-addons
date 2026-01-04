@@ -12,6 +12,7 @@
     "db:migrate": "drizzle-kit migrate"
   },
   "dependencies": {
+    "@iarna/toml": "^2.2.5",
     "@libsql/client": "^0.15.2",
     "@tanstack/react-virtual": "^3.13.6",
     "@upstash/ratelimit": "^2.0.5",
@@ -21,6 +22,7 @@
     "enhanced-ms": "^4.1.0",
     "flyonui": "^2.1.0",
     "fuse.js": "^7.1.0",
+    "jszip": "^3.10.1",
     "millify": "^6.1.0",
     "next": "16.0.7",
     "node-schedule": "^2.1.1",

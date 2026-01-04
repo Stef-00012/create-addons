@@ -46,6 +46,7 @@ export interface DatabaseModData {
 	serverSide: SupportTypes;
 	modloaders: Modloaders[];
 	id: string;
+	createVersion?: string;
 }
 
 interface DatabaseModDataAuthor {

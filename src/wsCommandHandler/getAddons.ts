@@ -15,6 +15,7 @@ interface CommandArgs {
 	search?: string;
 	sortOrder?: SortOrders;
 	platform?: Platforms;
+	createVersion?: boolean;
 }
 
 export default async function getMods(
@@ -29,6 +30,7 @@ export default async function getMods(
 		search = "",
 		sortOrder = "downloads",
 		platform = "all",
+		createVersion = false,
 	} = args || {};
 
 	if (page < 0) {
@@ -50,6 +52,7 @@ export default async function getMods(
 		search,
 		sortOrder,
 		platform,
+		createVersion,
 	});
 
 	if (res.error) {

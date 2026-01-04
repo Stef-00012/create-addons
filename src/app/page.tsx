@@ -20,6 +20,7 @@ import SkeletonList from "@/components/SkeletonList";
 import Card from "@/components/Card";
 import List from "@/components/List";
 import Link from "next/link";
+import Switch from "@/components/Switch";
 
 const modloaderOptions = [
 	{ value: "all", label: "All" },
@@ -63,10 +64,13 @@ export default function Home() {
 	const initialVersion = searchParams.get("version") as string;
 	const initialSearch = searchParams.get("search");
 	const initialPlatform = searchParams.get("platform") as Platforms;
+	const initialCreateVersion =
+		searchParams.get("createVersion") === "1" ||
+		searchParams.get("createVersion") === "true";
 
 	const [versions, setVersions] = useState<string[]>([]);
 	const [page, setPage] = useState<number>(
-		Number.parseInt(initialPage || "1") || 1,
+		Number.parseInt(initialPage || "1", 10) || 1,
 	);
 	const [addonsData, setAddonsData] = useState<APIModsResponse | null>(null);
 
@@ -87,6 +91,9 @@ export default function Home() {
 	const [platform, setPlatform] = useState<Platforms | "all">(
 		platforms.includes(initialPlatform) ? initialPlatform : "all",
 	);
+
+	const [createVersion, setCreateVersion] =
+		useState<boolean>(initialCreateVersion);
 
 	const [search, setSearch] = useState<string>(
 		initialSearch ? decodeURIComponent(initialSearch) : "",
@@ -117,6 +124,9 @@ export default function Home() {
 		const sortBy = searchParams.get("sort") as SortOrders;
 		const page = searchParams.get("page") as string;
 		const platform = searchParams.get("platform") as Platforms;
+		const createVersion =
+			searchParams.get("createVersion") === "1" ||
+			searchParams.get("createVersion") === "true";
 
 		if (versions.includes(version)) {
 			setVersion(version);
@@ -134,9 +144,11 @@ export default function Home() {
 			setPlatform(platform);
 		}
 
-		if (Number.parseInt(page) > 1) {
-			setPage(Number.parseInt(page));
+		if (Number.parseInt(page, 10) > 1) {
+			setPage(Number.parseInt(page, 10));
 		}
+
+		setCreateVersion(createVersion);
 		setSearch(decodeURIComponent(search || ""));
 	}, [searchParams, versions]);
 
@@ -149,6 +161,7 @@ export default function Home() {
 				sort: sortBy,
 				search: encodeURIComponent(search),
 				platform,
+				createVersion: createVersion ? "1" : "0",
 			});
 
 			scrollTo({
@@ -166,7 +179,7 @@ export default function Home() {
 		};
 
 		fetchAddonsData().catch((err) => console.error(err));
-	}, [page, loader, sortBy, version, platform, search]);
+	}, [page, loader, sortBy, version, platform, createVersion, search]);
 
 	useEffect(() => {
 		if (addonsData && page > (addonsData.totalPages || 1)) {
@@ -183,14 +196,32 @@ export default function Home() {
 		if (search) setSearchParams.append("search", encodeURIComponent(search));
 		if (sortBy !== "downloads") setSearchParams.append("sort", sortBy);
 		if (platform !== "all") setSearchParams.append("platform", platform);
+		if (createVersion) setSearchParams.append("createVersion", "1");
 		if (compactMode) setSearchParams.append("compact", "1");
 
 		router.replace(`?${setSearchParams}`, {
 			scroll: false,
 		});
-	}, [sortBy, search, loader, version, platform, compactMode, page, router]);
+	}, [
+		sortBy,
+		search,
+		loader,
+		version,
+		platform,
+		createVersion,
+		compactMode,
+		page,
+		router,
+	]);
 
 	useEffect(() => {
+		function handleKeyboardShortcut(event: KeyboardEvent) {
+			if ((event.ctrlKey && event.key === "k") || event.key === "/") {
+				event.preventDefault();
+				searchInput.current?.focus();
+			}
+		}
+
 		document.addEventListener("keydown", handleKeyboardShortcut);
 
 		return () => {
@@ -228,6 +259,10 @@ export default function Home() {
 		setPlatform(platform || "all");
 	}
 
+	function handleCreateVersionToggle() {
+		setCreateVersion((prev) => !prev);
+	}
+
 	function handleSearch() {
 		setSearch(searchInput.current?.value || "");
 	}
@@ -261,13 +296,6 @@ export default function Home() {
 		if (event.key === "Escape") {
 			event.preventDefault();
 			searchInput.current?.blur();
-		}
-	}
-
-	function handleKeyboardShortcut(event: KeyboardEvent) {
-		if ((event.ctrlKey && event.key === "k") || event.key === "/") {
-			event.preventDefault();
-			searchInput.current?.focus();
 		}
 	}
 
@@ -364,6 +392,12 @@ export default function Home() {
 							isDisabled={!addonsData}
 							onChange={handleSortSelect}
 						/>
+
+						<Switch
+							label="Has Create Version"
+							onSwitchChange={handleCreateVersionToggle}
+							isDisabled={!addonsData}
+						/>
 					</div>
 
 					<div className="join rounded-2xl max-w-xs">
@@ -387,7 +421,9 @@ export default function Home() {
 								<p className="mr-1 py-1">Search addons</p>
 
 								<span className="my-auto flex gap-2">
-									<kbd className="kbd kbd-sm font-minecraft pl-2 pt-0.5">Ctrl</kbd>
+									<kbd className="kbd kbd-sm font-minecraft pl-2 pt-0.5">
+										Ctrl
+									</kbd>
 									<kbd className="kbd kbd-sm font-minecraft pl-2 pt-0.5">K</kbd>
 								</span>
 							</label>
@@ -416,40 +452,34 @@ export default function Home() {
 						className={`${compactMode ? "" : "sm:flex sm:flex-row sm:flex-wrap sm:gap-4"}`}
 					>
 						{addonsData ? (
-							<>
-								{addonsData.mods.length > 0 ? (
-									<>
-										{addonsData.mods.map((mod) => (
-											<Fragment
-												key={
-													mod.modData.modrinth?.id ?? mod.modData.curseforge?.id
+							addonsData.mods.length > 0 ? (
+								addonsData.mods.map((mod) => (
+									<Fragment
+										key={mod.modData.modrinth?.id ?? mod.modData.curseforge?.id}
+									>
+										{compactMode ? (
+											<List
+												mod={mod.modData}
+												defaultPlatform={
+													platform === "all" ? undefined : platform
 												}
-											>
-												{compactMode ? (
-													<List
-														mod={mod.modData}
-														defaultPlatform={
-															platform === "all" ? undefined : platform
-														}
-													/>
-												) : (
-													<Card
-														mod={mod.modData}
-														defaultPlatform={
-															platform === "all" ? undefined : platform
-														}
-													/>
-												)}
-											</Fragment>
-										))}
-									</>
-								) : (
-									<p className="text-center mx-auto text-4xl my-6 flex items-center">
-										<span className="icon-[tabler--alert-triangle-filled] me-2 mt-1 text-error" />
-										Sorry! No results were found...
-									</p>
-								)}
-							</>
+											/>
+										) : (
+											<Card
+												mod={mod.modData}
+												defaultPlatform={
+													platform === "all" ? undefined : platform
+												}
+											/>
+										)}
+									</Fragment>
+								))
+							) : (
+								<p className="text-center mx-auto text-4xl my-6 flex items-center">
+									<span className="icon-[tabler--alert-triangle-filled] me-2 mt-1 text-error" />
+									Sorry! No results were found...
+								</p>
+							)
 						) : (
 							<div
 								className={`py-2 my-2 ${compactMode ? "" : "sm:flex sm:flex-row sm:flex-wrap sm:gap-4"}`}

@@ -103,11 +103,14 @@ async function getBaseCreateMod(): Promise<CurseforgeSearchResponse["data"]> {
 	return data.data;
 }
 
+interface GetCurseforgeModsResult {
+	mod: CurseforgeSearchResponse["data"][0];
+	hashes: string[];
+	downloads: string[];
+}
+
 export default async function getCurseforgeMods(): Promise<
-	{
-		mod: CurseforgeSearchResponse["data"][0];
-		hashes: string[];
-	}[]
+	GetCurseforgeModsResult[]
 > {
 	const modsData = await fetchMods();
 	const baseCreateMods = await getBaseCreateMod();
@@ -124,5 +127,6 @@ export default async function getCurseforgeMods(): Promise<
 				.filter((hash) => hash.algo === CurseforgeHashAlgo.Sha1)
 				.map((hash) => hash.value),
 		),
+		downloads: mod.latestFiles.map((file) => file.downloadUrl).filter(Boolean),
 	}));
 }

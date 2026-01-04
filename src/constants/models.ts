@@ -171,6 +171,12 @@ export const apiAddonsQueryModelRows: ModelTableProps["rows"] = [
 		description:
 			"The platform to filter addons by (e.g., Modrinth, Curseforge).",
 	},
+	{
+		name: "createVersion?",
+		type: "boolean | 1 | 0 (1 = true, 0 = false)",
+		description:
+			"Whether to only show addons that have a Create version specified.",
+	},
 ];
 
 export const apiAddonsResponseModelRows: ModelTableProps["rows"] = [
@@ -221,7 +227,7 @@ export const apiAddonsAutocompleteResponseModelRows: ModelTableProps["rows"] = [
 		type: "string",
 		description: "The name of the addon.",
 	},
-]
+];
 
 export const apiAddonsAutocompleteQueryModelRows: ModelTableProps["rows"] = [
 	{
@@ -233,8 +239,8 @@ export const apiAddonsAutocompleteQueryModelRows: ModelTableProps["rows"] = [
 		name: "query?",
 		type: "string",
 		description: "The slug or name to filter for.",
-	}
-]
+	},
+];
 
 export const apiAddonsAutocompleteError400ModelRows: ModelTableProps["rows"] = [
 	{
@@ -243,7 +249,6 @@ export const apiAddonsAutocompleteError400ModelRows: ModelTableProps["rows"] = [
 		description: "An invalid platform was provided.",
 	},
 ];
-
 
 export const apiAddonsSlugParamsModelRows: ModelTableProps["rows"] = [
 	{
@@ -365,8 +370,9 @@ export const websocketUpdateDataRows: ModelTableProps["rows"] = [
 	{
 		name: "names",
 		type: "UpdateMessageDataNames",
-		description: "An object containing the names of the updated addon for each supported platform.",
-		url: "#UpdateMessageDataNames"
+		description:
+			"An object containing the names of the updated addon for each supported platform.",
+		url: "#UpdateMessageDataNames",
 	},
 	{
 		name: "changes",
@@ -743,6 +749,12 @@ export const getAddonsCommandArgsRows: ModelTableProps["rows"] = [
 		name: "platform?",
 		type: '"modrinth" | "curseforge" | "all"',
 		description: "The platform to filter addons by.",
+	},
+	{
+		name: "createVersion?",
+		type: "boolean",
+		description:
+			"Whether to only show addons that have a Create version specified.",
 	},
 ];
 

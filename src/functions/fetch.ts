@@ -9,26 +9,26 @@ const REQUEST_TIMEOUT = 15000;
 async function withHardTimeout<T = AxiosResponse>(
 	promise: Promise<T>,
 	timeoutMs: number,
-	errorMessage: string
+	errorMessage: string,
 ): Promise<T> {
-	let timeoutHandle: NodeJS.Timeout | null = null;;
-	
+	let timeoutHandle: NodeJS.Timeout | null = null;
+
 	const timeoutPromise = new Promise<T>((_, reject) => {
 		timeoutHandle = setTimeout(() => {
 			reject({
 				response: {
 					status: 408,
 					statusText: errorMessage,
-				}
+				},
 			});
 		}, timeoutMs);
 	});
-	
+
 	try {
 		const result = await Promise.race([promise, timeoutPromise]);
-		
+
 		if (timeoutHandle) clearTimeout(timeoutHandle);
-		
+
 		return result;
 	} catch (error) {
 		if (timeoutHandle) clearTimeout(timeoutHandle);
@@ -55,15 +55,18 @@ export async function ratelimitFetch(
 				...config,
 			}),
 			REQUEST_TIMEOUT,
-			`GET request timed out after ${REQUEST_TIMEOUT}ms for ${url}`
-		)
+			`GET request timed out after ${REQUEST_TIMEOUT}ms for ${url}`,
+		);
 
 		return res;
 	} catch (e) {
 		const error = e as AxiosError;
 
 		if (error?.response?.status === 429) {
-			const retryAfter = error.response.headers["x-ratelimit-reset"];
+			const retryAfter =
+				error.response.headers["Retry-After"] ||
+				error.response.headers["x-ratelimit-reset"] ||
+				60;
 
 			console.info(
 				`\x1b[31mRate limit hit, retrying in \x1b[0;1m${retryAfter} \x1b[0;31mseconds...\x1b[0m`,
@@ -118,22 +121,25 @@ export async function ratelimitPost(
 				...config,
 			}),
 			REQUEST_TIMEOUT,
-			`POST request timed out after ${REQUEST_TIMEOUT}ms for ${url}`
-		)
+			`POST request timed out after ${REQUEST_TIMEOUT}ms for ${url}`,
+		);
 
 		return res;
 	} catch (e) {
 		const error = e as AxiosError;
 
 		if (error?.response?.status === 429) {
-			const retryAfter = error.response.headers["x-ratelimit-reset"];
+			const retryAfter =
+				error.response.headers["Retry-After"] ||
+				error.response.headers["x-ratelimit-reset"] ||
+				60;
 
 			console.info(
 				`\x1b[31mRate limit hit, retrying in \x1b[0;1m${retryAfter} \x1b[0;31mseconds...\x1b[0m`,
 			);
 
 			if (retryAfter) {
-				await Bun.sleep(Number.parseInt(retryAfter) * 1000);
+				await Bun.sleep(Number.parseInt(retryAfter, 10) * 1000);
 				console.info("\x1b[33mRetrying...\x1b[0m");
 
 				return await ratelimitPost(url, data, config);

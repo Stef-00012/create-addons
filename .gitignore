@@ -46,6 +46,7 @@ default.nix
 
 # db
 /data/*.db
+/data/*.db.bak
 /drizzle
 
 # vscode

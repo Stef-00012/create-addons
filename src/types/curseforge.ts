@@ -106,7 +106,8 @@ interface CurseforgeModFile {
 	fileDate: string;
 	fileLength: number;
 	downloadCount: number;
-	fileSizeOnDisk: number;
+	fileSizeOnDisk: number | null;
+	downloadUrl: string;
 	gameVersions: string[];
 	sortableGameVersions: CurseforgeSortableGameVersion[];
 	dependencies: CurseforgeFileDependency[];

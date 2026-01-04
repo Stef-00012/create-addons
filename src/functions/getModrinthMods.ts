@@ -152,12 +152,15 @@ export async function getMinecraftVersions() {
 	return new Map(data.reverse().map((v, idx) => [v.version, idx]));
 }
 
+interface GetModrinthModsResult {
+	mod: ModrinthGetProjectsMod;
+	authors: string[];
+	hashes: string[];
+	downloads: string[];
+}
+
 export default async function getModrinthMods(): Promise<
-	{
-		mod: ModrinthGetProjectsMod;
-		authors: string[];
-		hashes: string[];
-	}[]
+	GetModrinthModsResult[]
 > {
 	const modsData = await fetchMods();
 
@@ -194,11 +197,7 @@ export default async function getModrinthMods(): Promise<
 
 	const modsIdsGroups = splitArray<string>(modsIds, 700);
 
-	const modData: {
-		mod: ModrinthGetProjectsMod;
-		authors: string[];
-		hashes: string[];
-	}[] = [];
+	const modData: GetModrinthModsResult[] = [];
 
 	for (const modIdGroup of modsIdsGroups) {
 		const modsRes = await getFullMods(modIdGroup);
@@ -207,6 +206,7 @@ export default async function getModrinthMods(): Promise<
 			mod: mod,
 			authors: [],
 			hashes: [],
+			downloads: [],
 		}));
 
 		modData.push(...formattedMods);
@@ -243,10 +243,12 @@ export default async function getModrinthMods(): Promise<
 
 	for (const version of versions) {
 		const hashes = version.files.map((file) => file.hashes.sha1);
+		const downloads = version.files.map((file) => file.url).filter(Boolean);
 		const projectId = version.project_id;
 
 		const index = modData.findIndex((data) => data.mod.id === projectId);
 		modData[index].hashes.push(...hashes);
+		modData[index].downloads.push(...downloads);
 	}
 
 	return modData;

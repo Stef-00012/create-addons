@@ -6,7 +6,7 @@ import db from "@/db/db";
 import { or, sql } from "drizzle-orm";
 import type { Modloaders, DatabaseMod, DatabaseModData } from "@/types/addons";
 import type { UpdateMessage } from "@/types/websocket";
-import { compareAddons, sortVersions } from "@/functions/util";
+import { compareAddons, getCreatVersion, sortVersions } from "@/functions/util";
 import getCurseforgeMods from "@/functions/getCurseforgeMods";
 import { curseforgeModloaders } from "@/constants/loaders";
 
@@ -27,11 +27,13 @@ export async function handleFetching(): Promise<FetchResult> {
 	const addons: {
 		dbData: DatabaseMod;
 		hashes: string[];
+		downloads: string[];
 	}[] = [];
 
 	for (const addon of curseforgeMods) {
 		const mod = addon.mod;
 		const hashes = addon.hashes;
+		const downloads = addon.downloads;
 		const versions = sortVersions(
 			Array.from(
 				new Set(mod.latestFilesIndexes.map((version) => version.gameVersion)),
@@ -75,12 +77,14 @@ export async function handleFetching(): Promise<FetchResult> {
 				},
 			},
 			hashes,
+			downloads,
 		});
 	}
 
 	for (const addon of modrinthMods) {
 		const mod = addon.mod;
 		const hashes = addon.hashes;
+		const downloads = addon.downloads;
 		const versions = sortVersions(mod.game_versions, minecraftVersions);
 
 		const index = addons.findIndex((x) =>
@@ -122,7 +126,8 @@ export async function handleFetching(): Promise<FetchResult> {
 						modrinth: addonData,
 					},
 				},
-				hashes: addon.hashes,
+				hashes,
+				downloads,
 			});
 		}
 	}
@@ -145,11 +150,57 @@ export async function handleFetching(): Promise<FetchResult> {
 		});
 
 		if (!exists) {
-			await db.insert(modsSchema).values(mod);
+			const latestDownloadUrl = addon.downloads[addon.downloads.length - 1];
 
+			if (!latestDownloadUrl)
+				console.error(
+					`\x1b[31mNo download URL found for the addon "\x1b[0;1m${mod.modData.modrinth?.slug ?? mod.modData.curseforge?.slug}\x1b[0;36m"\x1b[0m]`,
+				);
+
+			console.info(
+				`\x1b[36mFetching create version for the addon "\x1b[0;1m${mod.modData.modrinth?.slug ?? mod.modData.curseforge?.slug}\x1b[0;36m" from "\x1b[0m${latestDownloadUrl}\x1b[0;36m"\x1b[0m`,
+			);
+
+			if (latestDownloadUrl) {
+				const createVersion = await getCreatVersion(latestDownloadUrl);
+
+				if (createVersion) {
+					console.info(
+						`\x1b[36mObtained create version "\x1b[0m${createVersion}\x1b[0;36m" for the addon "\x1b[0;1m${mod.modData.modrinth?.slug ?? mod.modData.curseforge?.slug}\x1b[0;36m"\x1b[0m`,
+					);
+
+					if (mod.modData.curseforge) {
+						mod.modData.curseforge.createVersion = createVersion;
+					}
+
+					if (mod.modData.modrinth) {
+						mod.modData.modrinth.createVersion = createVersion;
+					}
+				}
+			}
+
+			await db.insert(modsSchema).values(mod);
 			created.push(mod);
 
 			continue;
+		}
+
+		if (
+			exists.modData.curseforge &&
+			mod.modData.curseforge &&
+			"createVersion" in exists.modData.curseforge
+		) {
+			mod.modData.curseforge.createVersion =
+				exists.modData.curseforge.createVersion;
+		}
+
+		if (
+			exists.modData.modrinth &&
+			mod.modData.modrinth &&
+			"createVersion" in exists.modData.modrinth
+		) {
+			mod.modData.modrinth.createVersion =
+				exists.modData.modrinth.createVersion;
 		}
 
 		const curseforgeChanges = compareAddons(
@@ -165,6 +216,64 @@ export async function handleFetching(): Promise<FetchResult> {
 			curseforge: curseforgeChanges,
 			modrinth: modrinthChanges,
 		};
+
+		if (
+			curseforgeChanges?.versions ||
+			curseforgeChanges?.version ||
+			modrinthChanges?.versions ||
+			modrinthChanges?.version ||
+			(exists.modData.curseforge && !exists.modData.curseforge.createVersion) ||
+			(exists.modData.modrinth && !exists.modData.modrinth.createVersion)
+		) {
+			const latestDownloadUrl = addon.downloads[addon.downloads.length - 1];
+
+			if (!latestDownloadUrl)
+				console.error(
+					`\x1b[31mNo download URL found for the addon "\x1b[0;1m${mod.modData.modrinth?.slug ?? mod.modData.curseforge?.slug}\x1b[0;36m"\x1b[0m]`,
+				);
+
+			console.info(
+				`\x1b[36mFetching create version for the addon "\x1b[0;1m${mod.modData.modrinth?.slug ?? mod.modData.curseforge?.slug}\x1b[0;36m" from "\x1b[0m${latestDownloadUrl}\x1b[0;36m"\x1b[0m`,
+			);
+
+			if (latestDownloadUrl) {
+				const createVersion = await getCreatVersion(latestDownloadUrl);
+
+				if (createVersion) {
+					console.info(
+						`\x1b[36mObtained create version "\x1b[0m${createVersion}\x1b[0;36m" for the addon "\x1b[0;1m${mod.modData.modrinth?.slug ?? mod.modData.curseforge?.slug}\x1b[0;36m"\x1b[0m`,
+					);
+
+					if (mod.modData.curseforge) {
+						if (
+							changes.curseforge?.createVersion &&
+							mod.modData.curseforge.createVersion !== createVersion
+						) {
+							changes.curseforge.createVersion = {
+								old: mod.modData.curseforge.createVersion,
+								new: createVersion,
+							};
+						}
+
+						mod.modData.curseforge.createVersion = createVersion;
+					}
+
+					if (mod.modData.modrinth) {
+						if (
+							changes.modrinth?.createVersion &&
+							mod.modData.modrinth.createVersion !== createVersion
+						) {
+							changes.modrinth.createVersion = {
+								old: mod.modData.modrinth.createVersion,
+								new: createVersion,
+							};
+						}
+
+						mod.modData.modrinth.createVersion = createVersion;
+					}
+				}
+			}
+		}
 
 		await db
 			.update(modsSchema)
@@ -187,14 +296,14 @@ export async function handleFetching(): Promise<FetchResult> {
 				},
 				icons: {
 					curseforge: mod.modData.curseforge?.icon ?? null,
-					modrinth: mod.modData.modrinth?.icon ?? null
+					modrinth: mod.modData.modrinth?.icon ?? null,
 				},
 				changes,
 				platforms: mod.platforms,
 				names: {
 					modrinth: mod.modData.modrinth?.name ?? null,
 					curseforge: mod.modData.curseforge?.name ?? null,
-				}
+				},
 			};
 
 			updated.push(changeResult);

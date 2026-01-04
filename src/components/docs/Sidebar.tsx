@@ -28,11 +28,9 @@ export default function Sidebar({ sidebarWidth }: SidebarProps) {
 				<span className="icon-[tabler--menu-2] size-5" />
 			</button>
 
-			{/** biome-ignore lint/nursery/useUniqueElementIds: id is required for the sidebar to work */}
 			<aside
 				id="multilevel-with-separator"
 				style={{ width: `${sidebarWidth}px` }}
-				// className="overlay [--auto-close:sm] overlay-open:translate-x-0 drawer drawer-start hidden max-w-64 sm:absolute sm:z-0 sm:flex sm:translate-x-0 sm:shadow-none"
 				className={`drawer drawer-start max-w-64 sm:fixed sm:top-0 sm:left-0 z-10 sm:flex sm:translate-x-0 sm:shadow-none transition-[translate] ${sidebarOpen ? "translate-x-0 w-full h-full" : "-translate-x-[100%]"}`}
 				tabIndex={-1}
 			>
@@ -91,7 +89,10 @@ export default function Sidebar({ sidebarWidth }: SidebarProps) {
 								iconClass="icon-[mdi--gauge]"
 							/>
 							<SidebarButton path="/api/addons" name="/addons">
-								<SidebarButton path="/api/addons/autocomplete" name="/autocomplete" />
+								<SidebarButton
+									path="/api/addons/autocomplete"
+									name="/autocomplete"
+								/>
 								<SidebarButton path="/api/addons/:slug" name="/:slug" />
 							</SidebarButton>
 						</SidebarButton>
