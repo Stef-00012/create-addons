@@ -18,7 +18,7 @@
     "@upstash/ratelimit": "^2.0.5",
     "axios": "^1.12.2",
     "date-fns": "^4.1.0",
-    "drizzle-orm": "^0.41.0",
+    "drizzle-orm": "^0.45.2",
     "enhanced-ms": "^4.1.0",
     "flyonui": "^2.1.0",
     "fuse.js": "^7.1.0",
