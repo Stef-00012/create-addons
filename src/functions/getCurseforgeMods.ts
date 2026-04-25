@@ -21,7 +21,7 @@ async function fetchMods(
 		classId: "6", // 6 = mc-mods
 		// categoryIds: '["426","6484"]', // 426 = mc-addons | 6484 = create
 		categoryId: "6484", // 6484 = create
-		sortField: "downloadCount",
+		sortField: "TotalDownloads",
 		// sortField: '6', // 6 = TotalDownloads
 		sortOrder: "desc",
 		pageSize: "50",
