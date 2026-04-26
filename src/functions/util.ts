@@ -5,8 +5,80 @@ import * as TOML from "@iarna/toml";
 import type { FabricModJson, ForgeModJson } from "@/types/modloaders";
 import { ratelimitFetch } from "./fetch";
 
-export function compareArrays<T>(a: T[], b: T[]): boolean {
-	return a.length === b.length && a.every((value) => b.includes(value));
+type DeepComparable =
+	| string
+	| number
+	| boolean
+	| null
+	| { [key: string]: DeepComparable }
+	| DeepComparable[];
+
+function isDeepEqual(object1: DeepComparable, object2: DeepComparable): boolean {
+	if (object1 === object2) return true;
+
+	if (
+		typeof object1 !== "object" ||
+		object1 === null ||
+		typeof object2 !== "object" ||
+		object2 === null
+	) return false;
+
+	const isArray1 = Array.isArray(object1);
+	const isArray2 = Array.isArray(object2);
+
+	if (isArray1 !== isArray2) return false;
+
+	if (isArray1 && isArray2) {
+		const array1 = object1 as DeepComparable[];
+		const array2 = object2 as DeepComparable[];
+
+		if (array1.length !== array2.length) return false;
+		
+		return array1.every((val, index) => isDeepEqual(val, array2[index]));
+	}
+
+	const record1 = object1 as Record<string, DeepComparable>;
+	const record2 = object2 as Record<string, DeepComparable>;
+
+	const keys1 = Object.keys(record1);
+	const keys2 = Object.keys(record2);
+
+	if (keys1.length !== keys2.length) return false;
+
+	return keys1.every(
+		(key) =>
+			Object.hasOwn(record2, key) &&
+			isDeepEqual(record1[key], record2[key]),
+	);
+}
+
+function compareArrays<T extends DeepComparable>(
+	array1: T[],
+	array2: T[],
+): boolean {
+	if (array1.length !== array2.length) return false;
+
+	const matchedIndices = new Set<number>();
+
+	for (const item1 of array1) {
+		let foundMatch = false;
+
+		for (let i = 0; i < array2.length; i++) {
+			if (matchedIndices.has(i)) continue;
+
+			if (isDeepEqual(item1, array2[i])) {
+				matchedIndices.add(i);
+
+				foundMatch = true;
+
+				break;
+			}
+		}
+
+		if (!foundMatch) return false;
+	}
+
+	return true;
 }
 
 export function splitArray<T = unknown>(array: Array<T>, count = 700) {
